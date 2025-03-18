@@ -33,6 +33,26 @@
                    <groupId>org.apache.maven.plugins</groupId>
                    <artifactId>maven-surefire-plugin</artifactId>
                    <version>3.0.0-M7</version>
+                   <configuration>
+                       <!-- Enable headless mode for AWT/Swing -->
+                       <systemPropertyVariables>
+                           <java.awt.headless>true</java.awt.headless>
+                           <!-- Ensure headless property is passed to forked JVMs -->
+                           <headless.awt>true</headless.awt>
+                       </systemPropertyVariables>
+                       <argLine>-Djava.awt.headless=true</argLine>
+                       <workingDirectory>${project.build.directory}</workingDirectory>
+                       <forkCount>1</forkCount>
+                       <reuseForks>false</reuseForks>
+                       <useSystemClassLoader>false</useSystemClassLoader>
+                       <!-- Don't exclude tests - we've fixed them to run in headless mode -->
+                       <!--
+                       <excludes>
+                           <exclude>**/SlideViewer*Test.java</exclude>
+                           <exclude>**/MenuController*Test.java</exclude>
+                       </excludes>
+                       -->
+                   </configuration>
                </plugin>
                <plugin>
                    <groupId>org.apache.maven.plugins</groupId>
