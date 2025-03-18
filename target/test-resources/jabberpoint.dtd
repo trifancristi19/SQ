@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT presentation (showtitle, slide*)>
+<!ELEMENT showtitle (#PCDATA)>
+<!ELEMENT slide (title, item*)>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT item (#PCDATA)>
+<!ATTLIST item kind CDATA #REQUIRED>
+<!ATTLIST item level CDATA #REQUIRED>
