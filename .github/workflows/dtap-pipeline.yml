@@ -49,7 +49,7 @@ jobs:
           java-version: "11"
           distribution: "temurin"
       - name: Check code coverage
-        run: mvn jacoco:check
+        run: mvn verify
 
   deploy-to-test:
     if: github.ref == 'refs/heads/test' || (github.event_name == 'pull_request' && github.base_ref == 'test')
