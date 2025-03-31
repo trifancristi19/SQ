@@ -1,7 +1,7 @@
 package com.jabberpoint;
 
 import java.util.ArrayList;
-
+import java.util.List;
 
 /**
  * <p>Presentation maintains the slides in the presentation.</p>
@@ -16,32 +16,67 @@ import java.util.ArrayList;
  */
 
 public class Presentation {
-	private String showTitle; // title of the presentation
-	private ArrayList<Slide> showList = null; // an ArrayList with Slides
-	private int currentSlideNumber = 0; // the slidenummer of the current Slide
+	private String title;
+	private List<Slide> slides;
+	private int currentSlideNumber = 0;
+	private List<PresentationObserver> observers = new ArrayList<>();
+	private PresentationLoader loader;  // Strategy pattern
 	private SlideViewerComponent slideViewComponent = null; // the viewcomponent of the Slides
 
 	public Presentation() {
-		showList = new ArrayList<Slide>();
-		currentSlideNumber = -1;
+		slides = new ArrayList<>();
+		title = "New Presentation";
 	}
 
-	public Presentation(Slide slide) {
-		showList = new ArrayList<Slide>();
-		showList.add(slide);
-		currentSlideNumber = 0;
+	public void setLoader(PresentationLoader loader) {
+		this.loader = loader;
+	}
+
+	public void loadPresentation(String fileName) throws Exception {
+		if (loader == null) {
+			throw new IllegalStateException("No presentation loader set");
+		}
+		loader.loadPresentation(this, fileName);
+		notifyPresentationChanged();
+	}
+
+	public void savePresentation(String fileName) throws Exception {
+		if (loader == null) {
+			throw new IllegalStateException("No presentation loader set");
+		}
+		loader.savePresentation(this, fileName);
+	}
+
+	public void addObserver(PresentationObserver observer) {
+		observers.add(observer);
+	}
+
+	public void removeObserver(PresentationObserver observer) {
+		observers.remove(observer);
+	}
+
+	private void notifySlideChanged() {
+		for (PresentationObserver observer : observers) {
+			observer.onSlideChanged(currentSlideNumber);
+		}
+	}
+
+	private void notifyPresentationChanged() {
+		for (PresentationObserver observer : observers) {
+			observer.onPresentationChanged();
+		}
 	}
 
 	public int getSize() {
-		return showList.size();
+		return slides.size();
 	}
 
 	public String getTitle() {
-		return showTitle;
+		return title;
 	}
 
-	public void setTitle(String nt) {
-		showTitle = nt;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public void setShowView(SlideViewerComponent slideViewerComponent) {
@@ -56,9 +91,7 @@ public class Presentation {
 	// change the current slide number and signal it to the window
 	public void setSlideNumber(int number) {
 		currentSlideNumber = number;
-		if (slideViewComponent != null) {
-			slideViewComponent.update(this, getCurrentSlide());
-		}
+		notifySlideChanged();
 	}
 
 	// go to the previous slide unless your at the beginning of the presentation
@@ -70,27 +103,21 @@ public class Presentation {
 
 	// go to the next slide unless your at the end of the presentation.
 	public void nextSlide() {
-		if (currentSlideNumber < (showList.size()-1)) {
+		if (currentSlideNumber < (slides.size()-1)) {
 			setSlideNumber(currentSlideNumber + 1);
 		}
 	}
 
 	// Delete the presentation to be ready for the next one.
 	void clear() {
-		// Save the title
-		String title = showTitle;
-		
-		// Clear slides
-		showList = new ArrayList<Slide>();
-		setSlideNumber(-1);
-		
-		// Restore the title
-		showTitle = title;
+		slides = new ArrayList<>();
+		currentSlideNumber = -1;
+		notifyPresentationChanged();
 	}
 
 	// Add a slide to the presentation
 	public void append(Slide slide) {
-		showList.add(slide);
+		slides.add(slide);
 	}
 
 	// Get a slide with a certain slidenumber
@@ -98,15 +125,28 @@ public class Presentation {
 		if (number < 0 || number >= getSize()){
 			return null;
 		}
-		return showList.get(number);
+		return slides.get(number);
 	}
 
 	// Give the current slide
 	public Slide getCurrentSlide() {
-		return getSlide(currentSlideNumber);
+		return slides.get(currentSlideNumber);
 	}
 
 	public void exit(int n) {
 		System.exit(n);
+	}
+
+	public List<Slide> getSlides() {
+		return slides;
+	}
+
+	public void setSlides(List<Slide> slides) {
+		this.slides = slides;
+		notifyPresentationChanged();
+	}
+
+	public int getCurrentSlideNumber() {
+		return currentSlideNumber;
 	}
 }

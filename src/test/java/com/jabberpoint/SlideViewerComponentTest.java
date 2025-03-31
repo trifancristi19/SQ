@@ -32,28 +32,17 @@ public class SlideViewerComponentTest {
             frame = new JFrame();
         }
         
-        // Create the component with appropriate frame type
-        if (frame instanceof JFrame) {
-            component = new SlideViewerComponent(presentation, (JFrame)frame);
-        } else {
-            // Create a headless-safe component
-            component = createHeadlessSafeComponent(presentation);
-        }
+        // Create the component with presentation only
+        component = new SlideViewerComponent(presentation);
     }
     
     // Helper to create a component that works in headless mode
     private SlideViewerComponent createHeadlessSafeComponent(Presentation pres) {
         // Create a minimal test double that can be tested in headless mode
-        return new SlideViewerComponent(pres, null) {
+        return new SlideViewerComponent(pres) {
             @Override
             public Dimension getPreferredSize() {
                 return new Dimension(Slide.WIDTH, Slide.HEIGHT);
-            }
-            
-            @Override
-            public void update(Presentation p, Slide data) {
-                // Just store references but don't do GUI operations
-                // The superclass update() might call frame methods that fail in headless mode
             }
         };
     }
@@ -73,7 +62,7 @@ public class SlideViewerComponentTest {
     }
     
     @Test
-    public void testUpdateWithSlide() {
+    public void testSlideChange() {
         // Create a slide
         Slide slide = new Slide();
         slide.setTitle("Test Slide");
@@ -81,21 +70,17 @@ public class SlideViewerComponentTest {
         // Set a title on the presentation
         presentation.setTitle("Test Presentation");
         
-        // This should be safe to call even in headless mode with our modified component
-        component.update(presentation, slide);
+        // Add the slide to presentation
+        presentation.append(slide);
+        
+        // Set the slide number to trigger the observer
+        presentation.setSlideNumber(0);
         
         // Only test frame title in non-headless mode
         if (!GraphicsEnvironment.isHeadless() && frame instanceof JFrame) {
             assertEquals("Frame title should reflect presentation title", 
                         presentation.getTitle(), ((JFrame)frame).getTitle());
         }
-    }
-    
-    @Test
-    public void testUpdateWithNull() {
-        // Should not throw exception
-        component.update(presentation, null);
-        assertTrue(true);
     }
     
     @Test
@@ -113,12 +98,7 @@ public class SlideViewerComponentTest {
         testPresentation.append(slide2);
         
         // Set up a headless-safe viewer component
-        SlideViewerComponent viewer;
-        if (frame instanceof JFrame) {
-            viewer = new SlideViewerComponent(testPresentation, (JFrame)frame);
-        } else {
-            viewer = createHeadlessSafeComponent(testPresentation);
-        }
+        SlideViewerComponent viewer = createHeadlessSafeComponent(testPresentation);
         
         testPresentation.setShowView(viewer);
         
