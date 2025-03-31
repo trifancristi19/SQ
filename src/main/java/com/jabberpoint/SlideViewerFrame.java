@@ -31,8 +31,7 @@ public class SlideViewerFrame extends JFrame {
 // Setup GUI
 	public void setupWindow(Presentation presentation) {
 		System.out.println("Setting up SlideViewerFrame...");
-		SlideViewerComponent slideViewerComponent = new SlideViewerComponent(presentation, this);
-		slideViewerComponent.initialize();
+		SlideViewerComponent slideViewerComponent = new SlideViewerComponent(presentation);
 		presentation.setShowView(slideViewerComponent);
 		setTitle(JABTITLE);
 		addWindowListener(new WindowAdapter() {
