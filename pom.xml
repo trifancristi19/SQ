@@ -40,7 +40,7 @@
                            <!-- Ensure headless property is passed to forked JVMs -->
                            <headless.awt>true</headless.awt>
                        </systemPropertyVariables>
-                       <argLine>-Djava.awt.headless=true</argLine>
+                       <argLine></argLine>
                        <workingDirectory>${project.build.directory}</workingDirectory>
                        <forkCount>1</forkCount>
                        <reuseForks>false</reuseForks>

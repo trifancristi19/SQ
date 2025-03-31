@@ -111,7 +111,7 @@ public class Presentation {
 	// Delete the presentation to be ready for the next one.
 	void clear() {
 		slides = new ArrayList<>();
-		currentSlideNumber = 0;
+		currentSlideNumber = -1;
 		notifyPresentationChanged();
 	}
 
