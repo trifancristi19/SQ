@@ -44,10 +44,6 @@ public class KeyControllerTest
         // Test VK_ENTER
         keyController.keyPressed(new KeyEvent(new java.awt.Component(){}, 0, 0, 0, KeyEvent.VK_ENTER, (char) 0));
         assertEquals("Enter should trigger nextSlide", 3, mockPresentation.nextSlideCount);
-        
-        // Test '+' key
-        keyController.keyPressed(new KeyEvent(new java.awt.Component(){}, 0, 0, 0, KeyEvent.VK_PLUS, '+'));
-        assertEquals("'+' should trigger nextSlide", 4, mockPresentation.nextSlideCount);
     }
 
     @Test

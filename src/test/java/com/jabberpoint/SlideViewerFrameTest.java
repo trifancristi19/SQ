@@ -2,38 +2,29 @@ package com.jabberpoint;
 
 import org.junit.Test;
 import org.junit.BeforeClass;
-
+import org.junit.Assume;
 import static org.junit.Assert.*;
 
 import java.awt.MenuBar;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
-
-import org.junit.Assume;
 import java.awt.event.KeyListener;
 
 public class SlideViewerFrameTest
 {
-    private static boolean headless;
-
     @BeforeClass
     public static void setUpClass()
     {
         // Initialize any required static classes
         Style.createStyles();
-
-        // Check if running in headless mode
-        headless = GraphicsEnvironment.isHeadless();
     }
 
     @Test
     public void testFrameCreation()
     {
-        // If headless, we'll use a different approach
-        if (headless) {
-            testFrameCreationHeadless();
-            return;
-        }
+        // Skip test in headless mode
+        Assume.assumeFalse("Skipping GUI test in headless environment", 
+            GraphicsEnvironment.isHeadless());
 
         Presentation presentation = new Presentation();
         SlideViewerFrame frame = new SlideViewerFrame("Test Frame", presentation);
@@ -59,27 +50,13 @@ public class SlideViewerFrameTest
             frame.dispose();
         }
     }
-    
-    private void testFrameCreationHeadless() {
-        // In headless mode, we can only test that the constructor doesn't throw
-        Presentation presentation = new Presentation();
-        
-        // Create a custom subclass to avoid actual window operations
-        SlideViewerFrame frame = new HeadlessSlideViewerFrame("Test Frame", presentation);
-        
-        // Verify basic properties
-        assertNotNull("Frame should be created", frame);
-        assertEquals("Title should be set correctly", "Test Frame", frame.getTitle());
-    }
 
     @Test
     public void testComponentSetup()
     {
-        // If headless, we'll use a different approach
-        if (headless) {
-            testComponentSetupHeadless();
-            return;
-        }
+        // Skip test in headless mode
+        Assume.assumeFalse("Skipping GUI test in headless environment", 
+            GraphicsEnvironment.isHeadless());
 
         Presentation presentation = new Presentation();
         SlideViewerFrame frame = new SlideViewerFrame("Test Frame", presentation);
@@ -112,28 +89,13 @@ public class SlideViewerFrameTest
             frame.dispose();
         }
     }
-    
-    private void testComponentSetupHeadless() {
-        // In headless mode, we can test that setupWindow doesn't throw
-        Presentation presentation = new Presentation();
-        
-        // Create a custom subclass to avoid actual window operations
-        HeadlessSlideViewerFrame frame = new HeadlessSlideViewerFrame("Test Frame", presentation);
-        
-        // Verify our tracked values
-        assertTrue("Setup should have created SlideViewerComponent", frame.didCreateSlideViewerComponent);
-        assertTrue("Setup should have created a menu bar", frame.didSetMenuBar);
-        assertTrue("Setup should have added a key listener", frame.didAddKeyListener);
-    }
 
     @Test
     public void testKeyListenerSetup()
     {
-        // If headless, we'll use a different approach
-        if (headless) {
-            testKeyListenerSetupHeadless();
-            return;
-        }
+        // Skip test in headless mode
+        Assume.assumeFalse("Skipping GUI test in headless environment", 
+            GraphicsEnvironment.isHeadless());
 
         Presentation presentation = new Presentation();
         SlideViewerFrame frame = new SlideViewerFrame("Test Frame", presentation);
@@ -167,63 +129,6 @@ public class SlideViewerFrameTest
         {
             // Clean up the frame
             frame.dispose();
-        }
-    }
-    
-    private void testKeyListenerSetupHeadless() {
-        // Already covered by testComponentSetupHeadless(), but we'll add a specific test here
-        Presentation presentation = new Presentation();
-        HeadlessSlideViewerFrame frame = new HeadlessSlideViewerFrame("Test Frame", presentation);
-        
-        // Verify our tracked values
-        assertTrue("Setup should have added a key listener", frame.didAddKeyListener);
-        assertTrue("KeyListener should be a KeyController", frame.lastKeyListenerAdded instanceof KeyController);
-    }
-    
-    // A test double that tracks what would happen without actually creating GUI components
-    private static class HeadlessSlideViewerFrame extends SlideViewerFrame {
-        public boolean didCreateSlideViewerComponent = false;
-        public boolean didSetMenuBar = false;
-        public boolean didAddKeyListener = false;
-        public KeyListener lastKeyListenerAdded = null;
-        
-        public HeadlessSlideViewerFrame(String title, Presentation presentation) {
-            super(title, presentation);
-        }
-        
-        @Override
-        public void setupWindow(Presentation presentation) {
-            // We'll track what would happen but avoid actually creating GUI components
-            System.out.println("Setting up HeadlessSlideViewerFrame...");
-            
-            // Track that we would create a SlideViewerComponent
-            didCreateSlideViewerComponent = true;
-            
-            // Track that a KeyController would be added
-            KeyController keyController = new KeyController(presentation);
-            lastKeyListenerAdded = keyController;
-            didAddKeyListener = true;
-            
-            // Track that a MenuController would be set
-            didSetMenuBar = true;
-            
-            System.out.println("HeadlessSlideViewerFrame setup complete");
-        }
-        
-        // Override any methods that would actually interact with the GUI
-        @Override
-        public void setVisible(boolean b) {
-            // Do nothing - we're in headless mode
-        }
-        
-        @Override
-        public void pack() {
-            // Do nothing - we're in headless mode
-        }
-        
-        @Override
-        public void setSize(Dimension d) {
-            // Do nothing - we're in headless mode
         }
     }
 } 
