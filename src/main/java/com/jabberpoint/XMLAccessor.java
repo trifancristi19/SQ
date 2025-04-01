@@ -160,59 +160,79 @@ public class XMLAccessor extends Accessor
 
     public void saveFile(Presentation presentation, String filename) throws IOException
     {
-        PrintWriter out = new PrintWriter(new FileWriter(filename));
-        out.println("<?xml version=\"1.0\"?>");
-
-        // Get the directory path from the filename
+        // Create the parent directory first
         File file = new File(filename);
-        String directory = file.getParent();
-
-        // Check if jabberpoint.dtd exists in the target directory, if not, copy it
-        File dtdFile = new File(directory, "jabberpoint.dtd");
-        if (!dtdFile.exists())
-        {
-            // Create the DTD file in the same directory
-            createDTDFile(dtdFile.getPath());
-        }
-
-        out.println("<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">");
-        out.println("<presentation>");
-        out.print("<showtitle>");
-        out.print(presentation.getTitle());
-        out.println("</showtitle>");
-        for (int slideNumber = 0; slideNumber < presentation.getSize(); slideNumber++)
-        {
-            Slide slide = presentation.getSlide(slideNumber);
-            out.println("<slide>");
-            out.println("<title>" + slide.getTitle() + "</title>");
-            Vector<SlideItem> slideItems = slide.getSlideItems();
-            for (int itemNumber = 0; itemNumber < slideItems.size(); itemNumber++)
-            {
-                SlideItem slideItem = slideItems.elementAt(itemNumber);
-                out.print("<item kind=");
-                if (slideItem instanceof TextItem)
-                {
-                    out.print("\"text\" level=\"" + slideItem.getLevel() + "\">");
-                    out.print(((TextItem) slideItem).getText());
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            boolean dirCreated = parentDir.mkdirs();
+            if (!dirCreated) {
+                System.err.println("Failed to create directory: " + parentDir.getAbsolutePath());
+                // Check if parent directory exists now, despite failed mkdirs() call
+                if (!parentDir.exists()) {
+                    throw new IOException("Failed to create directory: " + parentDir.getAbsolutePath());
+                } else {
+                    System.out.println("Directory exists despite mkdirs() returning false: " + parentDir.getAbsolutePath());
                 }
-                else
-                {
-                    if (slideItem instanceof BitmapItem)
-                    {
-                        out.print("\"image\" level=\"" + slideItem.getLevel() + "\">");
-                        out.print(((BitmapItem) slideItem).getName());
-                    }
-                    else
-                    {
-                        System.out.println("Ignoring " + slideItem);
-                    }
-                }
-                out.println("</item>");
+            } else {
+                System.out.println("Successfully created directory: " + parentDir.getAbsolutePath());
             }
-            out.println("</slide>");
         }
-        out.println("</presentation>");
-        out.close();
+        
+        try {
+            PrintWriter out = new PrintWriter(new FileWriter(filename));
+            out.println("<?xml version=\"1.0\"?>");
+
+            // Get the directory path from the filename
+            String directory = file.getParent();
+
+            // Check if jabberpoint.dtd exists in the target directory, if not, copy it
+            if (directory != null) {
+                File dtdFile = new File(directory, "jabberpoint.dtd");
+                if (!dtdFile.exists()) {
+                    // Create the DTD file in the same directory
+                    createDTDFile(dtdFile.getPath());
+                }
+            }
+
+            out.println("<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">");
+            out.println("<presentation>");
+            out.print("<showtitle>");
+            out.print(presentation.getTitle() == null ? "" : presentation.getTitle());
+            out.println("</showtitle>");
+            for (int slideNumber = 0; slideNumber < presentation.getSize(); slideNumber++) {
+                Slide slide = presentation.getSlide(slideNumber);
+                if (slide == null) continue;
+                
+                out.println("<slide>");
+                out.println("<title>" + (slide.getTitle() == null ? "" : slide.getTitle()) + "</title>");
+                Vector<SlideItem> slideItems = slide.getSlideItems();
+                for (int itemNumber = 0; itemNumber < slideItems.size(); itemNumber++) {
+                    SlideItem slideItem = slideItems.elementAt(itemNumber);
+                    if (slideItem == null) continue;
+                    
+                    out.print("<item kind=");
+                    if (slideItem instanceof TextItem) {
+                        out.print("\"text\" level=\"" + slideItem.getLevel() + "\">");
+                        out.print(((TextItem) slideItem).getText() == null ? "" : ((TextItem) slideItem).getText());
+                    } else {
+                        if (slideItem instanceof BitmapItem) {
+                            out.print("\"image\" level=\"" + slideItem.getLevel() + "\">");
+                            out.print(((BitmapItem) slideItem).getName() == null ? "" : ((BitmapItem) slideItem).getName());
+                        } else {
+                            System.out.println("Ignoring " + slideItem);
+                            continue;
+                        }
+                    }
+                    out.println("</item>");
+                }
+                out.println("</slide>");
+            }
+            out.println("</presentation>");
+            out.close();
+        } catch (IOException e) {
+            System.err.println("Error writing to file: " + filename + " - " + e.getMessage());
+            throw e;
+        }
     }
 
     // Helper method to create a DTD file at the specified path

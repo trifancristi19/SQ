@@ -27,7 +27,10 @@ public class Slide
     // Add a slide item
     public void append(SlideItem anItem)
     {
-        items.addElement(anItem);
+        // Skip null items
+        if (anItem != null) {
+            items.addElement(anItem);
+        }
     }
 
     // give the title of the slide
@@ -45,7 +48,10 @@ public class Slide
     // Create TextItem of String, and add the TextItem
     public void append(int level, String message)
     {
-        append(new TextItem(level, message));
+        // Skip null messages
+        if (message != null) {
+            append(new TextItem(level, message));
+        }
     }
 
     // give the  SlideItem
@@ -57,7 +63,8 @@ public class Slide
     // give all SlideItems in a Vector
     public Vector<SlideItem> getSlideItems()
     {
-        return items;
+        // Return a copy of the items vector to prevent external modification
+        return new Vector<SlideItem>(items);
     }
 
     // give the size of the Slide
@@ -72,7 +79,8 @@ public class Slide
         float scale = getScale(area);
         int y = area.y;
         // Title is handled separately
-        SlideItem slideItem = new TextItem(0, getTitle());
+        String title = getTitle();
+        SlideItem slideItem = new TextItem(0, title != null ? title : "");
         Style style = Style.getStyle(slideItem.getLevel());
         slideItem.draw(area.x, y, scale, g, style, view);
         y += slideItem.getBoundingBox(g, view, scale, style).height;

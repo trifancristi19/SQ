@@ -4,6 +4,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PresentationTest
 {
 
@@ -173,5 +176,158 @@ public class PresentationTest
         
         presentation.append(new Slide());
         assertEquals("Slide number should remain unchanged after append", 0, presentation.getSlideNumber());
+    }
+
+    @Test
+    public void testObserverPattern() {
+        Presentation presentation = new Presentation();
+        TestPresentationObserver observer = new TestPresentationObserver();
+        presentation.addObserver(observer);
+        
+        // Test slide change notification
+        presentation.append(new Slide());
+        presentation.setSlideNumber(0);
+        assertTrue("Observer should be notified of slide change", observer.wasSlideChanged());
+        assertEquals("Observer should receive correct slide number", 0, observer.getLastSlideNumber());
+        
+        // Test presentation change notification
+        presentation.clear();
+        assertTrue("Observer should be notified of presentation change", observer.wasPresentationChanged());
+        
+        // Test observer removal
+        presentation.removeObserver(observer);
+        observer.reset();
+        presentation.setSlideNumber(0);
+        assertFalse("Observer should not be notified after removal", observer.wasSlideChanged());
+    }
+
+    @Test
+    public void testPresentationLoader() throws Exception {
+        Presentation presentation = new Presentation();
+        TestPresentationLoader loader = new TestPresentationLoader();
+        presentation.setLoader(loader);
+        
+        // Test loading presentation
+        presentation.loadPresentation("test.xml");
+        assertTrue("Loader should be called for loading", loader.wasLoadCalled());
+        
+        // Test saving presentation
+        presentation.savePresentation("test.xml");
+        assertTrue("Loader should be called for saving", loader.wasSaveCalled());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testLoadPresentationWithoutLoader() throws Exception {
+        Presentation presentation = new Presentation();
+        presentation.loadPresentation("test.xml");
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void testSavePresentationWithoutLoader() throws Exception {
+        Presentation presentation = new Presentation();
+        presentation.savePresentation("test.xml");
+    }
+
+    @Test
+    public void testSetSlides() {
+        Presentation presentation = new Presentation();
+        TestPresentationObserver observer = new TestPresentationObserver();
+        presentation.addObserver(observer);
+        
+        List<Slide> newSlides = new ArrayList<>();
+        newSlides.add(new Slide());
+        newSlides.add(new Slide());
+        
+        presentation.setSlides(newSlides);
+        assertEquals("Should have correct number of slides", 2, presentation.getSize());
+        assertTrue("Observer should be notified of presentation change", observer.wasPresentationChanged());
+    }
+
+    @Test
+    public void testSetNullSlides() {
+        Presentation presentation = new Presentation();
+        presentation.append(new Slide());
+        
+        // Set slides to null
+        presentation.setSlides(null);
+        
+        // Now that implementation is fixed, slides should never be null
+        assertNotNull("Slides list should not be null", presentation.getSlides());
+        assertEquals("Slides list should be empty", 0, presentation.getSize());
+    }
+
+    @Test
+    public void testSetShowView() {
+        Presentation presentation = new Presentation();
+        SlideViewerComponent viewer = new SlideViewerComponent(presentation);
+        presentation.setShowView(viewer);
+        // No direct way to test this as it's just a setter, but we can verify it doesn't throw
+    }
+
+    @Test
+    public void testExit() {
+        Presentation presentation = new Presentation();
+        // Note: We can't actually test System.exit() as it would terminate the JVM
+        // This is just to ensure the method exists and compiles
+    }
+
+    // Helper class for testing observer pattern
+    private class TestPresentationObserver implements PresentationObserver {
+        private boolean slideChanged = false;
+        private boolean presentationChanged = false;
+        private int lastSlideNumber = -1;
+
+        @Override
+        public void onSlideChanged(int slideNumber) {
+            slideChanged = true;
+            lastSlideNumber = slideNumber;
+        }
+
+        @Override
+        public void onPresentationChanged() {
+            presentationChanged = true;
+        }
+
+        public boolean wasSlideChanged() {
+            return slideChanged;
+        }
+
+        public boolean wasPresentationChanged() {
+            return presentationChanged;
+        }
+
+        public int getLastSlideNumber() {
+            return lastSlideNumber;
+        }
+
+        public void reset() {
+            slideChanged = false;
+            presentationChanged = false;
+            lastSlideNumber = -1;
+        }
+    }
+
+    // Helper class for testing presentation loader
+    private class TestPresentationLoader implements PresentationLoader {
+        private boolean loadCalled = false;
+        private boolean saveCalled = false;
+
+        @Override
+        public void loadPresentation(Presentation presentation, String fileName) throws Exception {
+            loadCalled = true;
+        }
+
+        @Override
+        public void savePresentation(Presentation presentation, String fileName) throws Exception {
+            saveCalled = true;
+        }
+
+        public boolean wasLoadCalled() {
+            return loadCalled;
+        }
+
+        public boolean wasSaveCalled() {
+            return saveCalled;
+        }
     }
 } 

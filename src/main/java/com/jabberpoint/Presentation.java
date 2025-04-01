@@ -186,7 +186,7 @@ public class Presentation
 
     public void setSlides(List<Slide> slides)
     {
-        this.slides = slides;
+        this.slides = (slides != null) ? slides : new ArrayList<>();
         notifyPresentationChanged();
     }
 

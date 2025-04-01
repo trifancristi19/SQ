@@ -361,6 +361,153 @@ public class XMLAccessorTest
         assertEquals(3, slide.getSlideItems().get(2).getLevel());
     }
 
+    @Test
+    public void testLoadSlideItemWithMissingAttributes() throws IOException {
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item>Text Item 1</item>\n" + // Missing both level and kind attributes
+                "</slide>\n" +
+                "</presentation>";
+
+        Files.write(Paths.get(TEST_FILE), xmlContent.getBytes());
+        this.xmlAccessor.loadFile(presentation, TEST_FILE);
+        
+        // Should load the slide but skip the item with missing attributes
+        Slide slide = this.presentation.getSlide(0);
+        assertEquals(0, slide.getSize());
+    }
+
+    @Test
+    public void testSaveFileWithNullTitle() throws IOException {
+        // Create a presentation with null title
+        this.presentation.setTitle(null);
+        Slide slide = new Slide();
+        slide.setTitle("Test Slide");
+        slide.append(new TextItem(1, "Test Text Item"));
+        this.presentation.append(slide);
+
+        // Save the presentation
+        this.xmlAccessor.saveFile(this.presentation, TEST_FILE);
+
+        // Verify the file was created and contains empty title
+        String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
+        assertTrue(savedContent.contains("<showtitle></showtitle>"));
+    }
+
+    @Test
+    public void testSaveFileWithNullSlideTitle() throws IOException {
+        // Create a presentation with null slide title
+        this.presentation.setTitle("Test Presentation");
+        Slide slide = new Slide();
+        slide.setTitle(null);
+        slide.append(new TextItem(1, "Test Text Item"));
+        this.presentation.append(slide);
+
+        // Save the presentation
+        this.xmlAccessor.saveFile(this.presentation, TEST_FILE);
+
+        // Verify the file was created and contains empty slide title
+        String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
+        assertTrue(savedContent.contains("<title></title>"));
+    }
+
+    @Test
+    public void testSaveFileWithNullItems() throws IOException {
+        // Create a presentation with null items
+        this.presentation.setTitle("Test Presentation");
+        Slide slide = new Slide();
+        slide.setTitle("Test Slide");
+        slide.append(null); // This should be handled gracefully
+        this.presentation.append(slide);
+
+        // Save the presentation
+        this.xmlAccessor.saveFile(this.presentation, TEST_FILE);
+
+        // Verify the file was created and doesn't contain any items
+        String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
+        assertFalse(savedContent.contains("<item"));
+    }
+
+    @Test
+    public void testLoadFileWithMalformedXML() throws IOException {
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item kind=\"text\" level=\"1\">Text Item 1</item>\n" +
+                "</slide>"; // Missing closing presentation tag
+
+        Files.write(Paths.get(TEST_FILE), xmlContent.getBytes());
+        
+        // Should throw IOException for malformed XML
+        try {
+            this.xmlAccessor.loadFile(presentation, TEST_FILE);
+            fail("Should have thrown IOException for malformed XML");
+        } catch (IOException e) {
+            assertTrue(e.getMessage().contains("SAX Exception"));
+        }
+    }
+
+    @Test
+    public void testLoadFileWithInvalidDTD() throws IOException {
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"invalid.dtd\">\n" + // Invalid DTD
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item kind=\"text\" level=\"1\">Text Item 1</item>\n" +
+                "</slide>\n" +
+                "</presentation>";
+
+        Files.write(Paths.get(TEST_FILE), xmlContent.getBytes());
+        
+        // Should still load the file even with invalid DTD
+        this.xmlAccessor.loadFile(presentation, TEST_FILE);
+        
+        // Verify the content was loaded correctly
+        assertEquals("Test Presentation", presentation.getTitle());
+        assertEquals(1, presentation.getSize());
+        assertEquals("Test Slide", presentation.getSlide(0).getTitle());
+    }
+
+    @Test
+    public void testSaveFileWithEmptyDirectory() throws IOException {
+        // Create a presentation
+        this.presentation.setTitle("Test Presentation");
+        Slide slide = new Slide();
+        slide.setTitle("Test Slide");
+        slide.append(new TextItem(1, "Test Text Item"));
+        this.presentation.append(slide);
+
+        // Save to a non-existent directory
+        String newDirPath = TEST_DIR + "/nonexistent/dir";
+        String newFilePath = newDirPath + "/test.xml";
+        
+        // Clean up any existing test files from previous failed runs
+        new File(newFilePath).delete();
+        new File(newDirPath).delete();
+        new File(TEST_DIR + "/nonexistent").delete();
+        
+        // Now attempt to save the file
+        this.xmlAccessor.saveFile(this.presentation, newFilePath);
+            
+        // Verify the file was created
+        File savedFile = new File(newFilePath);
+        assertTrue("File should be created", savedFile.exists());
+            
+        // Clean up after test
+        savedFile.delete();
+        new File(newDirPath).delete();
+        new File(TEST_DIR + "/nonexistent").delete();
+    }
+
     // Helper method to create a test XML file
     private void createTestXmlFile() throws IOException
     {

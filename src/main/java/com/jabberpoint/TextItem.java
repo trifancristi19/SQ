@@ -51,8 +51,13 @@ public class TextItem extends SlideItem
     // geef de AttributedString voor het item
     public AttributedString getAttributedString(Style style, float scale)
     {
-        AttributedString attrStr = new AttributedString(getText());
-        attrStr.addAttribute(TextAttribute.FONT, style.getFont(scale), 0, text.length());
+        String textToUse = getText();
+        // If text is empty, use a space character to avoid empty AttributedString issues
+        if (textToUse.isEmpty()) {
+            textToUse = " ";
+        }
+        AttributedString attrStr = new AttributedString(textToUse);
+        attrStr.addAttribute(TextAttribute.FONT, style.getFont(scale), 0, textToUse.length());
         return attrStr;
     }
 
@@ -102,12 +107,19 @@ public class TextItem extends SlideItem
     private List<TextLayout> getLayouts(Graphics g, Style s, float scale)
     {
         List<TextLayout> layouts = new ArrayList<TextLayout>();
+        String text = getText();
+        
+        // Handle empty text case
+        if (text.isEmpty()) {
+            return layouts;
+        }
+        
         AttributedString attrStr = getAttributedString(s, scale);
         Graphics2D g2d = (Graphics2D) g;
         FontRenderContext frc = g2d.getFontRenderContext();
         LineBreakMeasurer measurer = new LineBreakMeasurer(attrStr.getIterator(), frc);
         float wrappingWidth = (Slide.WIDTH - s.indent) * scale;
-        while (measurer.getPosition() < getText().length())
+        while (measurer.getPosition() < text.length())
         {
             TextLayout layout = measurer.nextLayout(wrappingWidth);
             layouts.add(layout);
