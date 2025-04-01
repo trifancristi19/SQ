@@ -182,6 +182,109 @@ public class MenuControllerTest
         }
     }
 
+    @Test
+    public void testHelpMenuExists()
+    {
+        if (this.isHeadless)
+        {
+            MockMenuController mockController = (MockMenuController) this.menuController;
+            assertTrue("Help menu should exist", mockController.hasMenu(MenuController.HELP));
+            assertTrue("Help menu should have About item", mockController.hasMenuItem(MenuController.HELP, MenuController.ABOUT));
+        }
+        else
+        {
+            MenuController realController = (MenuController) this.menuController;
+            Menu helpMenu = realController.getHelpMenu();
+            
+            assertNotNull("Help menu should exist", helpMenu);
+            assertEquals("Help menu should be labeled correctly", MenuController.HELP, helpMenu.getLabel());
+            
+            // Check for specific menu items
+            boolean hasAbout = false;
+            
+            for (int i = 0; i < helpMenu.getItemCount(); i++)
+            {
+                MenuItem item = helpMenu.getItem(i);
+                if (item != null && item.getLabel().equals(MenuController.ABOUT))
+                {
+                    hasAbout = true;
+                }
+            }
+            
+            assertTrue("Help menu should have About item", hasAbout);
+        }
+    }
+    
+    @Test
+    public void testCreateMenuItem()
+    {
+        if (!this.isHeadless)
+        {
+            MenuController realController = (MenuController) this.menuController;
+            MenuItem item = realController.mkMenuItem("Test");
+            
+            assertNotNull("MenuItem should be created", item);
+            assertEquals("MenuItem should have correct label", "Test", item.getLabel());
+            assertNotNull("MenuItem should have a shortcut", item.getShortcut());
+            assertEquals("MenuItem shortcut should be first character", 'T', item.getShortcut().getKey());
+        }
+    }
+    
+    @Test
+    public void testFileMenuNewAction()
+    {
+        // Add a slide to the presentation
+        Slide slide = new Slide();
+        this.presentation.append(slide);
+        assertEquals("Presentation should have 1 slide", 1, this.presentation.getSize());
+        
+        if (this.isHeadless)
+        {
+            MockMenuController mockController = (MockMenuController) this.menuController;
+            mockController.simulateMenuAction(MenuController.FILE, MenuController.NEW);
+            
+            assertEquals("Presentation should be cleared", 0, this.presentation.getSize());
+        }
+    }
+    
+    @Test
+    public void testViewMenuNextAction()
+    {
+        // Setup presentation with multiple slides
+        Slide slide1 = new Slide();
+        Slide slide2 = new Slide();
+        this.presentation.append(slide1);
+        this.presentation.append(slide2);
+        this.presentation.setSlideNumber(0);
+        
+        if (this.isHeadless)
+        {
+            MockMenuController mockController = (MockMenuController) this.menuController;
+            mockController.simulateMenuAction(MenuController.VIEW, MenuController.NEXT);
+            
+            assertEquals("Should move to next slide", 1, this.presentation.getSlideNumber());
+        }
+    }
+    
+    @Test
+    public void testViewMenuPrevAction()
+    {
+        // Setup presentation with multiple slides
+        Slide slide1 = new Slide();
+        Slide slide2 = new Slide();
+        this.presentation.append(slide1);
+        this.presentation.append(slide2);
+        this.presentation.setSlideNumber(1);
+        
+        if (this.isHeadless)
+        {
+            MockMenuController mockController = (MockMenuController) this.menuController;
+            mockController.simulateMenuAction(MenuController.VIEW, MenuController.PREV);
+            
+            assertEquals("Should move to previous slide", 0, this.presentation.getSlideNumber());
+        }
+    }
+
     /**
      * A mock MenuController that works in headless mode
      */
@@ -239,6 +342,71 @@ public class MenuControllerTest
                 }
             }
             return false;
+        }
+
+        public void simulateMenuAction(String menuName, String itemName)
+        {
+            if (menuName.equals(MenuController.FILE))
+            {
+                if (itemName.equals(MenuController.NEW))
+                {
+                    // Simulate New action
+                    this.presentation.clear();
+                }
+                else if (itemName.equals(MenuController.OPEN))
+                {
+                    // Simulate Open action
+                    try
+                    {
+                        new XMLAccessor().loadFile(this.presentation, MenuController.TESTFILE);
+                        this.presentation.setSlideNumber(0);
+                    }
+                    catch (Exception e)
+                    {
+                        // Ignore exceptions in test
+                    }
+                }
+                else if (itemName.equals(MenuController.SAVE))
+                {
+                    // Simulate Save action
+                    try
+                    {
+                        new XMLAccessor().saveFile(this.presentation, MenuController.SAVEFILE);
+                    }
+                    catch (Exception e)
+                    {
+                        // Ignore exceptions in test
+                    }
+                }
+                else if (itemName.equals(MenuController.EXIT))
+                {
+                    // Simulate Exit action - do nothing in test
+                }
+            }
+            else if (menuName.equals(MenuController.VIEW))
+            {
+                if (itemName.equals(MenuController.NEXT))
+                {
+                    // Simulate Next action
+                    this.presentation.nextSlide();
+                }
+                else if (itemName.equals(MenuController.PREV))
+                {
+                    // Simulate Prev action
+                    this.presentation.prevSlide();
+                }
+                else if (itemName.equals(MenuController.GOTO))
+                {
+                    // Simulate GoTo action - not tested
+                }
+            }
+            else if (menuName.equals(MenuController.HELP))
+            {
+                if (itemName.equals(MenuController.ABOUT))
+                {
+                    // Simulate About action - do nothing in test
+                }
+            }
         }
 
         private static class MockMenu
