@@ -167,7 +167,8 @@ public class XMLAccessorTest
         this.presentation.setTitle("Test Presentation");
         Slide slide = new Slide();
         slide.setTitle("Test Slide");
-        slide.append(new BitmapItem(1, "test.jpg"));
+        // Use a non-existent image file - should still save but log warning
+        slide.append(new BitmapItem(1, "nonexistent.jpg"));
         this.presentation.append(slide);
 
         // Save the presentation
@@ -176,7 +177,7 @@ public class XMLAccessorTest
         // Verify the file was created and contains the image item
         String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
         assertTrue(savedContent.contains("kind=\"image\""));
-        assertTrue(savedContent.contains("test.jpg"));
+        assertTrue(savedContent.contains("nonexistent.jpg"));
     }
 
     @Test
@@ -187,7 +188,8 @@ public class XMLAccessorTest
         slide.setTitle("Test Slide");
         slide.append(new TextItem(1, "First Item"));
         slide.append(new TextItem(2, "Second Item"));
-        slide.append(new BitmapItem(3, "image.jpg"));
+        // Use a non-existent image file - should still save but log warning
+        slide.append(new BitmapItem(3, "nonexistent.jpg"));
         this.presentation.append(slide);
 
         // Save the presentation
@@ -197,7 +199,7 @@ public class XMLAccessorTest
         String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
         assertTrue(savedContent.contains("First Item"));
         assertTrue(savedContent.contains("Second Item"));
-        assertTrue(savedContent.contains("image.jpg"));
+        assertTrue(savedContent.contains("nonexistent.jpg"));
     }
 
     @Test(expected = IOException.class)
@@ -213,10 +215,150 @@ public class XMLAccessorTest
                 "</slide>\n" +
                 "<slide>\n" +  // Unclosed slide tag
                 "<title>Invalid Slide</title>\n" +
-                "<item kind=\"text\" level=\"1\">Invalid Item</item>\n";
+                "<item kind=\"text\" level=\"1\">Invalid Item</item>\n" +
+                "</presentation>";  // Close presentation tag
 
         Files.write(Paths.get(TEST_FILE), invalidXml.getBytes());
         this.xmlAccessor.loadFile(presentation, TEST_FILE);
+    }
+
+    @Test
+    public void testLoadFileWithInvalidLevelValue() throws IOException {
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item kind=\"text\" level=\"not_a_number\">Text Item 1</item>\n" +
+                "</slide>\n" +
+                "</presentation>";
+
+        Files.write(Paths.get(TEST_FILE), xmlContent.getBytes());
+        this.xmlAccessor.loadFile(presentation, TEST_FILE);
+        
+        // Should use default level 1 when parsing fails
+        Slide slide = this.presentation.getSlide(0);
+        assertEquals(1, slide.getSlideItems().get(0).getLevel());
+    }
+
+    @Test
+    public void testSaveFileWithEmptyPresentation() throws IOException {
+        // Create an empty presentation
+        this.presentation.setTitle("");
+        this.presentation.clear();
+
+        // Save the presentation
+        this.xmlAccessor.saveFile(this.presentation, TEST_FILE);
+
+        // Verify the file was created with empty content
+        String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
+        assertTrue(savedContent.contains("<showtitle></showtitle>"));
+        assertFalse(savedContent.contains("<slide>"));
+    }
+
+    @Test
+    public void testSaveFileWithSpecialCharacters() throws IOException {
+        // Create a presentation with special characters
+        this.presentation.setTitle("Test & Presentation");
+        Slide slide = new Slide();
+        slide.setTitle("Slide with < > & characters");
+        slide.append(new TextItem(1, "Text with < > & characters"));
+        this.presentation.append(slide);
+
+        // Save the presentation
+        this.xmlAccessor.saveFile(this.presentation, TEST_FILE);
+
+        // Verify the file was created and contains the special characters
+        String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
+        assertTrue(savedContent.contains("Test & Presentation"));
+        assertTrue(savedContent.contains("Slide with < > & characters"));
+        assertTrue(savedContent.contains("Text with < > & characters"));
+    }
+
+    @Test
+    public void testLoadFileWithMissingAttributes() throws IOException {
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item>Missing attributes</item>\n" +
+                "</slide>\n" +
+                "</presentation>";
+
+        Files.write(Paths.get(TEST_FILE), xmlContent.getBytes());
+        this.xmlAccessor.loadFile(presentation, TEST_FILE);
+        
+        // Should handle missing attributes gracefully
+        Slide slide = this.presentation.getSlide(0);
+        assertEquals(0, slide.getSize());
+    }
+
+    @Test
+    public void testSaveFileWithMultipleSlidesAndItems() throws IOException {
+        // Create a presentation with multiple slides and items
+        this.presentation.setTitle("Complex Presentation");
+        
+        // First slide
+        Slide slide1 = new Slide();
+        slide1.setTitle("First Slide");
+        slide1.append(new TextItem(1, "First Item"));
+        // Use a non-existent image file - should still save but log warning
+        slide1.append(new BitmapItem(2, "nonexistent.jpg"));
+        this.presentation.append(slide1);
+        
+        // Second slide
+        Slide slide2 = new Slide();
+        slide2.setTitle("Second Slide");
+        slide2.append(new TextItem(1, "Second Item"));
+        slide2.append(new TextItem(2, "Third Item"));
+        this.presentation.append(slide2);
+
+        // Save the presentation
+        this.xmlAccessor.saveFile(this.presentation, TEST_FILE);
+
+        // Verify the file was created with all content
+        String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
+        assertTrue(savedContent.contains("Complex Presentation"));
+        assertTrue(savedContent.contains("First Slide"));
+        assertTrue(savedContent.contains("Second Slide"));
+        assertTrue(savedContent.contains("First Item"));
+        assertTrue(savedContent.contains("nonexistent.jpg"));
+        assertTrue(savedContent.contains("Second Item"));
+        assertTrue(savedContent.contains("Third Item"));
+    }
+
+    @Test
+    public void testLoadFileWithMixedItemTypes() throws IOException {
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item kind=\"text\" level=\"1\">Text Item 1</item>\n" +
+                "<item kind=\"image\" level=\"2\">nonexistent.jpg</item>\n" +
+                "<item kind=\"text\" level=\"3\">Text Item 2</item>\n" +
+                "</slide>\n" +
+                "</presentation>";
+
+        Files.write(Paths.get(TEST_FILE), xmlContent.getBytes());
+        this.xmlAccessor.loadFile(presentation, TEST_FILE);
+        
+        // Verify all items are loaded correctly
+        Slide slide = this.presentation.getSlide(0);
+        assertEquals(3, slide.getSize());
+        
+        // Verify item types and levels
+        assertTrue(slide.getSlideItems().get(0) instanceof TextItem);
+        assertTrue(slide.getSlideItems().get(1) instanceof BitmapItem);
+        assertTrue(slide.getSlideItems().get(2) instanceof TextItem);
+        
+        assertEquals(1, slide.getSlideItems().get(0).getLevel());
+        assertEquals(2, slide.getSlideItems().get(1).getLevel());
+        assertEquals(3, slide.getSlideItems().get(2).getLevel());
     }
 
     // Helper method to create a test XML file

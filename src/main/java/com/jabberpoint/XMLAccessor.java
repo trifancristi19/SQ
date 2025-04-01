@@ -122,6 +122,13 @@ public class XMLAccessor extends Accessor
     {
         int level = 1; // default
         NamedNodeMap attributes = item.getAttributes();
+        
+        // Check if required attributes exist
+        if (attributes.getNamedItem(LEVEL) == null || attributes.getNamedItem(KIND) == null) {
+            System.err.println("Missing required attributes (level or kind)");
+            return; // Skip this item if required attributes are missing
+        }
+
         String leveltext = attributes.getNamedItem(LEVEL).getTextContent();
         if (leveltext != null)
         {
