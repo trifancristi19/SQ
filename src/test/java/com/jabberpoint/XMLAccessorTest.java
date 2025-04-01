@@ -202,6 +202,7 @@ public class XMLAccessorTest
 
     @Test(expected = IOException.class)
     public void testLoadFileWithInvalidXML() throws IOException {
+        // Create a malformed XML file with unclosed tags
         String invalidXml = "<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
                 "<presentation>\n" +
@@ -210,8 +211,9 @@ public class XMLAccessorTest
                 "<title>Test Slide</title>\n" +
                 "<item kind=\"text\" level=\"1\">Text Item 1</item>\n" +
                 "</slide>\n" +
-                "<invalid>Invalid XML</invalid>\n" +
-                "</presentation>";
+                "<slide>\n" +  // Unclosed slide tag
+                "<title>Invalid Slide</title>\n" +
+                "<item kind=\"text\" level=\"1\">Invalid Item</item>\n";
 
         Files.write(Paths.get(TEST_FILE), invalidXml.getBytes());
         this.xmlAccessor.loadFile(presentation, TEST_FILE);
