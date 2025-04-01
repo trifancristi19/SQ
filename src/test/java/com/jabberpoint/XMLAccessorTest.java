@@ -205,16 +205,16 @@ public class XMLAccessorTest
         String invalidXml = "<?xml version=\"1.0\"?>\n" +
                 "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
                 "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item kind=\"text\" level=\"1\">Text Item 1</item>\n" +
+                "</slide>\n" +
                 "<invalid>Invalid XML</invalid>\n" +
                 "</presentation>";
 
         Files.write(Paths.get(TEST_FILE), invalidXml.getBytes());
-        try {
-            this.xmlAccessor.loadFile(presentation, TEST_FILE);
-        } catch (IOException e) {
-            // This is expected
-            throw e;
-        }
+        this.xmlAccessor.loadFile(presentation, TEST_FILE);
     }
 
     // Helper method to create a test XML file
