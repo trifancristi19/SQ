@@ -100,4 +100,78 @@ public class PresentationTest
         presentation.append(new Slide());
         assertNull("Getting out of bounds slide should return null", presentation.getSlide(1));
     }
+
+    @Test
+    public void testSetInvalidSlideNumber() {
+        Presentation presentation = new Presentation();
+        presentation.append(new Slide());
+        presentation.append(new Slide());
+        
+        // Try to set invalid slide numbers
+        presentation.setSlideNumber(-1);
+        assertEquals("Should not set negative slide number", 0, presentation.getSlideNumber());
+        
+        presentation.setSlideNumber(2);
+        assertEquals("Should not set slide number beyond bounds", 1, presentation.getSlideNumber());
+    }
+
+    @Test
+    public void testEmptyPresentationNavigation() {
+        Presentation presentation = new Presentation();
+        
+        // Test navigation on empty presentation
+        presentation.nextSlide();
+        assertEquals("Should not navigate on empty presentation", -1, presentation.getSlideNumber());
+        
+        presentation.prevSlide();
+        assertEquals("Should not navigate on empty presentation", -1, presentation.getSlideNumber());
+        
+        assertNull("Should return null for current slide on empty presentation", 
+                  presentation.getCurrentSlide());
+    }
+
+    @Test
+    public void testMultipleSlidesNavigation() {
+        Presentation presentation = new Presentation();
+        Slide slide1 = new Slide();
+        Slide slide2 = new Slide();
+        Slide slide3 = new Slide();
+        
+        presentation.append(slide1);
+        presentation.append(slide2);
+        presentation.append(slide3);
+        
+        // Test forward navigation
+        presentation.setSlideNumber(0);
+        presentation.nextSlide();
+        presentation.nextSlide();
+        assertEquals("Should reach last slide", 2, presentation.getSlideNumber());
+        
+        // Test backward navigation
+        presentation.prevSlide();
+        presentation.prevSlide();
+        assertEquals("Should reach first slide", 0, presentation.getSlideNumber());
+    }
+
+    @Test
+    public void testSlideNumberAfterClear() {
+        Presentation presentation = new Presentation();
+        presentation.append(new Slide());
+        presentation.append(new Slide());
+        presentation.setSlideNumber(1);
+        
+        presentation.clear();
+        assertEquals("Slide number should be -1 after clear", -1, presentation.getSlideNumber());
+        assertNull("Current slide should be null after clear", presentation.getCurrentSlide());
+    }
+
+    @Test
+    public void testSlideNumberAfterAppend() {
+        Presentation presentation = new Presentation();
+        presentation.append(new Slide());
+        presentation.setSlideNumber(0);
+        
+        presentation.append(new Slide());
+        assertEquals("Slide number should remain unchanged after append", 0, presentation.getSlideNumber());
+    }
 } 
