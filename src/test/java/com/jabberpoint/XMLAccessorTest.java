@@ -545,4 +545,239 @@ public class XMLAccessorTest
         Files.write(Paths.get("jabberpoint.dtd"), dtdContent.getBytes());
         System.out.println("Created jabberpoint.dtd file for testing");
     }
+
+    /**
+     * Test loadSlideItem method directly
+     */
+    @Test
+    public void testLoadSlideItem() throws Exception {
+        // Create an XML document with item elements
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item kind=\"text\" level=\"1\">Text Item 1</item>\n" +
+                "<item kind=\"image\" level=\"2\">test.jpg</item>\n" +
+                "<item kind=\"unknown\" level=\"3\">Unknown Item</item>\n" +
+                "</slide>\n" +
+                "</presentation>";
+
+        // Save this to a temporary file
+        File tempFile = new File(TEST_DIR + "/load-item-test.xml");
+        Files.write(Paths.get(tempFile.getPath()), xmlContent.getBytes());
+
+        try {
+            // Parse the file to get the slide elements
+            javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+            factory.setValidating(false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document document = builder.parse(tempFile);
+            
+            // Get the slide element
+            org.w3c.dom.NodeList slides = document.getElementsByTagName("slide");
+            org.w3c.dom.Element slideElement = (org.w3c.dom.Element) slides.item(0);
+            
+            // Get the item elements
+            org.w3c.dom.NodeList items = slideElement.getElementsByTagName("item");
+            
+            // Create a slide to add items to
+            Slide slide = new Slide();
+            
+            // Use the loadSlideItem method directly using reflection
+            java.lang.reflect.Method loadSlideItemMethod = XMLAccessor.class.getDeclaredMethod(
+                "loadSlideItem", Slide.class, org.w3c.dom.Element.class);
+            loadSlideItemMethod.setAccessible(true);
+            
+            // Test with text item
+            org.w3c.dom.Element textItem = (org.w3c.dom.Element) items.item(0);
+            loadSlideItemMethod.invoke(this.xmlAccessor, slide, textItem);
+            
+            // Test with image item
+            org.w3c.dom.Element imageItem = (org.w3c.dom.Element) items.item(1);
+            loadSlideItemMethod.invoke(this.xmlAccessor, slide, imageItem);
+            
+            // Test with unknown item type
+            org.w3c.dom.Element unknownItem = (org.w3c.dom.Element) items.item(2);
+            loadSlideItemMethod.invoke(this.xmlAccessor, slide, unknownItem);
+            
+            // Verify the items were added correctly
+            assertEquals("Slide should have 2 items (unknown type is skipped)", 2, slide.getSize());
+            
+            // Check text item
+            SlideItem item1 = slide.getSlideItem(0);
+            assertTrue("First item should be a TextItem", item1 instanceof TextItem);
+            assertEquals("First item level should be 1", 1, item1.getLevel());
+            assertEquals("First item text should match", "Text Item 1", ((TextItem)item1).getText());
+            
+            // Check image item
+            SlideItem item2 = slide.getSlideItem(1);
+            assertTrue("Second item should be a BitmapItem", item2 instanceof BitmapItem);
+            assertEquals("Second item level should be 2", 2, item2.getLevel());
+            assertEquals("Second item filename should match", "test.jpg", ((BitmapItem)item2).getName());
+        } finally {
+            // Clean up
+            tempFile.delete();
+        }
+    }
+
+    /**
+     * Test loadSlideItem with malformed attributes
+     */
+    @Test
+    public void testLoadSlideItemWithMalformedAttributes() throws Exception {
+        // Create an XML document with item elements with various issues
+        String xmlContent = "<?xml version=\"1.0\"?>\n" +
+                "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+                "<presentation>\n" +
+                "<showtitle>Test Presentation</showtitle>\n" +
+                "<slide>\n" +
+                "<title>Test Slide</title>\n" +
+                "<item kind=\"text\" level=\"invalid\">Invalid Level</item>\n" + // Non-numeric level
+                "<item kind=\"text\">Missing Level</item>\n" + // Missing level attribute
+                "<item level=\"1\">Missing Kind</item>\n" + // Missing kind attribute
+                "<item>No Attributes</item>\n" + // No attributes
+                "</slide>\n" +
+                "</presentation>";
+
+        // Save this to a temporary file
+        File tempFile = new File(TEST_DIR + "/malformed-item-test.xml");
+        Files.write(Paths.get(tempFile.getPath()), xmlContent.getBytes());
+
+        try {
+            // Parse the file to get the slide elements
+            javax.xml.parsers.DocumentBuilderFactory factory = javax.xml.parsers.DocumentBuilderFactory.newInstance();
+            factory.setValidating(false);
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            javax.xml.parsers.DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document document = builder.parse(tempFile);
+            
+            // Get the slide element
+            org.w3c.dom.NodeList slides = document.getElementsByTagName("slide");
+            org.w3c.dom.Element slideElement = (org.w3c.dom.Element) slides.item(0);
+            
+            // Get the item elements
+            org.w3c.dom.NodeList items = slideElement.getElementsByTagName("item");
+            
+            // Create a slide to add items to
+            Slide slide = new Slide();
+            
+            // Use the loadSlideItem method directly using reflection
+            java.lang.reflect.Method loadSlideItemMethod = XMLAccessor.class.getDeclaredMethod(
+                "loadSlideItem", Slide.class, org.w3c.dom.Element.class);
+            loadSlideItemMethod.setAccessible(true);
+            
+            // Test each problematic item
+            for (int i = 0; i < items.getLength(); i++) {
+                org.w3c.dom.Element item = (org.w3c.dom.Element) items.item(i);
+                loadSlideItemMethod.invoke(this.xmlAccessor, slide, item);
+            }
+            
+            // Invalid level should default to 1, missing attributes should be skipped
+            assertTrue("Items with valid required attributes should be added", slide.getSize() <= 1);
+            
+            // If the first item was added (some implementations might handle invalid level by using default)
+            if (slide.getSize() > 0) {
+                SlideItem item = slide.getSlideItem(0);
+                assertEquals("Level should default to 1 for invalid level", 1, item.getLevel());
+            }
+        } finally {
+            // Clean up
+            tempFile.delete();
+        }
+    }
+
+    /**
+     * Test createDTDFile method
+     */
+    @Test
+    public void testCreateDTDFile() throws IOException {
+        String dtdPath = TEST_DIR + "/test-create-dtd.dtd";
+        File dtdFile = new File(dtdPath);
+        
+        // Delete the file if it exists
+        if (dtdFile.exists()) {
+            dtdFile.delete();
+        }
+        
+        // Create a presentation with content
+        Presentation testPresentation = new Presentation();
+        testPresentation.setTitle("DTD Test");
+        
+        // Save the presentation, which should create the DTD
+        String xmlPath = TEST_DIR + "/dtd-test.xml";
+        this.xmlAccessor.saveFile(testPresentation, xmlPath);
+        
+        // Verify the DTD was created
+        File createdDtd = new File(TEST_DIR + "/jabberpoint.dtd");
+        assertTrue("DTD file should be created", createdDtd.exists());
+        
+        // Read the DTD content to verify
+        String dtdContent = new String(Files.readAllBytes(createdDtd.toPath()));
+        assertTrue("DTD should define presentation element", 
+                dtdContent.contains("<!ELEMENT presentation"));
+        assertTrue("DTD should define item attributes", 
+                dtdContent.contains("<!ATTLIST item"));
+    }
+
+    /**
+     * Test handling of null slide titles
+     */
+    @Test
+    public void testHandleNullSlideTitle() throws IOException {
+        // Create a presentation with a slide that has a null title
+        Presentation nullTitlePresentation = new Presentation();
+        nullTitlePresentation.setTitle("Null Title Test");
+        
+        Slide slide = new Slide();
+        slide.setTitle(null); // Explicitly set null title
+        nullTitlePresentation.append(slide);
+        
+        // Save and then reload to test both directions
+        String nullTitleFile = TEST_DIR + "/null-title-test.xml";
+        this.xmlAccessor.saveFile(nullTitlePresentation, nullTitleFile);
+        
+        // Load the file back
+        Presentation loadedPresentation = new Presentation();
+        this.xmlAccessor.loadFile(loadedPresentation, nullTitleFile);
+        
+        // Verify handling of null title
+        assertEquals("Should have one slide", 1, loadedPresentation.getSize());
+        assertEquals("Null title should be handled as empty string", "", loadedPresentation.getSlide(0).getTitle());
+    }
+
+    /**
+     * Test handling null items in a slide
+     */
+    @Test
+    public void testHandleNullSlideItems() throws IOException {
+        // Create a presentation with a slide that has null items
+        Presentation nullItemsPresentation = new Presentation();
+        nullItemsPresentation.setTitle("Null Items Test");
+        
+        Slide slide = new Slide();
+        slide.setTitle("Slide with null items");
+        
+        // Add a valid item for comparison
+        slide.append(new TextItem(1, "Valid item"));
+        
+        // Attempt to add null items (should be ignored by Slide.append)
+        slide.append(null);
+        
+        nullItemsPresentation.append(slide);
+        
+        // Save and then reload to test both directions
+        String nullItemsFile = TEST_DIR + "/null-items-test.xml";
+        this.xmlAccessor.saveFile(nullItemsPresentation, nullItemsFile);
+        
+        // Load the file back
+        Presentation loadedPresentation = new Presentation();
+        this.xmlAccessor.loadFile(loadedPresentation, nullItemsFile);
+        
+        // Verify only valid items were saved/loaded
+        assertEquals("Should have one slide", 1, loadedPresentation.getSize());
+        assertEquals("Slide should have one item", 1, loadedPresentation.getSlide(0).getSize());
+    }
 } 

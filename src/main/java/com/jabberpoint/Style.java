@@ -41,6 +41,10 @@ public class Style
         {
             level = styles.length - 1;
         }
+        if (level < 0)
+        {
+            level = 0;
+        }
         return styles[level];
     }
 
