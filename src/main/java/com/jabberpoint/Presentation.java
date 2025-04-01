@@ -105,13 +105,23 @@ public class Presentation
     // change the current slide number and signal it to the window
     public void setSlideNumber(int number)
     {
-        currentSlideNumber = number;
+        if (number < 0) {
+            currentSlideNumber = 0;
+        } else if (number >= slides.size()) {
+            currentSlideNumber = slides.size() - 1;
+        } else {
+            currentSlideNumber = number;
+        }
         notifySlideChanged();
     }
 
     // go to the previous slide unless your at the beginning of the presentation
     public void prevSlide()
     {
+        if (slides.isEmpty()) {
+            currentSlideNumber = -1;
+            return;
+        }
         if (currentSlideNumber > 0)
         {
             setSlideNumber(currentSlideNumber - 1);
@@ -121,6 +131,10 @@ public class Presentation
     // go to the next slide unless your at the end of the presentation.
     public void nextSlide()
     {
+        if (slides.isEmpty()) {
+            currentSlideNumber = -1;
+            return;
+        }
         if (currentSlideNumber < (slides.size() - 1))
         {
             setSlideNumber(currentSlideNumber + 1);
@@ -154,6 +168,9 @@ public class Presentation
     // Give the current slide
     public Slide getCurrentSlide()
     {
+        if (currentSlideNumber < 0 || currentSlideNumber >= slides.size()) {
+            return null;
+        }
         return slides.get(currentSlideNumber);
     }
 

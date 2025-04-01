@@ -209,7 +209,12 @@ public class XMLAccessorTest
                 "</presentation>";
 
         Files.write(Paths.get(TEST_FILE), invalidXml.getBytes());
-        this.xmlAccessor.loadFile(presentation, TEST_FILE);
+        try {
+            this.xmlAccessor.loadFile(presentation, TEST_FILE);
+        } catch (IOException e) {
+            // This is expected
+            throw e;
+        }
     }
 
     // Helper method to create a test XML file
