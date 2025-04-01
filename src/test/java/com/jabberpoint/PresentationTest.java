@@ -262,10 +262,19 @@ public class PresentationTest
 
     @Test
     public void testExit() {
-        Presentation presentation = new Presentation();
-        // Note: We can't actually test System.exit() as it would terminate the JVM
-        // We just verify the method exists and can be called
+        // We can't test System.exit directly as it would terminate the JVM
+        // Instead, we'll create a subclass for testing that overrides doExit
+        Presentation presentation = new Presentation() {
+            @Override
+            protected void doExit(int n) {
+                // Do nothing in tests
+            }
+        };
+        
+        // Call the method to ensure it exists and can be called
         presentation.exit(0);
+        // If we reach here, the test passes (no crash)
+        assertTrue(true);
     }
 
     @Test

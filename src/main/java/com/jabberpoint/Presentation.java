@@ -174,8 +174,12 @@ public class Presentation
         return slides.get(currentSlideNumber);
     }
 
-    public void exit(int n)
-    {
+    public void exit(int n) {
+        doExit(n);
+    }
+    
+    // Protected method that can be overridden in tests
+    protected void doExit(int n) {
         System.exit(n);
     }
 
