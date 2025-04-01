@@ -63,11 +63,23 @@ public class MenuControllerTest {
         // Create test objects
         presentation = new TestPresentation();
         
-        // Create a test frame that won't actually display
-        testFrame = new TestFrame("Test Frame");
-        
-        // Create the test menu controller
-        menuController = new TestMenuController(testFrame, presentation);
+        try {
+            // Create a test frame that won't actually display
+            testFrame = new TestFrame("Test Frame");
+            
+            // Create the test menu controller
+            menuController = new TestMenuController(testFrame, presentation);
+        } catch (HeadlessException e) {
+            // Create fully headless versions
+            System.err.println("Running in strict headless mode, using mock objects only");
+            testFrame = new TestFrame("Mock Frame");
+            
+            // Use no-arg constructor to avoid HeadlessException
+            menuController = new TestMenuController();
+            
+            // Set the presentation after construction
+            menuController.setPresentation(presentation);
+        }
     }
     
     @After
@@ -373,6 +385,29 @@ public class MenuControllerTest {
             
             // Ensure tracking flags are initialized
             this.aboutCalled = false;
+        }
+        
+        /**
+         * Constructor for fully headless environments that doesn't call super
+         */
+        public TestMenuController() {
+            // Don't call super constructor to avoid HeadlessException
+            super(null, null);
+            
+            // Initialize all necessary fields directly
+            this.fileMenu = new MockMenu(FILE);
+            this.viewMenu = new MockMenu(VIEW);
+            this.helpMenu = new MockMenu(HELP);
+            
+            // Initialize tracking flags
+            this.aboutCalled = false;
+            this.loadCalled = false;
+            this.saveCalled = false;
+            this.presentationCleared = false;
+            this.nextSlideCalled = false;
+            this.prevSlideCalled = false;
+            this.gotoSlideCalled = false;
+            this.exitCalled = false;
         }
         
         /**
