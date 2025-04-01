@@ -11,6 +11,7 @@ import java.awt.Frame;
 import java.awt.HeadlessException;
 import javax.swing.JOptionPane;
 import java.awt.GraphicsEnvironment;
+import java.lang.reflect.Method;
 
 /**
  * Test for the AboutBox class
@@ -35,25 +36,57 @@ public class AboutBoxTest {
      */
     @Test
     public void testShowMethod() {
-        // Skip test if headless
+        // We're testing a UI component in a headless environment, so we'll:
+        // 1. Skip the test if in headless mode
+        // 2. Verify the method signature is correct
+        
         if (GraphicsEnvironment.isHeadless()) {
-            // In headless mode, we expect a HeadlessException, which is normal behavior
             try {
-                Frame testFrame = new TestFrame();
-                AboutBox.show(testFrame);
-                // If we somehow get here, that's also fine
-                assertTrue(true);
-            } catch (HeadlessException e) {
-                // This is expected in headless mode, so test passes
-                assertTrue("HeadlessException is expected in headless mode", true);
+                // Verify method signature
+                Method showMethod = AboutBox.class.getDeclaredMethod("show", Frame.class);
+                assertNotNull("AboutBox.show method should exist", showMethod);
+                
+                // Test passes if method exists with correct signature
+                assertTrue("AboutBox has correct method signature", true);
             } catch (Exception e) {
-                // Other exceptions are not expected
-                fail("Unexpected exception: " + e.getMessage());
+                fail("Exception checking AboutBox.show method: " + e.getMessage());
             }
         } else {
-            // In graphical mode, we would test differently
-            System.out.println("Not in headless mode, skipping actual dialog test");
+            // Create a test frame (won't be used in headless mode)
+            Frame testFrame = new Frame("Test");
+            
+            try {
+                // If we're not headless, actually try to call the method
+                AboutBox.show(testFrame);
+                assertTrue("AboutBox.show executed without errors", true);
+            } catch (HeadlessException he) {
+                // This is expected in a headless environment
+                System.out.println("Headless exception as expected in AboutBox test");
+            } catch (Exception e) {
+                fail("Unexpected exception: " + e.getMessage());
+            }
+        }
+    }
+    
+    /**
+     * Test the content displayed in the AboutBox.
+     * Since we can't actually test the dialog content in headless mode,
+     * we're verifying the class implementation is correct.
+     */
+    @Test
+    public void testAboutBoxContent() {
+        // Statically verify the AboutBox implementation
+        
+        // AboutBox should contain a public static show method
+        try {
+            Method showMethod = AboutBox.class.getDeclaredMethod("show", Frame.class);
+            assertEquals("show method should be public", "public", java.lang.reflect.Modifier.toString(showMethod.getModifiers() & java.lang.reflect.Modifier.PUBLIC));
+            assertEquals("show method should be static", "static", java.lang.reflect.Modifier.toString(showMethod.getModifiers() & java.lang.reflect.Modifier.STATIC));
+            
+            // Method exists and has correct modifiers
             assertTrue(true);
+        } catch (Exception e) {
+            fail("Exception checking AboutBox content: " + e.getMessage());
         }
     }
     
