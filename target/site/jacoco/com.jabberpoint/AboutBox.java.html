@@ -15,20 +15,42 @@ import javax.swing.JOptionPane;
 
 <span class="nc" id="L16">public class AboutBox</span>
 {
+    // Test hook - normally false, but can be set to true in tests
+<span class="nc" id="L19">    private static boolean inTestMode = false;</span>
+<span class="nc" id="L20">    private static Object[] lastTestArgs = null;</span>
+    
+    // For test purposes only - not to be used in production code
+    public static void setTestMode(boolean testMode) {
+<span class="nc" id="L24">        inTestMode = testMode;</span>
+<span class="nc" id="L25">    }</span>
+    
+    // For test purposes only - allows test code to see what was passed to showMessageDialog
+    public static Object[] getLastTestArgs() {
+<span class="nc" id="L29">        return lastTestArgs;</span>
+    }
+    
 	public static void show(Frame parent)
     {
-<span class="nc" id="L20">		JOptionPane.showMessageDialog(parent,</span>
-<span class="nc" id="L21">				&quot;JabberPoint is a primitive slide-show program in Java(tm). It\n&quot; +</span>
-				&quot;is freely copyable as long as you keep this notice and\n&quot; +
-				&quot;the splash screen intact.\n&quot; +
-				&quot;Copyright (c) 1995-1997 by Ian F. Darwin, ian@darwinsys.com.\n&quot; +
-				&quot;Adapted by Gert Florijn (version 1.1) and &quot; +
-				&quot;Sylvia Stuurman (version 1.2 and higher) for the Open&quot; +
-				&quot;University of the Netherlands, 2002 -- now.&quot; +
-				&quot;Author's version available from http://www.darwinsys.com/&quot;,
-<span class="nc" id="L29">				&quot;About JabberPoint&quot;,</span>
-<span class="nc" id="L30">				JOptionPane.INFORMATION_MESSAGE</span>
-		);
-<span class="nc" id="L32">	}</span>
+	    // Create the message content
+<span class="nc" id="L35">        String message = </span>
+            &quot;JabberPoint is a primitive slide-show program in Java(tm). It\n&quot; +
+            &quot;is freely copyable as long as you keep this notice and\n&quot; +
+            &quot;the splash screen intact.\n&quot; +
+            &quot;Copyright (c) 1995-1997 by Ian F. Darwin, ian@darwinsys.com.\n&quot; +
+            &quot;Adapted by Gert Florijn (version 1.1) and &quot; +
+            &quot;Sylvia Stuurman (version 1.2 and higher) for the Open&quot; +
+            &quot;University of the Netherlands, 2002 -- now.&quot; +
+            &quot;Author's version available from http://www.darwinsys.com/&quot;;
+<span class="nc" id="L44">        String title = &quot;About JabberPoint&quot;;</span>
+<span class="nc" id="L45">        int messageType = JOptionPane.INFORMATION_MESSAGE;</span>
+        
+        // Store args for tests if in test mode
+<span class="nc bnc" id="L48" title="All 2 branches missed.">        if (inTestMode) {</span>
+<span class="nc" id="L49">            lastTestArgs = new Object[] { parent, message, title, messageType };</span>
+<span class="nc" id="L50">            return; // Don't show actual dialog in test mode</span>
+        }
+        
+<span class="nc" id="L53">		JOptionPane.showMessageDialog(parent, message, title, messageType);</span>
+<span class="nc" id="L54">	}</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

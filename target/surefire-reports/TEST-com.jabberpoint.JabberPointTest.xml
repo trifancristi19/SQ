@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.JabberPointTest" time="0.162" tests="6" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.JabberPointTest" time="0.185" tests="6" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
-    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire13132115219611833250 2025-04-03T16-37-24_473-jvmRun1 surefire-20250403163724723_22tmp surefire_4-20250403163724723_23tmp"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire7717313229569950681 2025-04-03T17-04-01_832-jvmRun1 surefire-20250403170402141_22tmp surefire_4-20250403170402141_23tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\test-classes;C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\classes;C:\Users\trifa\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\trifa\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -59,10 +59,10 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testMainWithFilenameArgument" classname="com.jabberpoint.JabberPointTest" time="0.046"/>
-  <testcase name="testStaticMethodsExist" classname="com.jabberpoint.JabberPointTest" time="0.002"/>
+  <testcase name="testMainWithFilenameArgument" classname="com.jabberpoint.JabberPointTest" time="0.039"/>
+  <testcase name="testStaticMethodsExist" classname="com.jabberpoint.JabberPointTest" time="0.001"/>
   <testcase name="testStyleInitialization" classname="com.jabberpoint.JabberPointTest" time="0.002"/>
   <testcase name="testConstants" classname="com.jabberpoint.JabberPointTest" time="0"/>
-  <testcase name="testPresentationCreation" classname="com.jabberpoint.JabberPointTest" time="0.001"/>
-  <testcase name="testMainWithNoArguments" classname="com.jabberpoint.JabberPointTest" time="0.046"/>
+  <testcase name="testPresentationCreation" classname="com.jabberpoint.JabberPointTest" time="0"/>
+  <testcase name="testMainWithNoArguments" classname="com.jabberpoint.JabberPointTest" time="0.079"/>
 </testsuite>

@@ -115,7 +115,7 @@ import org.w3c.dom.NodeList;
         {
 <span class="nc" id="L116">            System.err.println(PCE);</span>
 <span class="nc" id="L117">            throw new IOException(&quot;Parser Configuration Exception&quot;, pcx);</span>
-        }
+<span class="fc" id="L118">        }</span>
 <span class="fc" id="L119">    }</span>
 
     protected void loadSlideItem(Slide slide, Element item)
@@ -138,19 +138,19 @@ import org.w3c.dom.NodeList;
 <span class="fc" id="L138">            } catch (NumberFormatException x)</span>
             {
 <span class="fc" id="L140">                System.err.println(NFE);</span>
-            }
+<span class="fc" id="L141">            }</span>
         }
 <span class="fc" id="L143">        String type = attributes.getNamedItem(KIND).getTextContent();</span>
 <span class="fc bfc" id="L144" title="All 2 branches covered.">        if (TEXT.equals(type))</span>
         {
 <span class="fc" id="L146">            slide.append(new TextItem(level, item.getTextContent()));</span>
-<span class="fc" id="L147">        }</span>
+        }
         else
         {
 <span class="fc bfc" id="L150" title="All 2 branches covered.">            if (IMAGE.equals(type))</span>
             {
 <span class="fc" id="L152">                slide.append(new BitmapItem(level, item.getTextContent()));</span>
-<span class="fc" id="L153">            }</span>
+            }
             else
             {
 <span class="fc" id="L156">                System.err.println(UNKNOWNTYPE);</span>
@@ -173,7 +173,7 @@ import org.w3c.dom.NodeList;
                 } else {
 <span class="nc" id="L174">                    System.out.println(&quot;Directory exists despite mkdirs() returning false: &quot; + parentDir.getAbsolutePath());</span>
                 }
-<span class="nc" id="L176">            } else {</span>
+            } else {
 <span class="fc" id="L177">                System.out.println(&quot;Successfully created directory: &quot; + parentDir.getAbsolutePath());</span>
             }
         }
@@ -214,11 +214,11 @@ import org.w3c.dom.NodeList;
 <span class="fc bfc" id="L214" title="All 2 branches covered.">                    if (slideItem instanceof TextItem) {</span>
 <span class="fc" id="L215">                        out.print(&quot;\&quot;text\&quot; level=\&quot;&quot; + slideItem.getLevel() + &quot;\&quot;&gt;&quot;);</span>
 <span class="pc bpc" id="L216" title="1 of 2 branches missed.">                        out.print(((TextItem) slideItem).getText() == null ? &quot;&quot; : ((TextItem) slideItem).getText());</span>
-<span class="fc" id="L217">                    } else {</span>
+                    } else {
 <span class="pc bpc" id="L218" title="1 of 2 branches missed.">                        if (slideItem instanceof BitmapItem) {</span>
 <span class="fc" id="L219">                            out.print(&quot;\&quot;image\&quot; level=\&quot;&quot; + slideItem.getLevel() + &quot;\&quot;&gt;&quot;);</span>
 <span class="pc bpc" id="L220" title="1 of 2 branches missed.">                            out.print(((BitmapItem) slideItem).getName() == null ? &quot;&quot; : ((BitmapItem) slideItem).getName());</span>
-<span class="fc" id="L221">                        } else {</span>
+                        } else {
 <span class="nc" id="L222">                            System.out.println(&quot;Ignoring &quot; + slideItem);</span>
 <span class="nc" id="L223">                            continue;</span>
                         }
@@ -229,10 +229,10 @@ import org.w3c.dom.NodeList;
             }
 <span class="fc" id="L230">            out.println(&quot;&lt;/presentation&gt;&quot;);</span>
 <span class="fc" id="L231">            out.close();</span>
-<span class="pc" id="L232">        } catch (IOException e) {</span>
+<span class="nc" id="L232">        } catch (IOException e) {</span>
 <span class="nc" id="L233">            System.err.println(&quot;Error writing to file: &quot; + filename + &quot; - &quot; + e.getMessage());</span>
 <span class="nc" id="L234">            throw e;</span>
-        }
+<span class="fc" id="L235">        }</span>
 <span class="fc" id="L236">    }</span>
 
     // Helper method to create a DTD file at the specified path

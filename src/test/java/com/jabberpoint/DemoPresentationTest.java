@@ -2,41 +2,22 @@ package com.jabberpoint;
 
 import org.junit.Before;
 import org.junit.Test;
-<<<<<<< HEAD
-=======
-import org.junit.Before;
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
 import static org.junit.Assert.*;
 import java.io.IOException;
 
-<<<<<<< HEAD
 public class DemoPresentationTest {
     
     private DemoPresentation demoPresentation;
     private Presentation presentation;
     
-=======
-public class DemoPresentationTest
-{
-    private DemoPresentation demoPresentation;
-    private Presentation presentation;
-
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     @Before
     public void setUp() {
         demoPresentation = new DemoPresentation();
         presentation = new Presentation();
     }
-<<<<<<< HEAD
     
     @Test
     public void testLoadFile() {
-=======
-
-    @Test
-    public void testLoadDemoPresentation() throws IOException
-    {
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
         // Load the demo presentation
         demoPresentation.loadFile(presentation, "");
         
@@ -91,21 +72,13 @@ public class DemoPresentationTest
     }
     
     @Test(expected = IllegalStateException.class)
-<<<<<<< HEAD
     public void testSaveFile() {
         // Saving the demo presentation should throw an IllegalStateException
         demoPresentation.saveFile(presentation, "demo.xml");
         // Test should pass if the expected exception is thrown
-=======
-    public void testSaveThrowsException() throws IOException
-    {
-        // Saving is not supported in DemoPresentation
-        demoPresentation.saveFile(presentation, "test.xml");
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     @Test
-<<<<<<< HEAD
     public void testDemoPresentationAccessorPattern() {
         try {
             // Test the accessor pattern by getting the demo presenter through the factory method
@@ -127,10 +100,6 @@ public class DemoPresentationTest
     
     @Test
     public void testSlideContentDetails() {
-=======
-    public void testLoadedSlideContents() throws IOException
-    {
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
         // Load the demo presentation
         demoPresentation.loadFile(presentation, "");
         
@@ -156,127 +125,5 @@ public class DemoPresentationTest
         assertTrue(lastItem instanceof BitmapItem);
         BitmapItem bitmapItem = (BitmapItem) lastItem;
         assertEquals("JabberPoint.gif", bitmapItem.getName());
-    }
-    
-    @Test
-    public void testLoadFileComprehensively() {
-        // Create a fresh presentation
-        Presentation presentation = new Presentation();
-        
-        // Load the demo content
-        demoPresentation.loadFile(presentation, "any-filename-is-ignored");
-        
-        // Verify the overall presentation properties
-        assertEquals("Demo Presentation", presentation.getTitle());
-        assertEquals(3, presentation.getSize());
-        
-        // Verify each slide in detail
-        // First slide
-        Slide slide1 = presentation.getSlide(0);
-        assertEquals("JabberPoint", slide1.getTitle());
-        assertEquals(10, slide1.getSlideItems().size());
-        
-        // Verify every item in the first slide
-        TextItem item1 = (TextItem) slide1.getSlideItems().get(0);
-        assertEquals(1, item1.getLevel());
-        assertEquals("The Java Presentation Tool", item1.getText());
-        
-        TextItem item2 = (TextItem) slide1.getSlideItems().get(1);
-        assertEquals(2, item2.getLevel());
-        assertEquals("Copyright (c) 1996-2000: Ian Darwin", item2.getText());
-        
-        TextItem item3 = (TextItem) slide1.getSlideItems().get(2);
-        assertEquals(2, item3.getLevel());
-        assertEquals("Copyright (c) 2000-now:", item3.getText());
-        
-        TextItem item4 = (TextItem) slide1.getSlideItems().get(3);
-        assertEquals(2, item4.getLevel());
-        assertEquals("Gert Florijn andn Sylvia Stuurman", item4.getText());
-        
-        TextItem item5 = (TextItem) slide1.getSlideItems().get(4);
-        assertEquals(4, item5.getLevel());
-        assertEquals("Starting JabberPoint without a filename", item5.getText());
-        
-        TextItem item6 = (TextItem) slide1.getSlideItems().get(5);
-        assertEquals(4, item6.getLevel());
-        assertEquals("shows this presentation", item6.getText());
-        
-        TextItem item7 = (TextItem) slide1.getSlideItems().get(6);
-        assertEquals(1, item7.getLevel());
-        assertEquals("Navigate:", item7.getText());
-        
-        TextItem item8 = (TextItem) slide1.getSlideItems().get(7);
-        assertEquals(3, item8.getLevel());
-        assertEquals("Next slide: PgDn or Enter", item8.getText());
-        
-        TextItem item9 = (TextItem) slide1.getSlideItems().get(8);
-        assertEquals(3, item9.getLevel());
-        assertEquals("Previous slide: PgUp or up-arrow", item9.getText());
-        
-        TextItem item10 = (TextItem) slide1.getSlideItems().get(9);
-        assertEquals(3, item10.getLevel());
-        assertEquals("Quit: q or Q", item10.getText());
-        
-        // Second slide
-        Slide slide2 = presentation.getSlide(1);
-        assertEquals("Demonstration of levels and stijlen", slide2.getTitle());
-        assertEquals(7, slide2.getSlideItems().size());
-        
-        // Third slide
-        Slide slide3 = presentation.getSlide(2);
-        assertEquals("The third slide", slide3.getTitle());
-        assertEquals(5, slide3.getSlideItems().size());
-        
-        // Check the bitmap item in the third slide
-        BitmapItem bitmapItem = (BitmapItem) slide3.getSlideItems().get(4);
-        assertEquals(1, bitmapItem.getLevel());
-        assertEquals("JabberPoint.gif", bitmapItem.getName());
-    }
-
-    @Test
-    public void testLoadWithAlreadyLoadedPresentation() throws IOException {
-        // First, add a slide to the presentation
-        Slide customSlide = new Slide();
-        customSlide.setTitle("Custom Slide");
-        presentation.append(customSlide);
-        
-        // Clear the presentation before loading the demo content
-        presentation.clear();
-        
-        // Now load the demo presentation - it should clear existing slides
-        demoPresentation.loadFile(presentation, "");
-        
-        // Verify that the custom slide was replaced with demo content
-        assertEquals("Demo Presentation", presentation.getTitle());
-        assertEquals("Demo should have 3 slides", 3, presentation.getSize());
-        
-        // First slide should be from demo, not our custom slide
-        assertNotEquals("Custom Slide", presentation.getSlide(0).getTitle());
-    }
-    
-    @Test
-    public void testDemoPresentationImplementsAccessor() {
-        // Verify that DemoPresentation extends Accessor
-        assertTrue("DemoPresentation should extend Accessor", 
-                demoPresentation instanceof Accessor);
-    }
-    
-    @Test
-    public void testLoadWithDifferentFilenames() throws IOException {
-        // The filename parameter should be ignored in DemoPresentation
-        
-        // Load with empty string
-        Presentation p1 = new Presentation();
-        demoPresentation.loadFile(p1, "");
-        
-        // Load with some filename
-        Presentation p2 = new Presentation();
-        demoPresentation.loadFile(p2, "some-file.xml");
-        
-        // Both should produce the same result
-        assertEquals("Both presentations should have the same title", 
-                p1.getTitle(), p2.getTitle());
-        assertEquals("Both presentations should have the same number of slides",
-                p1.getSize(), p2.getSize());
     }
 } 

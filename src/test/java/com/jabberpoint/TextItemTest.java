@@ -17,9 +17,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.awt.image.BufferedImage;
 import java.awt.Color;
-import java.awt.Font;
 
-<<<<<<< HEAD
 /**
  * Tests for the TextItem class
  */
@@ -33,20 +31,12 @@ public class TextItemTest {
     @BeforeClass
     public static void setUpClass() {
         // Create styles for testing
-=======
-public class TextItemTest {
-
-    @BeforeClass
-    public static void setUpClass() {
-        // Initialize styles
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
         Style.createStyles();
         style = Style.getStyle(0);
     }
     
     @Before
     public void setUp() {
-<<<<<<< HEAD
         textItem = new TextItem(1, "Test Text");
         // Create a mock Graphics object using a BufferedImage
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -59,85 +49,44 @@ public class TextItemTest {
                 return false;
             }
         };
-=======
-        // No specific setup needed for each test
-    }
-
-    @Test
-    public void testTextItemCreation() {
-        String testText = "Test Text";
-        TextItem textItem = new TextItem(1, testText);
-        assertNotNull("TextItem should be created", textItem);
-        assertEquals("Level should be set correctly", 1, textItem.getLevel());
-        assertEquals("Text should be set correctly", testText, textItem.getText());
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     /**
      * Test constructor with level and string
      */
     @Test
-<<<<<<< HEAD
     public void testConstructorWithLevelAndString() {
         TextItem item = new TextItem(2, "Test String");
         assertEquals("Level should be set correctly", 2, item.getLevel());
         assertEquals("Text should be set correctly", "Test String", item.getText());
-=======
-    public void testEmptyTextItemCreation() {
-        TextItem textItem = new TextItem();
-        assertNotNull("Empty TextItem should be created", textItem);
-        assertEquals("Default level should be 0", 0, textItem.getLevel());
-        // The default text is "No Text Given" but getText() returns "" for null text
-        assertNotNull("Text should not be null", textItem.getText());
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     /**
      * Test default constructor
      */
     @Test
-<<<<<<< HEAD
     public void testDefaultConstructor() {
         TextItem defaultItem = new TextItem();
         assertEquals("Default level should be 0", 0, defaultItem.getLevel());
         assertEquals("Default text should be 'No Text Given'", "No Text Given", defaultItem.getText());
-=======
-    public void testGetText() {
-        String testText = "Test Text";
-        TextItem textItem = new TextItem(1, testText);
-        assertEquals("getText should return the correct text", testText, textItem.getText());
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     /**
      * Test getText method
      */
     @Test
-<<<<<<< HEAD
     public void testGetText() {
         assertEquals("Text should match what was set", "Test Text", textItem.getText());
         
         // Test with null text (should return empty string)
         TextItem nullTextItem = new TextItem(1, null);
         assertEquals("Null text should return empty string", "", nullTextItem.getText());
-=======
-    public void testGetAttributedString() {
-        String testText = "Test Text";
-        TextItem textItem = new TextItem(1, testText);
-
-        // Create a style for testing
-        Style style = new Style(10, Color.BLACK, 12, 5);
-
-        // Test with a real style
-        assertNotNull("AttributedString should be created", textItem.getAttributedString(style, 1.0f));
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     /**
      * Test getAttributedString method
      */
     @Test
-<<<<<<< HEAD
     public void testGetAttributedString() {
         float scale = 1.0f;
         AttributedString attrStr = textItem.getAttributedString(style, scale);
@@ -419,159 +368,5 @@ public class TextItemTest {
         } catch (Exception e) {
             fail("Could not access EMPTYTEXT constant: " + e.getMessage());
         }
-    }
-    
-    /**
-     * Test comprehensive functionality of TextItem
-     */
-    @Test
-    public void testComprehensiveTextItemFunctionality() {
-        // Create a text item
-        TextItem item = new TextItem(2, "Comprehensive Test");
-        
-        // Test basic properties
-        assertEquals(2, item.getLevel());
-        assertEquals("Comprehensive Test", item.getText());
-        
-        // Test string representation
-        String itemString = item.toString();
-        assertTrue(itemString.contains("Comprehensive Test"));
-        
-        // Test drawing functionality
-        BufferedImage image = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = image.createGraphics();
-        Style style = Style.getStyle(2);
-        
-        // Should not throw exception
-        item.draw(10, 10, 1.0f, g, style, null);
-        
-        // Test drawing with different text lengths
-        TextItem shortItem = new TextItem(1, "Short");
-        shortItem.draw(10, 10, 1.0f, g, Style.getStyle(1), null);
-        
-        TextItem longItem = new TextItem(3, "This is a very long text item that should test the word wrapping functionality");
-        longItem.draw(10, 10, 1.0f, g, Style.getStyle(3), null);
-        
-        // Test with different scales and positions
-        item.draw(20, 50, 1.5f, g, style, null);
-        item.draw(30, 100, 0.8f, g, style, null);
-        
-        // Test AttributedString creation
-        AttributedString attrStr = item.getAttributedString(style, 1.0f);
-        assertNotNull("AttributedString should not be null", attrStr);
-        
-        // Test getBoundingBox
-        Rectangle boundingBox = item.getBoundingBox(g, null, 1.0f, style);
-        assertTrue("Bounding box width should be positive", boundingBox.width > 0);
-        assertTrue("Bounding box height should be positive", boundingBox.height > 0);
-        
-        // Clean up
-        g.dispose();
-=======
-    public void testToString() {
-        String testText = "Test Text";
-        int level = 2;
-        TextItem textItem = new TextItem(level, testText);
-
-        String result = textItem.toString();
-        assertNotNull("toString should return a non-null string", result);
-        assertTrue("toString should contain the level", result.contains(String.valueOf(level)));
-        assertTrue("toString should contain the text", result.contains(testText));
->>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
-    }
-    
-    @Test
-    public void testDrawMethod() {
-        // Create a TextItem
-        TextItem textItem = new TextItem(1, "Test Drawing");
-        
-        // Create a mock graphics context
-        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bufferedImage.getGraphics();
-        
-        // Call draw method - should not throw exceptions
-        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
-        
-        // No specific assertions since we're just checking it doesn't throw exceptions
-        // and the actual rendering is hard to verify in a unit test
-    }
-    
-    @Test
-    public void testDrawWithNullText() {
-        // Create a TextItem with null text (implementation should handle this)
-        TextItem textItem = new TextItem(1, null);
-        
-        // Create a mock graphics context
-        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bufferedImage.getGraphics();
-        
-        // Call draw method - should not throw exceptions even with null text
-        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
-        
-        // Test passes if no exception is thrown
-    }
-    
-    @Test
-    public void testDrawWithEmptyText() {
-        // Create a TextItem with empty text
-        TextItem textItem = new TextItem(1, "");
-        
-        // Create a mock graphics context
-        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bufferedImage.getGraphics();
-        
-        // Call draw method - should not throw exceptions with empty text
-        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
-        
-        // Test passes if no exception is thrown
-    }
-    
-    @Test
-    public void testDrawWithDifferentScaleFactor() {
-        // Create a TextItem
-        TextItem textItem = new TextItem(1, "Test Drawing with Scale");
-        
-        // Create a mock graphics context
-        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bufferedImage.getGraphics();
-        
-        // Test with different scale factors
-        textItem.draw(100, 100, 0.5f, g, Style.getStyle(textItem.getLevel()), null);
-        textItem.draw(100, 100, 2.0f, g, Style.getStyle(textItem.getLevel()), null);
-        
-        // Test passes if no exception is thrown
-    }
-    
-    @Test
-    public void testDrawWithMultilineText() {
-        // Create a TextItem with multiline text
-        TextItem textItem = new TextItem(1, "Line 1\nLine 2\nLine 3");
-        
-        // Create a mock graphics context
-        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bufferedImage.getGraphics();
-        
-        // Call draw method - should handle multiline text
-        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
-        
-        // Test passes if no exception is thrown
-    }
-    
-    @Test
-    public void testBoundingBoxCalculation() {
-        // Create a TextItem
-        TextItem textItem = new TextItem(1, "Test Bounding Box");
-        
-        // Create a mock graphics context
-        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = bufferedImage.getGraphics();
-        
-        // Get the bounding box
-        Rectangle result = textItem.getBoundingBox(g, null, 1.0f, Style.getStyle(textItem.getLevel()));
-        
-        // Verify the bounding box
-        assertNotNull("Bounding box should not be null", result);
-        assertTrue("Bounding box width should be positive", result.width > 0);
-        assertTrue("Bounding box height should be positive", result.height > 0);
     }
 } 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.TextItemTest" time="0.422" tests="20" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.TextItemTest" time="0.384" tests="19" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
-    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire13132115219611833250 2025-04-03T16-37-24_473-jvmRun1 surefire-20250403163724723_45tmp surefire_13-20250403163724723_46tmp"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire7717313229569950681 2025-04-03T17-04-01_832-jvmRun1 surefire-20250403170402141_45tmp surefire_13-20250403170402141_46tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\test-classes;C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\classes;C:\Users\trifa\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\trifa\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -59,23 +59,22 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testDrawMethodExists" classname="com.jabberpoint.TextItemTest" time="0.038"/>
+  <testcase name="testDrawMethodExists" classname="com.jabberpoint.TextItemTest" time="0.034"/>
   <testcase name="testDrawWithNullText" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testDrawWithEmptyText" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testConstructorWithLevelAndString" classname="com.jabberpoint.TextItemTest" time="0"/>
-  <testcase name="testEmptyTextConstant" classname="com.jabberpoint.TextItemTest" time="0.002"/>
-  <testcase name="testLongText" classname="com.jabberpoint.TextItemTest" time="0.222"/>
-  <testcase name="testComprehensiveTextItemFunctionality" classname="com.jabberpoint.TextItemTest" time="0.029"/>
+  <testcase name="testEmptyTextConstant" classname="com.jabberpoint.TextItemTest" time="0.001"/>
+  <testcase name="testLongText" classname="com.jabberpoint.TextItemTest" time="0.229"/>
   <testcase name="testDraw" classname="com.jabberpoint.TextItemTest" time="0.003"/>
-  <testcase name="testToString" classname="com.jabberpoint.TextItemTest" time="0.002"/>
+  <testcase name="testToString" classname="com.jabberpoint.TextItemTest" time="0.005"/>
   <testcase name="testGetBoundingBoxWithEmptyText" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testGetBoundingBoxMethodExists" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testEmptyText" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testGetText" classname="com.jabberpoint.TextItemTest" time="0"/>
-  <testcase name="testDifferentScales" classname="com.jabberpoint.TextItemTest" time="0.002"/>
-  <testcase name="testGetLayouts" classname="com.jabberpoint.TextItemTest" time="0.011"/>
-  <testcase name="testMultilineText" classname="com.jabberpoint.TextItemTest" time="0.004"/>
-  <testcase name="testGetAttributedString" classname="com.jabberpoint.TextItemTest" time="0.001"/>
+  <testcase name="testDifferentScales" classname="com.jabberpoint.TextItemTest" time="0.001"/>
+  <testcase name="testGetLayouts" classname="com.jabberpoint.TextItemTest" time="0.007"/>
+  <testcase name="testMultilineText" classname="com.jabberpoint.TextItemTest" time="0.005"/>
+  <testcase name="testGetAttributedString" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testGetLayoutsMethodExists" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testGetBoundingBox" classname="com.jabberpoint.TextItemTest" time="0"/>
   <testcase name="testDefaultConstructor" classname="com.jabberpoint.TextItemTest" time="0"/>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.SlideTest" time="0.392" tests="17" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.SlideTest" time="0.284" tests="16" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
-    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire13132115219611833250 2025-04-03T16-37-24_473-jvmRun1 surefire-20250403163724723_37tmp surefire_9-20250403163724723_38tmp"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire7717313229569950681 2025-04-03T17-04-01_832-jvmRun1 surefire-20250403170402141_37tmp surefire_9-20250403170402141_38tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\test-classes;C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\classes;C:\Users\trifa\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\trifa\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -59,21 +59,20 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testSlideBasics" classname="com.jabberpoint.SlideTest" time="0.035"/>
-  <testcase name="testComprehensiveSlideUsage" classname="com.jabberpoint.SlideTest" time="0.237"/>
-  <testcase name="testDrawWithNullParameters" classname="com.jabberpoint.SlideTest" time="0.001"/>
-  <testcase name="testGetSlideItems" classname="com.jabberpoint.SlideTest" time="0"/>
+  <testcase name="testSlideBasics" classname="com.jabberpoint.SlideTest" time="0.028"/>
+  <testcase name="testDrawWithNullParameters" classname="com.jabberpoint.SlideTest" time="0"/>
+  <testcase name="testGetSlideItems" classname="com.jabberpoint.SlideTest" time="0.001"/>
   <testcase name="testGetScale" classname="com.jabberpoint.SlideTest" time="0.001"/>
-  <testcase name="testGetTitle" classname="com.jabberpoint.SlideTest" time="0.001"/>
-  <testcase name="testDraw" classname="com.jabberpoint.SlideTest" time="0.003"/>
+  <testcase name="testGetTitle" classname="com.jabberpoint.SlideTest" time="0"/>
+  <testcase name="testDraw" classname="com.jabberpoint.SlideTest" time="0.167"/>
   <testcase name="testSlideConstants" classname="com.jabberpoint.SlideTest" time="0.001"/>
-  <testcase name="testGetSlideItem" classname="com.jabberpoint.SlideTest" time="0.001"/>
-  <testcase name="testDrawWithNullTitle" classname="com.jabberpoint.SlideTest" time="0.001"/>
+  <testcase name="testGetSlideItem" classname="com.jabberpoint.SlideTest" time="0"/>
+  <testcase name="testDrawWithNullTitle" classname="com.jabberpoint.SlideTest" time="0.002"/>
   <testcase name="testAppendNullItem" classname="com.jabberpoint.SlideTest" time="0"/>
   <testcase name="testAppendWithLevelAndString" classname="com.jabberpoint.SlideTest" time="0"/>
-  <testcase name="testAppend" classname="com.jabberpoint.SlideTest" time="0"/>
-  <testcase name="testDrawWithEmptySlide" classname="com.jabberpoint.SlideTest" time="0"/>
-  <testcase name="testReplaceItems" classname="com.jabberpoint.SlideTest" time="0.001"/>
+  <testcase name="testAppend" classname="com.jabberpoint.SlideTest" time="0.001"/>
+  <testcase name="testDrawWithEmptySlide" classname="com.jabberpoint.SlideTest" time="0.001"/>
+  <testcase name="testReplaceItems" classname="com.jabberpoint.SlideTest" time="0"/>
   <testcase name="testDefaultConstructor" classname="com.jabberpoint.SlideTest" time="0"/>
-  <testcase name="testSetTitle" classname="com.jabberpoint.SlideTest" time="0"/>
+  <testcase name="testSetTitle" classname="com.jabberpoint.SlideTest" time="0.001"/>
 </testsuite>

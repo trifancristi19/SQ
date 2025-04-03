@@ -20,8 +20,8 @@ public class Presentation
     private PresentationLoader loader;  // Strategy pattern
 <span class="fc" id="L21">    private SlideViewerComponent slideViewComponent = null; // the viewcomponent of the Slides</span>
 
-<span class="fc" id="L23">    public Presentation()</span>
-    {
+    public Presentation()
+<span class="fc" id="L24">    {</span>
 <span class="fc" id="L25">        slides = new ArrayList&lt;&gt;();</span>
 <span class="fc" id="L26">        title = &quot;New Presentation&quot;;</span>
 <span class="fc" id="L27">    }</span>
@@ -65,15 +65,15 @@ public class Presentation
 <span class="fc bfc" id="L65" title="All 2 branches covered.">        for (PresentationObserver observer : observers)</span>
         {
 <span class="fc" id="L67">            observer.onSlideChanged(currentSlideNumber);</span>
-        }
+<span class="fc" id="L68">        }</span>
 <span class="fc" id="L69">    }</span>
 
     private void notifyPresentationChanged()
     {
-<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        for (PresentationObserver observer : observers)</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (PresentationObserver observer : observers)</span>
         {
-<span class="nc" id="L75">            observer.onPresentationChanged();</span>
-        }
+<span class="fc" id="L75">            observer.onPresentationChanged();</span>
+<span class="fc" id="L76">        }</span>
 <span class="fc" id="L77">    }</span>
 
     public int getSize()
@@ -109,7 +109,7 @@ public class Presentation
 <span class="fc" id="L109">            currentSlideNumber = 0;</span>
 <span class="fc bfc" id="L110" title="All 2 branches covered.">        } else if (number &gt;= slides.size()) {</span>
 <span class="fc" id="L111">            currentSlideNumber = slides.size() - 1;</span>
-<span class="fc" id="L112">        } else {</span>
+        } else {
 <span class="fc" id="L113">            currentSlideNumber = number;</span>
         }
 <span class="fc" id="L115">        notifySlideChanged();</span>
@@ -158,7 +158,7 @@ public class Presentation
     // Get a slide with a certain slidenumber
     public Slide getSlide(int number)
     {
-<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        if (number &lt; 0 || number &gt;= getSize())</span>
+<span class="fc bfc" id="L161" title="All 4 branches covered.">        if (number &lt; 0 || number &gt;= getSize())</span>
         {
 <span class="fc" id="L163">            return null;</span>
         }

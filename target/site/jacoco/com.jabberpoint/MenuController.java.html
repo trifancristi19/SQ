@@ -45,8 +45,8 @@ public class MenuController extends MenuBar
     protected static final String LOADERR = &quot;Load Error&quot;;
     protected static final String SAVEERR = &quot;Save Error&quot;;
 
-<span class="nc" id="L48">    public MenuController(Frame frame, Presentation pres)</span>
-    {
+    public MenuController(Frame frame, Presentation pres)
+<span class="nc" id="L49">    {</span>
 <span class="nc" id="L50">        parent = frame;</span>
 <span class="nc" id="L51">        presentation = pres;</span>
 <span class="nc" id="L52">        buildFileMenu();</span>
@@ -65,7 +65,7 @@ public class MenuController extends MenuBar
         MenuItem menuItem;
 <span class="nc" id="L66">        fileMenu.add(menuItem = mkMenuItem(OPEN));</span>
 <span class="nc" id="L67">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L68">        {</span>
             public void actionPerformed(ActionEvent actionEvent)
             {
 <span class="nc" id="L71">                Accessor xmlAccessor = new XMLAccessor();</span>
@@ -76,13 +76,13 @@ public class MenuController extends MenuBar
 <span class="nc" id="L76">                } catch (IOException exc)</span>
                 {
 <span class="nc" id="L78">                    JOptionPane.showMessageDialog(parent, IOEX + exc, LOADERR, JOptionPane.ERROR_MESSAGE);</span>
-                }
+<span class="nc" id="L79">                }</span>
 <span class="nc" id="L80">                parent.repaint();</span>
 <span class="nc" id="L81">            }</span>
         });
 <span class="nc" id="L83">        fileMenu.add(menuItem = mkMenuItem(NEW));</span>
 <span class="nc" id="L84">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L85">        {</span>
             public void actionPerformed(ActionEvent actionEvent)
             {
 <span class="nc" id="L88">                presentation.clear();</span>
@@ -91,7 +91,7 @@ public class MenuController extends MenuBar
         });
 <span class="nc" id="L92">        fileMenu.add(menuItem = mkMenuItem(SAVE));</span>
 <span class="nc" id="L93">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L94">        {</span>
             public void actionPerformed(ActionEvent e)
             {
 <span class="nc" id="L97">                Accessor xmlAccessor = new XMLAccessor();</span>
@@ -101,13 +101,13 @@ public class MenuController extends MenuBar
 <span class="nc" id="L101">                } catch (IOException exc)</span>
                 {
 <span class="nc" id="L103">                    JOptionPane.showMessageDialog(parent, IOEX + exc, SAVEERR, JOptionPane.ERROR_MESSAGE);</span>
-                }
+<span class="nc" id="L104">                }</span>
 <span class="nc" id="L105">            }</span>
         });
 <span class="nc" id="L107">        fileMenu.addSeparator();</span>
 <span class="nc" id="L108">        fileMenu.add(menuItem = mkMenuItem(EXIT));</span>
 <span class="nc" id="L109">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L110">        {</span>
             public void actionPerformed(ActionEvent actionEvent)
             {
 <span class="nc" id="L113">                presentation.exit(0);</span>
@@ -122,7 +122,7 @@ public class MenuController extends MenuBar
         MenuItem menuItem;
 <span class="nc" id="L123">        viewMenu.add(menuItem = mkMenuItem(NEXT));</span>
 <span class="nc" id="L124">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L125">        {</span>
             public void actionPerformed(ActionEvent actionEvent)
             {
 <span class="nc" id="L128">                presentation.nextSlide();</span>
@@ -130,7 +130,7 @@ public class MenuController extends MenuBar
         });
 <span class="nc" id="L131">        viewMenu.add(menuItem = mkMenuItem(PREV));</span>
 <span class="nc" id="L132">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L133">        {</span>
             public void actionPerformed(ActionEvent actionEvent)
             {
 <span class="nc" id="L136">                presentation.prevSlide();</span>
@@ -138,7 +138,7 @@ public class MenuController extends MenuBar
         });
 <span class="nc" id="L139">        viewMenu.add(menuItem = mkMenuItem(GOTO));</span>
 <span class="nc" id="L140">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L141">        {</span>
             public void actionPerformed(ActionEvent actionEvent)
             {
 <span class="nc" id="L144">                String pageNumberStr = JOptionPane.showInputDialog((Object) PAGENR);</span>
@@ -155,7 +155,7 @@ public class MenuController extends MenuBar
         MenuItem menuItem;
 <span class="nc" id="L156">        helpMenu.add(menuItem = mkMenuItem(ABOUT));</span>
 <span class="nc" id="L157">        menuItem.addActionListener(new ActionListener()</span>
-        {
+<span class="nc" id="L158">        {</span>
             public void actionPerformed(ActionEvent actionEvent)
             {
 <span class="nc" id="L161">                AboutBox.show(parent);</span>

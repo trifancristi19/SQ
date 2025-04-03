@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.SlideViewerComponentTest" time="0.135" tests="6" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.SlideViewerComponentTest" time="0.4" tests="10" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -15,7 +15,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
-    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire13132115219611833250 2025-04-03T16-37-24_473-jvmRun1 surefire-20250403163724723_39tmp surefire_10-20250403163724723_40tmp"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire7717313229569950681 2025-04-03T17-04-01_832-jvmRun1 surefire-20250403170402141_39tmp surefire_10-20250403170402141_40tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\test-classes;C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\classes;C:\Users\trifa\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\trifa\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -59,10 +59,14 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testOnPresentationChanged" classname="com.jabberpoint.SlideViewerComponentTest" time="0.032"/>
-  <testcase name="testPaintComponent" classname="com.jabberpoint.SlideViewerComponentTest" time="0.012"/>
-  <testcase name="testEmptyPresentation" classname="com.jabberpoint.SlideViewerComponentTest" time="0.002"/>
-  <testcase name="testOnSlideChanged" classname="com.jabberpoint.SlideViewerComponentTest" time="0"/>
-  <testcase name="testPreferredSize" classname="com.jabberpoint.SlideViewerComponentTest" time="0.001"/>
-  <testcase name="testConstructor" classname="com.jabberpoint.SlideViewerComponentTest" time="0"/>
+  <testcase name="testGetPreferredSizeInAllStates" classname="com.jabberpoint.SlideViewerComponentTest" time="0.041"/>
+  <testcase name="testObserverMethods" classname="com.jabberpoint.SlideViewerComponentTest" time="0.001"/>
+  <testcase name="testNullPresentation" classname="com.jabberpoint.SlideViewerComponentTest" time="0.005"/>
+  <testcase name="testPaintComponent" classname="com.jabberpoint.SlideViewerComponentTest" time="0.06"/>
+  <testcase name="testEmptyPresentationHandling" classname="com.jabberpoint.SlideViewerComponentTest" time="0.002"/>
+  <testcase name="testInvalidSlidePaintComponent" classname="com.jabberpoint.SlideViewerComponentTest" time="0.038"/>
+  <testcase name="testPaintComponentWithMockSlide" classname="com.jabberpoint.SlideViewerComponentTest" time="0.003"/>
+  <testcase name="testBasicConstructorAndStructure" classname="com.jabberpoint.SlideViewerComponentTest" time="0.001"/>
+  <testcase name="testDetailedPaintComponent" classname="com.jabberpoint.SlideViewerComponentTest" time="0.165"/>
+  <testcase name="testComponentConstants" classname="com.jabberpoint.SlideViewerComponentTest" time="0"/>
 </testsuite>

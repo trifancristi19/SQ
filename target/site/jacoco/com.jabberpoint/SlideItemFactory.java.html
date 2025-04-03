@@ -12,9 +12,10 @@
             case &quot;text&quot;:
 <span class="fc" id="L13">                return new TextItem(level, content);</span>
             case &quot;bitmap&quot;:
-<span class="fc" id="L15">                return new BitmapItem(level, content);</span>
+            case &quot;image&quot;:  // Handle 'image' as an alias for 'bitmap'
+<span class="fc" id="L16">                return new BitmapItem(level, content);</span>
             default:
-<span class="fc" id="L17">                throw new IllegalArgumentException(&quot;Unknown slide item type: &quot; + type);</span>
+<span class="fc" id="L18">                throw new IllegalArgumentException(&quot;Unknown slide item type: &quot; + type);</span>
         }
     }
 } 

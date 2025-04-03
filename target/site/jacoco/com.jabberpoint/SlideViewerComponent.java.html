@@ -30,10 +30,10 @@ public class SlideViewerComponent extends JComponent implements PresentationObse
     private static final int FONTSTYLE = Font.BOLD;
     private static final int FONTSIZE = 10;
     private static final int XPOS = 1100;
-<span class="fc" id="L33">    private static final int YPOS = 20;</span>
+    private static final int YPOS = 20;
 
-<span class="fc" id="L35">    public SlideViewerComponent(Presentation presentation)</span>
-    {
+    public SlideViewerComponent(Presentation presentation)
+<span class="fc" id="L36">    {</span>
 <span class="fc" id="L37">        setBackground(BGCOLOR);</span>
 <span class="fc" id="L38">        labelFont = new Font(FONTNAME, FONTSTYLE, FONTSIZE);</span>
 <span class="fc" id="L39">        this.presentation = presentation;</span>
@@ -53,7 +53,7 @@ public class SlideViewerComponent extends JComponent implements PresentationObse
 <span class="fc bfc" id="L53" title="All 2 branches covered.">        if (presentation.getSize() &gt; 0)</span>
         {
 <span class="fc" id="L55">            this.slide = presentation.getCurrentSlide();</span>
-<span class="fc" id="L56">        }</span>
+        }
         else
         {
 <span class="fc" id="L59">            this.slide = null;</span>
@@ -70,15 +70,15 @@ public class SlideViewerComponent extends JComponent implements PresentationObse
     {
 <span class="fc" id="L71">        g.setColor(BGCOLOR);</span>
 <span class="fc" id="L72">        g.fillRect(0, 0, getSize().width, getSize().height);</span>
-<span class="pc bpc" id="L73" title="2 of 4 branches missed.">        if (presentation.getSlideNumber() &lt; 0 || slide == null)</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        if (presentation.getSlideNumber() &lt; 0 || slide == null)</span>
         {
 <span class="fc" id="L75">            return;</span>
         }
-<span class="nc" id="L77">        g.setFont(labelFont);</span>
-<span class="nc" id="L78">        g.setColor(COLOR);</span>
-<span class="nc" id="L79">        g.drawString(&quot;Slide &quot; + (1 + presentation.getSlideNumber()) + &quot; of &quot; + presentation.getSize(), XPOS, YPOS);</span>
-<span class="nc" id="L80">        Rectangle area = new Rectangle(0, YPOS, getWidth(), (getHeight() - YPOS));</span>
-<span class="nc" id="L81">        slide.draw(g, area, this);</span>
-<span class="nc" id="L82">    }</span>
+<span class="fc" id="L77">        g.setFont(labelFont);</span>
+<span class="fc" id="L78">        g.setColor(COLOR);</span>
+<span class="fc" id="L79">        g.drawString(&quot;Slide &quot; + (1 + presentation.getSlideNumber()) + &quot; of &quot; + presentation.getSize(), XPOS, YPOS);</span>
+<span class="fc" id="L80">        Rectangle area = new Rectangle(0, YPOS, getWidth(), (getHeight() - YPOS));</span>
+<span class="fc" id="L81">        slide.draw(g, area, this);</span>
+<span class="fc" id="L82">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
