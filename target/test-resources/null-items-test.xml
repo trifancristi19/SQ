@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<!DOCTYPE presentation SYSTEM "jabberpoint.dtd">
-<presentation>
-<showtitle>Null Items Test</showtitle>
-<slide>
-<title>Slide with null items</title>
-<item kind="text" level="1">Valid item</item>
-</slide>
-</presentation>
