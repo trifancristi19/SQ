@@ -166,6 +166,65 @@ public class SlideViewerFrameTest {
     }
     
     /**
+     * Test the window adapter logic more directly
+     */
+    @Test
+    public void testWindowAdapterDirectly() {
+        // Create a testable frame
+        TestableSlideViewerFrame frame = TestableSlideViewerFrame.createHeadlessFrame("Test Frame", presentation);
+        
+        // Verify the window adapter is created
+        assertNotNull("Window adapter should be created", frame.windowAdapter);
+        
+        // Create a mock window event
+        WindowEvent windowEvent = new WindowEvent(frame, WindowEvent.WINDOW_CLOSING);
+        
+        // Invoke the window closing method directly
+        try {
+            // Call the windowAdapter directly
+            frame.windowAdapter.windowClosing(windowEvent);
+            
+            // Verify exit was called
+            assertTrue("Exit should be called when window is closed", frame.exitCalled);
+        } catch (Exception e) {
+            fail("Exception calling windowClosing: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Test direct creation of SlideViewerFrame
+     */
+    @Test
+    public void testFrameCreationDirect() {
+        // Skip in headless mode
+        Assume.assumeFalse("Skipping GUI test in headless environment", 
+                         GraphicsEnvironment.isHeadless());
+        
+        JFrame testFrame = null;
+        try {
+            // Try to create a real frame
+            testFrame = new SlideViewerFrame("Direct Test", presentation);
+            
+            // If we get here, we've successfully created a frame
+            assertNotNull("Frame should be created", testFrame);
+            
+            // Verify title was set - use "Jabberpoint" substring since we can't access the private constant
+            String title = testFrame.getTitle();
+            assertNotNull("Title should not be null", title);
+            assertTrue("Title should contain 'Jabberpoint'", title.contains("Jabberpoint"));
+            
+        } catch (HeadlessException e) {
+            // Skip the test if we can't create GUI components
+            System.out.println("Skipping GUI test due to HeadlessException: " + e.getMessage());
+        } finally {
+            // Clean up
+            if (testFrame != null) {
+                testFrame.dispose();
+            }
+        }
+    }
+    
+    /**
      * A testable version of SlideViewerFrame that tracks method calls
      * without requiring an actual GUI
      */

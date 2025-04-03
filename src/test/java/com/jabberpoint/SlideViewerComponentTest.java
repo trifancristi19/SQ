@@ -386,7 +386,80 @@ public class SlideViewerComponentTest
     }
     
     /**
-     * A component that tracks when observer methods are called
+     * Test rendering with null slide
+     */
+    @Test
+    public void testPaintWithNullSlide() {
+        // Create a component with a presentation that has no slides
+        Presentation emptyPresentation = new Presentation();
+        TestableSlideViewerComponent component = new TestableSlideViewerComponent(emptyPresentation);
+        
+        // Force the slide number to be -1 to trigger the null slide condition
+        try {
+            emptyPresentation.clear(); // This should set slideNumber to -1
+        } catch (Exception e) {
+            fail("Exception during test setup: " + e.getMessage());
+        }
+        
+        // Create a buffered image to draw on
+        BufferedImage image = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.getGraphics();
+        
+        // Call paintComponent - it should handle null slide gracefully
+        component.paintComponent(g);
+        
+        // Verify that there were no exceptions and some drawing occurred
+        assertTrue("Background should be drawn even with null slide", component.backgroundDrawn);
+        assertFalse("Slide should not be drawn when null", component.slideDrawn);
+        
+        // Clean up
+        g.dispose();
+    }
+    
+    /**
+     * Test that the component properly updates when slides change
+     */
+    @Test
+    public void testSlideNumberChange() {
+        // Create a presentation with multiple slides
+        Presentation testPresentation = new Presentation();
+        
+        // Add two slides
+        Slide slide1 = new Slide();
+        slide1.setTitle("Slide 1");
+        testPresentation.append(slide1);
+        
+        Slide slide2 = new Slide();
+        slide2.setTitle("Slide 2");
+        testPresentation.append(slide2);
+        
+        // Create a component that tracks repaints
+        TrackingObserverComponent component = new TrackingObserverComponent(testPresentation);
+        
+        // Reset tracking flags
+        component.resetTracking();
+        
+        // Change slide number
+        testPresentation.setSlideNumber(1);
+        
+        // Verify component was notified and repainted
+        assertTrue("onSlideChanged should be called", component.slideChangedCalled);
+        assertEquals("Last slide number should match", 1, component.lastSlideNumber);
+        assertTrue("Component should be repainted", component.repaintCalled);
+        
+        // Reset tracking again
+        component.resetTracking();
+        
+        // Change to an invalid slide number
+        testPresentation.setSlideNumber(5); // Beyond bounds, should sanitize to valid number
+        
+        // Verify component was still notified
+        assertTrue("onSlideChanged should be called even for invalid number", component.slideChangedCalled);
+        assertTrue("Component should be repainted even for invalid number", component.repaintCalled);
+    }
+    
+    /**
+     * Test component that tracks when the onSlideChanged method is called
      */
     private class TrackingObserverComponent extends SlideViewerComponent {
         public boolean slideChangedCalled = false;
@@ -395,8 +468,8 @@ public class SlideViewerComponentTest
         public int lastSlideNumber = -1;
         public Slide lastSlide = null;
         
-        public TrackingObserverComponent(Presentation p) {
-            super(p);
+        public TrackingObserverComponent(Presentation presentation) {
+            super(presentation);
         }
         
         @Override
@@ -433,7 +506,7 @@ public class SlideViewerComponentTest
         @Override
         public void repaint() {
             repaintCalled = true;
-            // Don't call super.repaint() to avoid headless issues
+            // Don't call super to avoid actual repainting in tests
         }
         
         public void resetTracking() {

@@ -35,7 +35,7 @@ public class AboutBoxTest {
         // Check if we're in a headless environment
         isHeadless = GraphicsEnvironment.isHeadless();
         
-        // Replace JOptionPane.showMessageDialog with our mock method
+        // Set up test tracking
         mockJOptionPane();
     }
     
@@ -54,6 +54,9 @@ public class AboutBoxTest {
         // Reset tracking variables
         showMessageDialogCalled = false;
         lastShowMessageDialogArgs = null;
+        
+        // Enable test mode for AboutBox
+        AboutBox.setTestMode(true);
     }
     
     @After
@@ -63,31 +66,18 @@ public class AboutBoxTest {
             parentFrame.dispose();
             parentFrame = null;
         }
+        
+        // Disable test mode for AboutBox
+        AboutBox.setTestMode(false);
     }
     
     /**
-     * Mock JOptionPane.showMessageDialog to avoid actual GUI display
-     * This is necessary for coverage in headless environments
+     * Set up our mock tracking
      */
     private static void mockJOptionPane() {
-        // Since we can't easily mock static methods in Java without libraries
-        // We'll use simple tracking variables instead
-        
-        // The actual JOptionPane.showMessageDialog will be intercepted in AboutBox class
-        // We just need to set up our tracking variables
+        // The mocking is now handled by AboutBox.setTestMode(true)
         showMessageDialogCalled = false;
         lastShowMessageDialogArgs = null;
-        
-        // Modify AboutBox to use our mock instead
-        try {
-            // Get the AboutBox class
-            Class<?> aboutBoxClass = AboutBox.class;
-            
-            // Define a test version of AboutBox with our mock
-            TestAboutBox.initialize();
-        } catch (Exception e) {
-            System.err.println("Error setting up mock: " + e);
-        }
     }
     
     /**
@@ -95,60 +85,92 @@ public class AboutBoxTest {
      */
     @Test
     public void testShowMethodDirectly() {
-        // Don't skip tests in headless environment anymore
-        // Assume.assumeFalse("Skipping test in headless environment", isHeadless);
+        // This test will now work in headless mode too
         
-        // Remember original state
-        boolean originalCalled = showMessageDialogCalled;
+        // Call AboutBox directly
+        AboutBox.show(parentFrame);
         
-        // This will use our mock instead of the real JOptionPane
-        TestAboutBox.show(parentFrame);
+        // Get the test arguments that would have been passed to showMessageDialog
+        Object[] testArgs = AboutBox.getLastTestArgs();
         
-        // Verify the method was called
-        assertTrue("TestAboutBox.show should have been called", showMessageDialogCalled && !originalCalled);
+        // Verify the test data
+        assertNotNull("Test arguments should not be null", testArgs);
+        assertEquals("Parent should match", parentFrame, testArgs[0]);
         
-        // Verify message content
-        assertNotNull("Message should not be null", TestAboutBox.lastMessage);
+        String message = (String) testArgs[1];
+        String title = (String) testArgs[2];
+        
+        assertNotNull("Message should not be null", message);
         assertTrue("Message should contain copyright info", 
-                TestAboutBox.lastMessage.contains("Copyright") && 
-                TestAboutBox.lastMessage.contains("Darwin"));
+                message.contains("Copyright") && 
+                message.contains("Darwin"));
         
-        // Verify dialog title
-        assertEquals("Title should be 'About JabberPoint'", "About JabberPoint", TestAboutBox.lastTitle);
+        assertEquals("Title should be 'About JabberPoint'", "About JabberPoint", title);
     }
     
     /**
-     * Test AboutBox functionality in a headless environment by directly testing the TestAboutBox class
+     * Test AboutBox functionality in a headless environment
      * This ensures we get coverage even when running in CI environments
      */
     @Test
     public void testAboutBoxHeadless() {
         // This test will always run, even in headless mode
         
-        // Initialize the test class
-        TestAboutBox.initialize();
+        // Call AboutBox with null parent
+        AboutBox.show(null);
         
-        // Call the show method with null parent (valid for headless tests)
-        TestAboutBox.show(null);
+        // Get the test arguments
+        Object[] testArgs = AboutBox.getLastTestArgs();
         
-        // Verify the method was called and populated correctly
-        assertNotNull("Message should not be null", TestAboutBox.lastMessage);
+        // Verify the test data
+        assertNotNull("Test arguments should not be null", testArgs);
+        assertNull("Parent should be null", testArgs[0]);
+        
+        String message = (String) testArgs[1];
+        String title = (String) testArgs[2];
+        
+        assertNotNull("Message should not be null", message);
         assertTrue("Message should contain copyright info", 
-                TestAboutBox.lastMessage.contains("Copyright") && 
-                TestAboutBox.lastMessage.contains("Darwin"));
+                message.contains("Copyright") && 
+                message.contains("Darwin"));
         
-        // Verify dialog title
-        assertEquals("Title should be 'About JabberPoint'", "About JabberPoint", TestAboutBox.lastTitle);
-        
-        // Verify parent frame was set correctly
-        assertNull("Parent frame should be null for headless test", TestAboutBox.lastParent);
-        
-        // Verify showMessageDialogCalled flag was set
-        assertTrue("Show method should have been called", showMessageDialogCalled);
+        assertEquals("Title should be 'About JabberPoint'", "About JabberPoint", title);
+    }
+    
+    /**
+     * Test using reflection to directly call the AboutBox.show method
+     * This approach ensures code coverage even in CI environments
+     */
+    @Test
+    public void testShowMethodWithReflection() {
+        try {
+            // Call our AboutBox.show method via reflection
+            Method showMethod = AboutBox.class.getDeclaredMethod("show", Frame.class);
+            showMethod.setAccessible(true);
+            showMethod.invoke(null, (Frame)null);
+            
+            // Verify the test data was captured
+            Object[] testArgs = AboutBox.getLastTestArgs();
+            assertNotNull("Test arguments should not be null", testArgs);
+            
+            String message = (String) testArgs[1];
+            String title = (String) testArgs[2];
+            
+            assertNotNull("Message should not be null", message);
+            assertTrue("Message should contain copyright info", 
+                    message.contains("Copyright") && 
+                    message.contains("Darwin"));
+            
+            assertEquals("Title should be 'About JabberPoint'", "About JabberPoint", title);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("Exception during reflection test: " + e.getMessage());
+        }
     }
     
     /**
      * A test version of AboutBox that tracks calls instead of showing dialogs
+     * This is kept for backwards compatibility but is no longer needed with the new test mode
      */
     public static class TestAboutBox {
         static String lastMessage;
@@ -181,8 +203,6 @@ public class AboutBoxTest {
             lastShowMessageDialogArgs = new Object[] {
                 parent, message, title, JOptionPane.INFORMATION_MESSAGE
             };
-            
-            // Don't actually show dialog
         }
     }
 } 
