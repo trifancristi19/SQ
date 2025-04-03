@@ -122,9 +122,10 @@ public class XMLAccessor extends Accessor
     {
         int level = 1; // default
         NamedNodeMap attributes = item.getAttributes();
-        
+
         // Check if required attributes exist
-        if (attributes.getNamedItem(LEVEL) == null || attributes.getNamedItem(KIND) == null) {
+        if (attributes.getNamedItem(LEVEL) == null || attributes.getNamedItem(KIND) == null)
+        {
             System.err.println("Missing required attributes (level or kind)");
             return; // Skip this item if required attributes are missing
         }
@@ -163,22 +164,30 @@ public class XMLAccessor extends Accessor
         // Create the parent directory first
         File file = new File(filename);
         File parentDir = file.getParentFile();
-        if (parentDir != null && !parentDir.exists()) {
+        if (parentDir != null && !parentDir.exists())
+        {
             boolean dirCreated = parentDir.mkdirs();
-            if (!dirCreated) {
+            if (!dirCreated)
+            {
                 System.err.println("Failed to create directory: " + parentDir.getAbsolutePath());
                 // Check if parent directory exists now, despite failed mkdirs() call
-                if (!parentDir.exists()) {
+                if (!parentDir.exists())
+                {
                     throw new IOException("Failed to create directory: " + parentDir.getAbsolutePath());
-                } else {
+                }
+                else
+                {
                     System.out.println("Directory exists despite mkdirs() returning false: " + parentDir.getAbsolutePath());
                 }
-            } else {
+            }
+            else
+            {
                 System.out.println("Successfully created directory: " + parentDir.getAbsolutePath());
             }
         }
-        
-        try {
+
+        try
+        {
             PrintWriter out = new PrintWriter(new FileWriter(filename));
             out.println("<?xml version=\"1.0\"?>");
 
@@ -186,9 +195,11 @@ public class XMLAccessor extends Accessor
             String directory = file.getParent();
 
             // Check if jabberpoint.dtd exists in the target directory, if not, copy it
-            if (directory != null) {
+            if (directory != null)
+            {
                 File dtdFile = new File(directory, "jabberpoint.dtd");
-                if (!dtdFile.exists()) {
+                if (!dtdFile.exists())
+                {
                     // Create the DTD file in the same directory
                     createDTDFile(dtdFile.getPath());
                 }
@@ -199,26 +210,34 @@ public class XMLAccessor extends Accessor
             out.print("<showtitle>");
             out.print(presentation.getTitle() == null ? "" : presentation.getTitle());
             out.println("</showtitle>");
-            for (int slideNumber = 0; slideNumber < presentation.getSize(); slideNumber++) {
+            for (int slideNumber = 0; slideNumber < presentation.getSize(); slideNumber++)
+            {
                 Slide slide = presentation.getSlide(slideNumber);
                 if (slide == null) continue;
-                
+
                 out.println("<slide>");
                 out.println("<title>" + (slide.getTitle() == null ? "" : slide.getTitle()) + "</title>");
                 Vector<SlideItem> slideItems = slide.getSlideItems();
-                for (int itemNumber = 0; itemNumber < slideItems.size(); itemNumber++) {
+                for (int itemNumber = 0; itemNumber < slideItems.size(); itemNumber++)
+                {
                     SlideItem slideItem = slideItems.elementAt(itemNumber);
                     if (slideItem == null) continue;
-                    
+
                     out.print("<item kind=");
-                    if (slideItem instanceof TextItem) {
+                    if (slideItem instanceof TextItem)
+                    {
                         out.print("\"text\" level=\"" + slideItem.getLevel() + "\">");
                         out.print(((TextItem) slideItem).getText() == null ? "" : ((TextItem) slideItem).getText());
-                    } else {
-                        if (slideItem instanceof BitmapItem) {
+                    }
+                    else
+                    {
+                        if (slideItem instanceof BitmapItem)
+                        {
                             out.print("\"image\" level=\"" + slideItem.getLevel() + "\">");
                             out.print(((BitmapItem) slideItem).getName() == null ? "" : ((BitmapItem) slideItem).getName());
-                        } else {
+                        }
+                        else
+                        {
                             System.out.println("Ignoring " + slideItem);
                             continue;
                         }
@@ -229,7 +248,8 @@ public class XMLAccessor extends Accessor
             }
             out.println("</presentation>");
             out.close();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             System.err.println("Error writing to file: " + filename + " - " + e.getMessage());
             throw e;
         }

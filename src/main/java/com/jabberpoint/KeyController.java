@@ -16,7 +16,7 @@ public class KeyController extends KeyAdapter
 
     public KeyController(Presentation p)
     {
-        presentation = p;
+        this.presentation = p;
     }
 
     public void keyPressed(KeyEvent keyEvent)

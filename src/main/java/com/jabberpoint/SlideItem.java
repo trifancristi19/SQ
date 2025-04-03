@@ -18,7 +18,7 @@ public abstract class SlideItem
 
     public SlideItem(int lev)
     {
-        level = lev;
+        this.level = lev;
     }
 
     public SlideItem()
@@ -29,7 +29,7 @@ public abstract class SlideItem
     // Give the level
     public int getLevel()
     {
-        return level;
+        return this.level;
     }
 
     // Give the bounding box

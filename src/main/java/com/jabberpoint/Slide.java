@@ -21,35 +21,37 @@ public class Slide
 
     public Slide()
     {
-        items = new Vector<SlideItem>();
+        this.items = new Vector<SlideItem>();
     }
 
     // Add a slide item
     public void append(SlideItem anItem)
     {
         // Skip null items
-        if (anItem != null) {
-            items.addElement(anItem);
+        if (anItem != null)
+        {
+            this.items.addElement(anItem);
         }
     }
 
     // give the title of the slide
     public String getTitle()
     {
-        return title;
+        return this.title;
     }
 
     // change the title of the slide
     public void setTitle(String newTitle)
     {
-        title = newTitle;
+        this.title = newTitle;
     }
 
     // Create TextItem of String, and add the TextItem
     public void append(int level, String message)
     {
         // Skip null messages
-        if (message != null) {
+        if (message != null)
+        {
             append(new TextItem(level, message));
         }
     }
@@ -57,20 +59,20 @@ public class Slide
     // give the  SlideItem
     public SlideItem getSlideItem(int number)
     {
-        return items.elementAt(number);
+        return this.items.elementAt(number);
     }
 
     // give all SlideItems in a Vector
     public Vector<SlideItem> getSlideItems()
     {
         // Return a copy of the items vector to prevent external modification
-        return new Vector<SlideItem>(items);
+        return new Vector<SlideItem>(this.items);
     }
 
     // give the size of the Slide
     public int getSize()
     {
-        return items.size();
+        return this.items.size();
     }
 
     // draw the slide

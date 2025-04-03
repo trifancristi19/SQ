@@ -33,7 +33,7 @@ public class TextItem extends SlideItem
     public TextItem(int level, String string)
     {
         super(level);
-        text = string;
+        this.text = string;
     }
 
     // an empty textitem
@@ -45,7 +45,7 @@ public class TextItem extends SlideItem
     // give the text
     public String getText()
     {
-        return text == null ? "" : text;
+        return this.text == null ? "" : text;
     }
 
     // geef de AttributedString voor het item
@@ -53,7 +53,8 @@ public class TextItem extends SlideItem
     {
         String textToUse = getText();
         // If text is empty, use a space character to avoid empty AttributedString issues
-        if (textToUse.isEmpty()) {
+        if (textToUse.isEmpty())
+        {
             textToUse = " ";
         }
         AttributedString attrStr = new AttributedString(textToUse);
@@ -88,7 +89,7 @@ public class TextItem extends SlideItem
     // draw the item
     public void draw(int x, int y, float scale, Graphics g, Style myStyle, ImageObserver o)
     {
-        if (text == null || text.length() == 0)
+        if (text == null || this.text.length() == 0)
         {
             return;
         }
@@ -108,12 +109,13 @@ public class TextItem extends SlideItem
     {
         List<TextLayout> layouts = new ArrayList<TextLayout>();
         String text = getText();
-        
+
         // Handle empty text case
-        if (text.isEmpty()) {
+        if (text.isEmpty())
+        {
             return layouts;
         }
-        
+
         AttributedString attrStr = getAttributedString(s, scale);
         Graphics2D g2d = (Graphics2D) g;
         FontRenderContext frc = g2d.getFontRenderContext();

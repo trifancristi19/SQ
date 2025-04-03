@@ -1,6 +1,6 @@
 package com.jabberpoint;
 
-/**
+/*
  * Factory for creating different types of SlideItems
  */
 public class SlideItemFactory

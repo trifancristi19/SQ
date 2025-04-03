@@ -1,16 +1,19 @@
 package com.jabberpoint;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
  * Test class for MenuController that tests only static constants and does not require
  * GUI components, avoiding headless environment issues.
  */
-public class MenuControllerTest {
+public class MenuControllerTest
+{
 
     @Test
-    public void testMenuItemConstants() {
+    public void testMenuItemConstants()
+    {
         assertEquals("About", MenuController.ABOUT);
         assertEquals("Help", MenuController.HELP);
         assertEquals("New", MenuController.NEW);
@@ -26,20 +29,23 @@ public class MenuControllerTest {
     }
 
     @Test
-    public void testFileConstants() {
+    public void testFileConstants()
+    {
         assertEquals("test.xml", MenuController.TESTFILE);
         assertEquals("dump.xml", MenuController.SAVEFILE);
     }
 
     @Test
-    public void testErrorConstants() {
+    public void testErrorConstants()
+    {
         assertEquals("IO Exception: ", MenuController.IOEX);
         assertEquals("Load Error", MenuController.LOADERR);
         assertEquals("Save Error", MenuController.SAVEERR);
     }
-    
+
     @Test
-    public void testClassName() {
+    public void testClassName()
+    {
         // Simple test to verify the class name
         assertEquals("MenuController", MenuController.class.getSimpleName());
     }

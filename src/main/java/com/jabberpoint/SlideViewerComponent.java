@@ -35,7 +35,7 @@ public class SlideViewerComponent extends JComponent implements PresentationObse
     public SlideViewerComponent(Presentation presentation)
     {
         setBackground(BGCOLOR);
-        labelFont = new Font(FONTNAME, FONTSTYLE, FONTSIZE);
+        this.labelFont = new Font(FONTNAME, FONTSTYLE, FONTSIZE);
         this.presentation = presentation;
         this.presentation.addObserver(this);
     }
@@ -43,16 +43,16 @@ public class SlideViewerComponent extends JComponent implements PresentationObse
     @Override
     public void onSlideChanged(int slideNumber)
     {
-        this.slide = presentation.getSlide(slideNumber);
+        this.slide = this.presentation.getSlide(slideNumber);
         repaint();
     }
 
     @Override
     public void onPresentationChanged()
     {
-        if (presentation.getSize() > 0)
+        if (this.presentation.getSize() > 0)
         {
-            this.slide = presentation.getCurrentSlide();
+            this.slide = this.presentation.getCurrentSlide();
         }
         else
         {
@@ -70,14 +70,14 @@ public class SlideViewerComponent extends JComponent implements PresentationObse
     {
         g.setColor(BGCOLOR);
         g.fillRect(0, 0, getSize().width, getSize().height);
-        if (presentation.getSlideNumber() < 0 || slide == null)
+        if (this.presentation.getSlideNumber() < 0 || this.slide == null)
         {
             return;
         }
-        g.setFont(labelFont);
+        g.setFont(this.labelFont);
         g.setColor(COLOR);
-        g.drawString("Slide " + (1 + presentation.getSlideNumber()) + " of " + presentation.getSize(), XPOS, YPOS);
+        g.drawString("Slide " + (1 + this.presentation.getSlideNumber()) + " of " + this.presentation.getSize(), XPOS, YPOS);
         Rectangle area = new Rectangle(0, YPOS, getWidth(), (getHeight() - YPOS));
-        slide.draw(g, area, this);
+        this.slide.draw(g, area, this);
     }
 }

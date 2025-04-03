@@ -31,42 +31,45 @@ public class BitmapItem extends SlideItem
     public BitmapItem(int level, String name)
     {
         super(level);
-        imageName = name;
-        if (imageName != null)
+        this.imageName = name;
+        if (this.imageName != null)
         {
             try
             {
                 // Try loading from exact path first
-                File file = new File(imageName);
+                File file = new File(this.imageName);
                 if (file.exists())
                 {
-                    bufferedImage = ImageIO.read(file);
+                    this.bufferedImage = ImageIO.read(file);
                 }
                 else
                 {
                     // Try loading from classpath resources first (works in JARs too)
-                    java.io.InputStream is = getClass().getClassLoader().getResourceAsStream(imageName);
+                    java.io.InputStream is = getClass().getClassLoader().getResourceAsStream(this.imageName);
                     if (is != null)
                     {
-                        bufferedImage = ImageIO.read(is);
+                        this.bufferedImage = ImageIO.read(is);
                     }
                     else
                     {
                         // Fallback to resources directory
-                        String resourcePath = "src/main/resources/" + imageName;
+                        String resourcePath = "src/main/resources/" + this.imageName;
                         File resourceFile = new File(resourcePath);
                         if (resourceFile.exists())
                         {
-                            bufferedImage = ImageIO.read(resourceFile);
+                            this.bufferedImage = ImageIO.read(resourceFile);
                         }
                         else
                         {
                             // Try with fallback image if provided one doesn't exist
                             is = getClass().getClassLoader().getResourceAsStream("resources-fallback.jpg");
-                            if (is != null) {
-                                bufferedImage = ImageIO.read(is);
+                            if (is != null)
+                            {
+                                this.bufferedImage = ImageIO.read(is);
                                 System.err.println(FILE + imageName + NOTFOUND + ", using fallback image");
-                            } else {
+                            }
+                            else
+                            {
                                 System.err.println(FILE + imageName + NOTFOUND);
                             }
                         }
@@ -74,16 +77,19 @@ public class BitmapItem extends SlideItem
                 }
             } catch (IOException e)
             {
-                System.err.println(FILE + imageName + NOTFOUND + ": " + e.getMessage());
-                
+                System.err.println(FILE + this.imageName + NOTFOUND + ": " + e.getMessage());
+
                 // Try with fallback image if there was an error
-                try {
+                try
+                {
                     java.io.InputStream is = getClass().getClassLoader().getResourceAsStream("resources-fallback.jpg");
-                    if (is != null) {
-                        bufferedImage = ImageIO.read(is);
+                    if (is != null)
+                    {
+                        this.bufferedImage = ImageIO.read(is);
                         System.err.println("Using fallback image");
                     }
-                } catch (IOException fallbackEx) {
+                } catch (IOException fallbackEx)
+                {
                     // If even fallback fails, just report error
                     System.err.println("Fallback image also failed: " + fallbackEx.getMessage());
                 }
@@ -100,33 +106,33 @@ public class BitmapItem extends SlideItem
     // give the filename of the image
     public String getName()
     {
-        return imageName;
+        return this.imageName;
     }
 
     // give the  bounding box of the image
     public Rectangle getBoundingBox(Graphics g, ImageObserver observer, float scale, Style myStyle)
     {
-        if (bufferedImage == null)
+        if (this.bufferedImage == null)
         {
             return new Rectangle((int) (myStyle.indent * scale), 0, 0, 0);
         }
-        return new Rectangle((int) (myStyle.indent * scale), 0, (int) (bufferedImage.getWidth(observer) * scale), ((int) (myStyle.leading * scale)) + (int) (bufferedImage.getHeight(observer) * scale));
+        return new Rectangle((int) (myStyle.indent * scale), 0, (int) (this.bufferedImage.getWidth(observer) * scale), ((int) (myStyle.leading * scale)) + (int) (this.bufferedImage.getHeight(observer) * scale));
     }
 
     // draw the image
     public void draw(int x, int y, float scale, Graphics g, Style myStyle, ImageObserver observer)
     {
-        if (bufferedImage == null)
+        if (this.bufferedImage == null)
         {
             return;
         }
         int width = x + (int) (myStyle.indent * scale);
         int height = y + (int) (myStyle.leading * scale);
-        g.drawImage(bufferedImage, width, height, (int) (bufferedImage.getWidth(observer) * scale), (int) (bufferedImage.getHeight(observer) * scale), observer);
+        g.drawImage(this.bufferedImage, width, height, (int) (this.bufferedImage.getWidth(observer) * scale), (int) (this.bufferedImage.getHeight(observer) * scale), observer);
     }
 
     public String toString()
     {
-        return "BitmapItem[" + getLevel() + "," + imageName + "]";
+        return "BitmapItem[" + getLevel() + "," + this.imageName + "]";
     }
 }

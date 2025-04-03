@@ -22,8 +22,8 @@ public class Presentation
 
     public Presentation()
     {
-        slides = new ArrayList<>();
-        title = "New Presentation";
+        this.slides = new ArrayList<>();
+        this.title = "New Presentation";
     }
 
     public void setLoader(PresentationLoader loader)
@@ -33,44 +33,44 @@ public class Presentation
 
     public void loadPresentation(String fileName) throws Exception
     {
-        if (loader == null)
+        if (this.loader == null)
         {
             throw new IllegalStateException("No presentation loader set");
         }
-        loader.loadPresentation(this, fileName);
+        this.loader.loadPresentation(this, fileName);
         notifyPresentationChanged();
     }
 
     public void savePresentation(String fileName) throws Exception
     {
-        if (loader == null)
+        if (this.loader == null)
         {
             throw new IllegalStateException("No presentation loader set");
         }
-        loader.savePresentation(this, fileName);
+        this.loader.savePresentation(this, fileName);
     }
 
     public void addObserver(PresentationObserver observer)
     {
-        observers.add(observer);
+        this.observers.add(observer);
     }
 
     public void removeObserver(PresentationObserver observer)
     {
-        observers.remove(observer);
+        this.observers.remove(observer);
     }
 
     private void notifySlideChanged()
     {
-        for (PresentationObserver observer : observers)
+        for (PresentationObserver observer : this.observers)
         {
-            observer.onSlideChanged(currentSlideNumber);
+            observer.onSlideChanged(this.currentSlideNumber);
         }
     }
 
     private void notifyPresentationChanged()
     {
-        for (PresentationObserver observer : observers)
+        for (PresentationObserver observer : this.observers)
         {
             observer.onPresentationChanged();
         }
@@ -78,12 +78,12 @@ public class Presentation
 
     public int getSize()
     {
-        return slides.size();
+        return this.slides.size();
     }
 
     public String getTitle()
     {
-        return title;
+        return this.title;
     }
 
     public void setTitle(String title)
@@ -99,18 +99,23 @@ public class Presentation
     // give the number of the current slide
     public int getSlideNumber()
     {
-        return currentSlideNumber;
+        return this.currentSlideNumber;
     }
 
     // change the current slide number and signal it to the window
     public void setSlideNumber(int number)
     {
-        if (number < 0) {
-            currentSlideNumber = 0;
-        } else if (number >= slides.size()) {
-            currentSlideNumber = slides.size() - 1;
-        } else {
-            currentSlideNumber = number;
+        if (number < 0)
+        {
+            this.currentSlideNumber = 0;
+        }
+        else if (number >= this.slides.size())
+        {
+            this.currentSlideNumber = this.slides.size() - 1;
+        }
+        else
+        {
+            this.currentSlideNumber = number;
         }
         notifySlideChanged();
     }
@@ -118,41 +123,43 @@ public class Presentation
     // go to the previous slide unless your at the beginning of the presentation
     public void prevSlide()
     {
-        if (slides.isEmpty()) {
-            currentSlideNumber = -1;
+        if (this.slides.isEmpty())
+        {
+            this.currentSlideNumber = -1;
             return;
         }
-        if (currentSlideNumber > 0)
+        if (this.currentSlideNumber > 0)
         {
-            setSlideNumber(currentSlideNumber - 1);
+            setSlideNumber(this.currentSlideNumber - 1);
         }
     }
 
     // go to the next slide unless your at the end of the presentation.
     public void nextSlide()
     {
-        if (slides.isEmpty()) {
-            currentSlideNumber = -1;
+        if (this.slides.isEmpty())
+        {
+            this.currentSlideNumber = -1;
             return;
         }
-        if (currentSlideNumber < (slides.size() - 1))
+        if (this.currentSlideNumber < (this.slides.size() - 1))
         {
-            setSlideNumber(currentSlideNumber + 1);
+            setSlideNumber(this.currentSlideNumber + 1);
         }
     }
 
     // Delete the presentation to be ready for the next one.
     void clear()
     {
-        slides = new ArrayList<>();
-        currentSlideNumber = -1;
+        this.slides = new ArrayList<>();
+        this.currentSlideNumber = -1;
         notifyPresentationChanged();
     }
 
     // Add a slide to the presentation
     public void append(Slide slide)
     {
-        slides.add(slide);
+        this.slides.add(slide);
     }
 
     // Get a slide with a certain slidenumber
@@ -162,30 +169,33 @@ public class Presentation
         {
             return null;
         }
-        return slides.get(number);
+        return this.slides.get(number);
     }
 
     // Give the current slide
     public Slide getCurrentSlide()
     {
-        if (currentSlideNumber < 0 || currentSlideNumber >= slides.size()) {
+        if (this.currentSlideNumber < 0 || this.currentSlideNumber >= this.slides.size())
+        {
             return null;
         }
-        return slides.get(currentSlideNumber);
+        return this.slides.get(this.currentSlideNumber);
     }
 
-    public void exit(int n) {
+    public void exit(int n)
+    {
         doExit(n);
     }
-    
+
     // Protected method that can be overridden in tests
-    protected void doExit(int n) {
+    protected void doExit(int n)
+    {
         System.exit(n);
     }
 
     public List<Slide> getSlides()
     {
-        return slides;
+        return this.slides;
     }
 
     public void setSlides(List<Slide> slides)
@@ -196,6 +206,6 @@ public class Presentation
 
     public int getCurrentSlideNumber()
     {
-        return currentSlideNumber;
+        return this.currentSlideNumber;
     }
 }

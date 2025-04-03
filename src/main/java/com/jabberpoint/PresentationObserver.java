@@ -1,6 +1,6 @@
 package com.jabberpoint;
 
-/**
+/*
  * Observer interface for presentation changes
  */
 public interface PresentationObserver

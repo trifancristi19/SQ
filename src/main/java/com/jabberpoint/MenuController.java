@@ -47,8 +47,8 @@ public class MenuController extends MenuBar
 
     public MenuController(Frame frame, Presentation pres)
     {
-        parent = frame;
-        presentation = pres;
+        this.parent = frame;
+        this.presentation = pres;
         buildFileMenu();
         buildViewMenu();
         buildHelpMenu();        // needed for portability (Motif, etc.).
