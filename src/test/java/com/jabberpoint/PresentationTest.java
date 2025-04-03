@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Tests for the Presentation class
@@ -16,6 +17,9 @@ public class PresentationTest
 {
 
     private Presentation presentation;
+    private boolean notificationReceived = false;
+    private int slideNumberNotified = -1;
+    private boolean presentationChangedNotified = false;
 
     @Before
     public void setUp()
@@ -30,6 +34,11 @@ public class PresentationTest
 
         // Add the slide to the presentation
         presentation.append(slide);
+
+        // Reset notification flags
+        notificationReceived = false;
+        slideNumberNotified = -1;
+        presentationChangedNotified = false;
     }
 
     @Test
@@ -229,5 +238,296 @@ public class PresentationTest
         // Change slide number
         presentation.setSlideNumber(0);
         assertEquals("Current slide number should be updated", 0, presentation.getCurrentSlideNumber());
+    }
+
+    /**
+     * Test the observer notification mechanism for slide changes
+     */
+    @Test
+    public void testNotifySlideChanged()
+    {
+        // Create a mock observer that tracks notifications
+        PresentationObserver observer = new PresentationObserver()
+        {
+            @Override
+            public void onSlideChanged(int slideNumber)
+            {
+                notificationReceived = true;
+                slideNumberNotified = slideNumber;
+            }
+
+            @Override
+            public void onPresentationChanged()
+            {
+                presentationChangedNotified = true;
+            }
+        };
+
+        // Add the observer
+        presentation.addObserver(observer);
+
+        // Change the slide number to trigger notification
+        presentation.setSlideNumber(0);
+
+        // Verify the observer was notified
+        assertTrue("Observer should have been notified", notificationReceived);
+        assertEquals("Correct slide number should be in notification", 0, slideNumberNotified);
+
+        // Remove the observer and reset flags
+        presentation.removeObserver(observer);
+        notificationReceived = false;
+        slideNumberNotified = -1;
+
+        // Change slide again
+        presentation.setSlideNumber(0);
+
+        // Verify observer was not notified after removal
+        assertFalse("Observer should not be notified after removal", notificationReceived);
+    }
+
+    /**
+     * Test the observer notification mechanism for presentation changes
+     */
+    @Test
+    public void testNotifyPresentationChanged()
+    {
+        // Create a mock observer that tracks notifications
+        PresentationObserver observer = new PresentationObserver()
+        {
+            @Override
+            public void onSlideChanged(int slideNumber)
+            {
+                notificationReceived = true;
+                slideNumberNotified = slideNumber;
+            }
+
+            @Override
+            public void onPresentationChanged()
+            {
+                presentationChangedNotified = true;
+            }
+        };
+
+        // Add the observer
+        presentation.addObserver(observer);
+
+        // Clear the presentation to trigger notification
+        presentation.clear();
+
+        // Verify the observer was notified
+        assertTrue("Observer should have been notified of presentation change", presentationChangedNotified);
+
+        // Remove the observer and reset flags
+        presentation.removeObserver(observer);
+        presentationChangedNotified = false;
+
+        // Set slides to trigger another notification
+        presentation.setSlides(new ArrayList<>());
+
+        // Verify observer was not notified after removal
+        assertFalse("Observer should not be notified after removal", presentationChangedNotified);
+    }
+
+    /**
+     * Test next and prev methods with empty presentation
+     */
+    @Test
+    public void testNextAndPrevWithEmptyPresentation()
+    {
+        // Create empty presentation
+        Presentation emptyPresentation = new Presentation();
+
+        // Try to go to next slide on empty presentation
+        emptyPresentation.nextSlide();
+        assertEquals("Current slide should be -1 in empty presentation", -1, emptyPresentation.getCurrentSlideNumber());
+
+        // Try to go to previous slide on empty presentation
+        emptyPresentation.prevSlide();
+        assertEquals("Current slide should be -1 in empty presentation", -1, emptyPresentation.getCurrentSlideNumber());
+    }
+
+    /**
+     * Test getCurrentSlide with empty presentation
+     */
+    @Test
+    public void testGetCurrentSlideWithEmptyPresentation()
+    {
+        // Create empty presentation
+        Presentation emptyPresentation = new Presentation();
+
+        // Try to get current slide
+        Slide slide = emptyPresentation.getCurrentSlide();
+        assertNull("Current slide should be null for empty presentation", slide);
+    }
+
+    /**
+     * Test exit method
+     */
+    @Test
+    public void testExit()
+    {
+        // Create a test presentation that overrides doExit
+        TestPresentation testPresentation = new TestPresentation();
+
+        // Call exit
+        testPresentation.exit(42);
+
+        // Verify doExit was called with the correct code
+        assertTrue("doExit should have been called", testPresentation.exitCalled);
+        assertEquals("Exit code should be passed to doExit", 42, testPresentation.exitCode);
+    }
+
+    /**
+     * Test loader related methods
+     */
+    @Test
+    public void testLoader()
+    {
+        // Create a mock loader
+        MockPresentationLoader loader = new MockPresentationLoader();
+
+        // Set the loader
+        presentation.setLoader(loader);
+
+        try
+        {
+            // Try to load
+            presentation.loadPresentation("test.xml");
+
+            // Verify loader was called
+            assertTrue("Loader should have been called for loading", loader.loadCalled);
+            assertEquals("Filename should be passed to loader", "test.xml", loader.loadedFile);
+
+            // Try to save
+            presentation.savePresentation("output.xml");
+
+            // Verify loader was called
+            assertTrue("Loader should have been called for saving", loader.saveCalled);
+            assertEquals("Filename should be passed to loader", "output.xml", loader.savedFile);
+
+        } catch (Exception e)
+        {
+            fail("Exception should not be thrown: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test exceptions when no loader is set
+     */
+    @Test
+    public void testLoaderExceptions()
+    {
+        // Ensure no loader is set
+        presentation.setLoader(null);
+
+        try
+        {
+            // Try to load without a loader
+            presentation.loadPresentation("test.xml");
+            fail("Should throw IllegalStateException when no loader is set");
+        } catch (Exception e)
+        {
+            assertTrue("Exception should be IllegalStateException", e instanceof IllegalStateException);
+            assertEquals("Exception message should mention loader", "No presentation loader set", e.getMessage());
+        }
+
+        try
+        {
+            // Try to save without a loader
+            presentation.savePresentation("output.xml");
+            fail("Should throw IllegalStateException when no loader is set");
+        } catch (Exception e)
+        {
+            assertTrue("Exception should be IllegalStateException", e instanceof IllegalStateException);
+            assertEquals("Exception message should mention loader", "No presentation loader set", e.getMessage());
+        }
+    }
+
+    /**
+     * Test setSlides with null parameter
+     */
+    @Test
+    public void testSetSlidesWithNull()
+    {
+        // Set initial slides
+        List<Slide> slides = new ArrayList<>();
+        Slide slide = new Slide();
+        slides.add(slide);
+        presentation.setSlides(slides);
+
+        // Now set null slides
+        presentation.setSlides(null);
+
+        // Verify an empty list was created instead of null
+        assertNotNull("Slides should not be null after setting null", presentation.getSlides());
+        assertEquals("Slides list should be empty after setting null", 0, presentation.getSize());
+    }
+
+    /**
+     * Test setting ShowView
+     */
+    @Test
+    public void testSetShowView()
+    {
+        // Create a mock SlideViewerComponent
+        SlideViewerComponent mockComponent = new SlideViewerComponent(presentation);
+
+        // Set the component
+        presentation.setShowView(mockComponent);
+
+        // Verify component was set using reflection
+        try
+        {
+            Field field = Presentation.class.getDeclaredField("slideViewComponent");
+            field.setAccessible(true);
+            Object value = field.get(presentation);
+
+            assertSame("SlideViewerComponent should be stored correctly", mockComponent, value);
+        } catch (Exception e)
+        {
+            fail("Exception accessing field: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test subclass for testing exit functionality
+     */
+    private class TestPresentation extends Presentation
+    {
+        public boolean exitCalled = false;
+        public int exitCode = -1;
+
+        @Override
+        protected void doExit(int n)
+        {
+            exitCalled = true;
+            exitCode = n;
+            // Don't actually exit
+        }
+    }
+
+    /**
+     * Mock loader for testing loader-related methods
+     */
+    private class MockPresentationLoader implements PresentationLoader
+    {
+        public boolean loadCalled = false;
+        public boolean saveCalled = false;
+        public String loadedFile = null;
+        public String savedFile = null;
+
+        @Override
+        public void loadPresentation(Presentation p, String filename) throws Exception
+        {
+            loadCalled = true;
+            loadedFile = filename;
+        }
+
+        @Override
+        public void savePresentation(Presentation p, String filename) throws Exception
+        {
+            saveCalled = true;
+            savedFile = filename;
+        }
     }
 } 
