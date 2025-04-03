@@ -17,7 +17,7 @@ public class StyleTest {
 
     @BeforeClass
     public static void setUpClass() {
-        // Create styles for testing
+        // Initialize styles for tests
         Style.createStyles();
     }
     
@@ -140,6 +140,38 @@ public class StyleTest {
         for (int i = 0; i < styles.length; i++) {
             assertEquals("Style in array should match getStyle", 
                     styles[i], Style.getStyle(i));
+        }
+    }
+    
+    /**
+     * Test font creation and properties
+     */
+    @Test
+    public void testFontCreation() {
+        Style style = new Style(10, Color.RED, 24, 5);
+        Font font = style.font;
+        
+        // The expected font might be "Helvetica" based on FONTNAME constant,
+        // but Java might map it to "Dialog" on some platforms
+        // So we should either check for Dialog or skip the font family check
+        assertEquals("Font style should be bold", Font.BOLD, font.getStyle());
+        assertEquals("Font size should match", 24, font.getSize());
+    }
+    
+    /**
+     * Test different scaling factors with getFont
+     */
+    @Test
+    public void testGetFontWithDifferentScales() {
+        Style style = new Style(10, Color.RED, 20, 5);
+        
+        // Test with various scaling factors
+        float[] scales = {0.5f, 1.0f, 1.5f, 2.0f};
+        
+        for (float scale : scales) {
+            Font scaledFont = style.getFont(scale);
+            assertEquals("Font size should scale correctly with " + scale, 
+                    20 * scale, scaledFont.getSize2D(), 0.001f);
         }
     }
 } 

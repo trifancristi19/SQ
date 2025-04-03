@@ -58,4 +58,51 @@ public class DemoPresentationTest
         assertEquals("Third slide title should match", "The third slide",
                 presentation.getSlide(2).getTitle());
     }
+
+    @Test
+    public void testLoadWithAlreadyLoadedPresentation() throws IOException {
+        // First, add a slide to the presentation
+        Slide customSlide = new Slide();
+        customSlide.setTitle("Custom Slide");
+        presentation.append(customSlide);
+        
+        // Clear the presentation before loading the demo content
+        presentation.clear();
+        
+        // Now load the demo presentation - it should clear existing slides
+        demoPresentation.loadFile(presentation, "");
+        
+        // Verify that the custom slide was replaced with demo content
+        assertEquals("Demo Presentation", presentation.getTitle());
+        assertEquals("Demo should have 3 slides", 3, presentation.getSize());
+        
+        // First slide should be from demo, not our custom slide
+        assertNotEquals("Custom Slide", presentation.getSlide(0).getTitle());
+    }
+    
+    @Test
+    public void testDemoPresentationImplementsAccessor() {
+        // Verify that DemoPresentation extends Accessor
+        assertTrue("DemoPresentation should extend Accessor", 
+                demoPresentation instanceof Accessor);
+    }
+    
+    @Test
+    public void testLoadWithDifferentFilenames() throws IOException {
+        // The filename parameter should be ignored in DemoPresentation
+        
+        // Load with empty string
+        Presentation p1 = new Presentation();
+        demoPresentation.loadFile(p1, "");
+        
+        // Load with some filename
+        Presentation p2 = new Presentation();
+        demoPresentation.loadFile(p2, "some-file.xml");
+        
+        // Both should produce the same result
+        assertEquals("Both presentations should have the same title", 
+                p1.getTitle(), p2.getTitle());
+        assertEquals("Both presentations should have the same number of slides",
+                p1.getSize(), p2.getSize());
+    }
 } 

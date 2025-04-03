@@ -1,34 +1,141 @@
-   # Maven
-   target/
-   pom.xml.tag
-   pom.xml.releaseBackup
-   pom.xml.versionsBackup
-   pom.xml.next
-   release.properties
-   dependency-reduced-pom.xml
+# Build output directories
+target/
+out/
+build/
+bin/
+classes/
 
-   # IDE files
-   .idea/
-   *.iml
-   .classpath
-   .project
-   .settings/
-   .vscode/
+# Maven specific
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
 
-   # Compiled class files
-   *.class
+# Gradle specific
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+!gradle-wrapper.properties
+.gradletasknamecache
 
-   # Log files
-   *.log
+# IDE files
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+.run/
 
-   # Package files
-   *.jar
-   *.war
-   *.nar
-   *.ear
-   *.zip
-   *.tar.gz
-   *.rar
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+.factorypath
+.springBeans
 
-   # JVM crash logs
-   hs_err_pid*
+# NetBeans
+nbproject/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+nbactions.xml
+nb-configuration.xml
+
+# VS Code
+.vscode/
+.code-workspace
+
+# Compiled files
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Logs and databases
+*.log
+*.log.*
+*.sqlite
+*.db
+logs/
+*.hprof
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+# Exception: allow gradle wrapper jar
+!gradle/wrapper/gradle-wrapper.jar
+
+# Java specific
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# Testing
+.coverage
+htmlcov/
+.tox/
+nosetests.xml
+coverage.xml
+junit-reports/
+test-output/
+allure-results/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+tmp/
+temp/
+
+# Mobile development
+.expo/
+npm-debug.*
+*.orig.*
+web-build/
+
+# BlueJ
+*.ctxt
+
+# Local configuration files
+local.properties
+application-local.properties
+application-local.yml
+application-dev.properties
+application-dev.yml
+*.env
+
+# Documentation
+docs/_site/
+docs/.jekyll-cache/
+docs/.jekyll-metadata
+javadoc/
+
+# Miscellaneous
+node_modules/
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
