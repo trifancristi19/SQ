@@ -320,6 +320,34 @@ public class PresentationTest {
         assertTrue("Remaining observer should be notified", observer2.wasSlideChanged());
     }
 
+    @Test
+    public void testGetCurrentSlideWithInvalidNumbers() {
+        // Test with no slides
+        assertNull("Should return null when presentation is empty", presentation.getCurrentSlide());
+        
+        // Add some slides
+        Slide slide1 = new Slide();
+        Slide slide2 = new Slide();
+        presentation.append(slide1);
+        presentation.append(slide2);
+        
+        // Test with negative slide number
+        presentation.setSlideNumber(-1); // This will be sanitized to 0
+        assertNotNull("Should return first slide after sanitizing", presentation.getCurrentSlide());
+        
+        // Test with too high slide number
+        // Set slide number directly using reflection to bypass sanitization
+        try {
+            java.lang.reflect.Field field = Presentation.class.getDeclaredField("currentSlideNumber");
+            field.setAccessible(true);
+            field.set(presentation, 10); // Set an out-of-bounds slide number
+            
+            assertNull("Should return null for out-of-bounds slide number", presentation.getCurrentSlide());
+        } catch (Exception e) {
+            fail("Reflection failed: " + e.getMessage());
+        }
+    }
+
     // Helper class for testing observer pattern
     private class TestPresentationObserver implements PresentationObserver {
         private boolean slideChanged = false;

@@ -95,8 +95,8 @@ public class AboutBoxTest {
      */
     @Test
     public void testShowMethodDirectly() {
-        // Skip test in headless environment
-        Assume.assumeFalse("Skipping test in headless environment", isHeadless);
+        // Don't skip tests in headless environment anymore
+        // Assume.assumeFalse("Skipping test in headless environment", isHeadless);
         
         // Remember original state
         boolean originalCalled = showMessageDialogCalled;

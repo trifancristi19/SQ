@@ -10,6 +10,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.awt.image.BufferedImage;
+import java.awt.Graphics2D;
+import java.awt.Color;
+import javax.imageio.ImageIO;
 
 public class XMLAccessorTest {
 
@@ -830,5 +834,161 @@ public class XMLAccessorTest {
         // Verify the file was created with the image reference
         String savedContent = new String(Files.readAllBytes(Paths.get(TEST_FILE)));
         assertTrue(savedContent.contains("nonexistent.jpg"));
+    }
+
+    /**
+     * Creates a test image if it doesn't already exist
+     * @param imagePath Path where the image should be created
+     * @throws IOException If there's an error creating the image
+     */
+    private void ensureTestImageExists(String imagePath) throws IOException {
+        File testImageFile = new File(imagePath);
+        if (!testImageFile.exists()) {
+            // Create parent directories if needed
+            testImageFile.getParentFile().mkdirs();
+            
+            // Create a small test image
+            BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = image.createGraphics();
+            g2d.setColor(Color.RED);
+            g2d.fillRect(0, 0, 10, 10);
+            g2d.dispose();
+            
+            // Save as a JPEG
+            ImageIO.write(image, "jpg", testImageFile);
+        }
+    }
+    
+    @Test
+    public void testHandleImageWithoutDimensions() throws Exception {
+        // Create a test file with an image without width and height attributes
+        String xmlWithoutDimensions = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+            "<presentation>\n" +
+            "<showtitle>Image Without Dimensions</showtitle>\n" +
+            "<slide>\n" +
+            "<title>Image Test</title>\n" +
+            // Create the image item with both required attributes
+            "<item kind=\"image\" level=\"1\">" + TEST_DIR + "/test-image.jpg</item>\n" +
+            "</slide>\n" +
+            "</presentation>";
+        
+        File testFile = new File(TEST_DIR + "/image-without-dimensions.xml");
+        try {
+            // Ensure test image exists
+            ensureTestImageExists(TEST_DIR + "/test-image.jpg");
+            
+            Files.write(Paths.get(testFile.getPath()), xmlWithoutDimensions.getBytes());
+            
+            // Should not throw an exception
+            Presentation presentation = new Presentation();
+            this.xmlAccessor.loadFile(presentation, testFile.getAbsolutePath());
+            
+            assertEquals("Image Without Dimensions", presentation.getTitle());
+            assertEquals("Presentation should have 1 slide", 1, presentation.getSize());
+            
+            // Should have created an image SlideItem
+            Slide slide = presentation.getSlide(0);
+            assertEquals("Image Test", slide.getTitle());
+            assertTrue("Should contain at least one item", slide.getSize() > 0);
+            
+        } finally {
+            testFile.delete();
+        }
+    }
+    
+    @Test
+    public void testHandleInvalidImageDimensions() throws Exception {
+        // Create a test file with an image with invalid width and height values
+        String xmlWithInvalidDimensions = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+            "<presentation>\n" +
+            "<showtitle>Invalid Image Dimensions</showtitle>\n" +
+            "<slide>\n" +
+            "<title>Invalid Image Test</title>\n" +
+            // Make sure we include both required attributes
+            "<item kind=\"image\" level=\"1\" width=\"notANumber\" height=\"alsoNotANumber\">" + TEST_DIR + "/test-image.jpg</item>\n" +
+            "</slide>\n" +
+            "</presentation>";
+        
+        File testFile = new File(TEST_DIR + "/invalid-image-dimensions.xml");
+        try {
+            // Ensure test image exists
+            ensureTestImageExists(TEST_DIR + "/test-image.jpg");
+            
+            Files.write(Paths.get(testFile.getPath()), xmlWithInvalidDimensions.getBytes());
+            
+            // Should not throw an exception despite invalid dimensions
+            Presentation presentation = new Presentation();
+            this.xmlAccessor.loadFile(presentation, testFile.getAbsolutePath());
+            
+            assertEquals("Invalid Image Dimensions", presentation.getTitle());
+            assertEquals("Presentation should have 1 slide", 1, presentation.getSize());
+            
+            // Should have created an image SlideItem
+            Slide slide = presentation.getSlide(0);
+            assertEquals("Invalid Image Test", slide.getTitle());
+            assertTrue("Should contain at least one item", slide.getSize() > 0);
+            
+        } finally {
+            testFile.delete();
+        }
+    }
+    
+    @Test
+    public void testHandleEmptyPresentation() throws Exception {
+        // Create a test file with no slides
+        String xmlWithNoSlides = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+            "<presentation>\n" +
+            "<showtitle>Empty Presentation</showtitle>\n" +
+            "</presentation>";
+        
+        File testFile = new File(TEST_DIR + "/empty-presentation.xml");
+        try {
+            Files.write(Paths.get(testFile.getPath()), xmlWithNoSlides.getBytes());
+            
+            // Should not throw an exception
+            Presentation presentation = new Presentation();
+            this.xmlAccessor.loadFile(presentation, testFile.getAbsolutePath());
+            
+            assertEquals("Empty Presentation", presentation.getTitle());
+            assertEquals("Presentation should have 0 slides", 0, presentation.getSize());
+            
+        } finally {
+            testFile.delete();
+        }
+    }
+    
+    @Test
+    public void testHandleEmptySlide() throws Exception {
+        // Create a test file with an empty slide (no items)
+        String xmlWithEmptySlide = "<?xml version=\"1.0\"?>\n" +
+            "<!DOCTYPE presentation SYSTEM \"jabberpoint.dtd\">\n" +
+            "<presentation>\n" +
+            "<showtitle>Empty Slide</showtitle>\n" +
+            "<slide>\n" +
+            "<title>Empty Slide Test</title>\n" +
+            "</slide>\n" +
+            "</presentation>";
+        
+        File testFile = new File(TEST_DIR + "/empty-slide.xml");
+        try {
+            Files.write(Paths.get(testFile.getPath()), xmlWithEmptySlide.getBytes());
+            
+            // Should not throw an exception
+            Presentation presentation = new Presentation();
+            this.xmlAccessor.loadFile(presentation, testFile.getAbsolutePath());
+            
+            assertEquals("Empty Slide", presentation.getTitle());
+            assertEquals("Presentation should have 1 slide", 1, presentation.getSize());
+            
+            Slide slide = presentation.getSlide(0);
+            assertEquals("Empty Slide Test", slide.getTitle());
+            assertEquals("Slide should have 0 items", 0, slide.getSize());
+            
+        } finally {
+            testFile.delete();
+        }
     }
 } 

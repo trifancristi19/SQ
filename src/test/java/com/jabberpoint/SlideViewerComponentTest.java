@@ -336,6 +336,55 @@ public class SlideViewerComponentTest
         }
     }
     
+    @Test
+    public void testNotificationOnPresentationReload() {
+        // Create a tracking component to monitor notifications
+        TrackingObserverComponent trackingComponent = new TrackingObserverComponent(presentation);
+        
+        // Add slides to the presentation
+        Slide slide1 = new Slide();
+        slide1.setTitle("Original Slide 1");
+        Slide slide2 = new Slide();
+        slide2.setTitle("Original Slide 2");
+        
+        presentation.append(slide1);
+        presentation.append(slide2);
+        presentation.setSlideNumber(0);
+        
+        // Reset tracking to start fresh
+        trackingComponent.resetTracking();
+        
+        // Clear the presentation (should trigger presentation changed)
+        presentation.clear();
+        
+        assertTrue("onPresentationChanged should be called when presentation is cleared",
+                trackingComponent.presentationChangedCalled);
+        assertTrue("repaint should be called when presentation is cleared",
+                trackingComponent.repaintCalled);
+        
+        // Reset tracking again
+        trackingComponent.resetTracking();
+        
+        // Add new slides
+        Slide newSlide1 = new Slide();
+        newSlide1.setTitle("New Slide 1");
+        Slide newSlide2 = new Slide();
+        newSlide2.setTitle("New Slide 2");
+        
+        presentation.append(newSlide1);
+        presentation.append(newSlide2);
+        
+        // This should trigger a slide changed notification
+        presentation.setSlideNumber(0);
+        
+        assertTrue("onSlideChanged should be called when slide number changes",
+                trackingComponent.slideChangedCalled);
+        assertEquals("onSlideChanged should receive correct slide number",
+                0, trackingComponent.lastSlideNumber);
+        assertTrue("repaint should be called when slide changes",
+                trackingComponent.repaintCalled);
+    }
+    
     /**
      * A component that tracks when observer methods are called
      */

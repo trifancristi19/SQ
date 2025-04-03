@@ -676,4 +676,48 @@ public class MenuControllerTest {
             return key;
         }
     }
+    
+    /**
+     * Test error handling for invalid slide number input in GOTO action
+     */
+    @Test
+    public void testInvalidGotoInput() {
+        // Create a presentation with slides
+        Slide slide1 = new Slide();
+        slide1.setTitle("Test Slide 1");
+        presentation.append(slide1);
+        
+        Slide slide2 = new Slide();
+        slide2.setTitle("Test Slide 2");
+        presentation.append(slide2);
+        
+        // Set initial slide number
+        presentation.setSlideNumber(0);
+        
+        // Test with non-numeric input
+        menuController.mockInputValue = "abc";
+        ActionEvent gotoEvent = new ActionEvent(menuController, ActionEvent.ACTION_PERFORMED, GOTO);
+        menuController.handleGotoAction(gotoEvent);
+        
+        // Slide number should remain unchanged since input was invalid
+        assertEquals("Invalid input should not change slide number", 0, presentation.getSlideNumber());
+        
+        // Test with out-of-range number (too high)
+        menuController.mockInputValue = "10";
+        gotoEvent = new ActionEvent(menuController, ActionEvent.ACTION_PERFORMED, GOTO);
+        menuController.handleGotoAction(gotoEvent);
+        
+        // Slide number should stay within valid range
+        assertTrue("Out of range input should keep slide number in valid range",
+                presentation.getSlideNumber() >= 0 && presentation.getSlideNumber() < presentation.getSize());
+                
+        // Test with out-of-range number (negative)
+        menuController.mockInputValue = "-5";
+        gotoEvent = new ActionEvent(menuController, ActionEvent.ACTION_PERFORMED, GOTO);
+        menuController.handleGotoAction(gotoEvent);
+        
+        // Slide number should stay within valid range
+        assertTrue("Negative input should keep slide number in valid range",
+                presentation.getSlideNumber() >= 0 && presentation.getSlideNumber() < presentation.getSize());
+    }
 } 

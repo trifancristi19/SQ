@@ -74,4 +74,99 @@ public class TextItemTest {
         assertTrue("toString should contain the level", result.contains(String.valueOf(level)));
         assertTrue("toString should contain the text", result.contains(testText));
     }
+    
+    @Test
+    public void testDrawMethod() {
+        // Create a TextItem
+        TextItem textItem = new TextItem(1, "Test Drawing");
+        
+        // Create a mock graphics context
+        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bufferedImage.getGraphics();
+        
+        // Call draw method - should not throw exceptions
+        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
+        
+        // No specific assertions since we're just checking it doesn't throw exceptions
+        // and the actual rendering is hard to verify in a unit test
+    }
+    
+    @Test
+    public void testDrawWithNullText() {
+        // Create a TextItem with null text (implementation should handle this)
+        TextItem textItem = new TextItem(1, null);
+        
+        // Create a mock graphics context
+        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bufferedImage.getGraphics();
+        
+        // Call draw method - should not throw exceptions even with null text
+        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
+        
+        // Test passes if no exception is thrown
+    }
+    
+    @Test
+    public void testDrawWithEmptyText() {
+        // Create a TextItem with empty text
+        TextItem textItem = new TextItem(1, "");
+        
+        // Create a mock graphics context
+        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bufferedImage.getGraphics();
+        
+        // Call draw method - should not throw exceptions with empty text
+        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
+        
+        // Test passes if no exception is thrown
+    }
+    
+    @Test
+    public void testDrawWithDifferentScaleFactor() {
+        // Create a TextItem
+        TextItem textItem = new TextItem(1, "Test Drawing with Scale");
+        
+        // Create a mock graphics context
+        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bufferedImage.getGraphics();
+        
+        // Test with different scale factors
+        textItem.draw(100, 100, 0.5f, g, Style.getStyle(textItem.getLevel()), null);
+        textItem.draw(100, 100, 2.0f, g, Style.getStyle(textItem.getLevel()), null);
+        
+        // Test passes if no exception is thrown
+    }
+    
+    @Test
+    public void testDrawWithMultilineText() {
+        // Create a TextItem with multiline text
+        TextItem textItem = new TextItem(1, "Line 1\nLine 2\nLine 3");
+        
+        // Create a mock graphics context
+        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bufferedImage.getGraphics();
+        
+        // Call draw method - should handle multiline text
+        textItem.draw(100, 100, 1.0f, g, Style.getStyle(textItem.getLevel()), null);
+        
+        // Test passes if no exception is thrown
+    }
+    
+    @Test
+    public void testBoundingBoxCalculation() {
+        // Create a TextItem
+        TextItem textItem = new TextItem(1, "Test Bounding Box");
+        
+        // Create a mock graphics context
+        BufferedImage bufferedImage = new BufferedImage(300, 200, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = bufferedImage.getGraphics();
+        
+        // Get the bounding box
+        Rectangle result = textItem.getBoundingBox(g, null, 1.0f, Style.getStyle(textItem.getLevel()));
+        
+        // Verify the bounding box
+        assertNotNull("Bounding box should not be null", result);
+        assertTrue("Bounding box width should be positive", result.width > 0);
+        assertTrue("Bounding box height should be positive", result.height > 0);
+    }
 } 
