@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Assume;
+import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
 import java.awt.Frame;
@@ -29,11 +30,25 @@ public class AboutBoxTest {
     private static boolean showMessageDialogCalled;
     private static Object[] lastShowMessageDialogArgs;
     
+    @BeforeClass
+    public static void setUpClass() {
+        // Check if we're in a headless environment
+        isHeadless = GraphicsEnvironment.isHeadless();
+        
+        // Replace JOptionPane.showMessageDialog with our mock method
+        mockJOptionPane();
+    }
+    
     @Before
     public void setUp() {
         // Set up frame only if not headless
         if (!isHeadless) {
-            parentFrame = new JFrame("Test Parent");
+            try {
+                parentFrame = new JFrame("Test Parent");
+            } catch (HeadlessException e) {
+                // If we still get a HeadlessException, make sure we mark as headless
+                isHeadless = true;
+            }
         }
         
         // Reset tracking variables
@@ -80,6 +95,9 @@ public class AboutBoxTest {
      */
     @Test
     public void testShowMethodDirectly() {
+        // Skip test in headless environment
+        Assume.assumeFalse("Skipping test in headless environment", isHeadless);
+        
         // Remember original state
         boolean originalCalled = showMessageDialogCalled;
         
