@@ -1,20 +1,25 @@
 package com.jabberpoint;
 
 import org.junit.Test;
-
+import org.junit.Before;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 
 public class DemoPresentationTest
 {
+    private DemoPresentation demoPresentation;
+    private Presentation presentation;
+
+    @Before
+    public void setUp() {
+        demoPresentation = new DemoPresentation();
+        presentation = new Presentation();
+    }
 
     @Test
     public void testLoadDemoPresentation() throws IOException
     {
-        DemoPresentation demoPresentation = new DemoPresentation();
-        Presentation presentation = new Presentation();
-
         // Load the demo presentation
         demoPresentation.loadFile(presentation, "");
 
@@ -32,9 +37,6 @@ public class DemoPresentationTest
     @Test(expected = IllegalStateException.class)
     public void testSaveThrowsException() throws IOException
     {
-        DemoPresentation demoPresentation = new DemoPresentation();
-        Presentation presentation = new Presentation();
-
         // Saving is not supported in DemoPresentation
         demoPresentation.saveFile(presentation, "test.xml");
     }
@@ -42,9 +44,6 @@ public class DemoPresentationTest
     @Test
     public void testLoadedSlideContents() throws IOException
     {
-        DemoPresentation demoPresentation = new DemoPresentation();
-        Presentation presentation = new Presentation();
-
         // Load the demo presentation
         demoPresentation.loadFile(presentation, "");
 

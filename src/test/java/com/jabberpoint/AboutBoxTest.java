@@ -3,9 +3,7 @@ package com.jabberpoint;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.Assume;
 import static org.junit.Assert.*;
 
 import java.awt.Frame;
@@ -15,26 +13,21 @@ import java.awt.HeadlessException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.lang.reflect.Field;
+import java.awt.Dialog;
+import java.awt.Component;
+import java.awt.Button;
+import java.awt.Label;
+import java.awt.event.ActionEvent;
 
 /**
  * Tests for the AboutBox class
  */
-@RunWith(JUnit4.class)
 public class AboutBoxTest {
     
     private static boolean isHeadless;
     private Frame parentFrame;
     private static boolean showMessageDialogCalled;
     private static Object[] lastShowMessageDialogArgs;
-    
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        // Check if we're in a headless environment
-        isHeadless = GraphicsEnvironment.isHeadless();
-        
-        // Replace JOptionPane.showMessageDialog with our mock method
-        mockJOptionPane();
-    }
     
     @Before
     public void setUp() {

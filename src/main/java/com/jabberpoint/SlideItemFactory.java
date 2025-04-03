@@ -12,6 +12,7 @@ public class SlideItemFactory
             case "text":
                 return new TextItem(level, content);
             case "bitmap":
+            case "image":
                 return new BitmapItem(level, content);
             default:
                 throw new IllegalArgumentException("Unknown slide item type: " + type);

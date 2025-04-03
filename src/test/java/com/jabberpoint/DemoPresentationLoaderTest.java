@@ -3,16 +3,14 @@ package com.jabberpoint;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Method;
+import java.io.IOException;
 
 /**
  * Tests for the DemoPresentationLoader class
  */
-@RunWith(JUnit4.class)
 public class DemoPresentationLoaderTest {
     
     private DemoPresentationLoader loader;
@@ -20,8 +18,12 @@ public class DemoPresentationLoaderTest {
     
     @Before
     public void setUp() {
+        // Initialize objects for testing
         loader = new DemoPresentationLoader();
         presentation = new Presentation();
+        
+        // Initialize styles for tests
+        Style.createStyles();
     }
     
     @After

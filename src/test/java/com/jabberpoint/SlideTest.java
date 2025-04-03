@@ -1,143 +1,163 @@
 package com.jabberpoint;
 
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.BeforeClass;
-
 import static org.junit.Assert.*;
 
 import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.image.ImageObserver;
 import java.awt.image.BufferedImage;
-import java.util.Vector;
+import java.util.List;
 
+/**
+ * Tests for the Slide class
+ */
 public class SlideTest
 {
+    private Slide slide;
 
     @BeforeClass
     public static void setUpClass()
     {
-        // Initialize styles for tests that need them
+        // Initialize styles for all tests
         Style.createStyles();
+    }
+
+    @Before
+    public void setUp()
+    {
+        // Create a new slide for each test
+        slide = new Slide();
     }
 
     @Test
     public void testSlideCreation()
     {
-        Slide slide = new Slide();
         assertNotNull("Slide should be created", slide);
-        assertEquals("New slide should have 0 items", 0, slide.getSize());
+        assertEquals("Initial size should be 0", 0, slide.getSize());
     }
 
     @Test
     public void testAppendItem()
     {
-        Slide slide = new Slide();
-        TextItem item = new TextItem(1, "Test Text");
+        // Create a test item
+        SlideItem item = new TextItem(1, "Test Item");
+        
+        // Append to slide
         slide.append(item);
-        assertEquals("Slide should have 1 item", 1, slide.getSize());
+        
+        assertEquals("Size should be 1 after append", 1, slide.getSize());
     }
 
     @Test
     public void testSetTitle()
     {
-        Slide slide = new Slide();
-        String testTitle = "Test Title";
-        slide.setTitle(testTitle);
-        assertEquals("Title should be set correctly", testTitle, slide.getTitle());
+        String title = "Test Title";
+        slide.setTitle(title);
+        
+        assertEquals("Title should be set correctly", title, slide.getTitle());
     }
 
     @Test
     public void testGetSlideItem()
     {
-        Slide slide = new Slide();
-        TextItem item1 = new TextItem(1, "Item 1");
-        TextItem item2 = new TextItem(2, "Item 2");
-
+        // Create test items
+        SlideItem item1 = new TextItem(1, "Item 1");
+        SlideItem item2 = new TextItem(2, "Item 2");
+        
+        // Append to slide
         slide.append(item1);
         slide.append(item2);
-
-        assertSame("First item should be retrieved", item1, slide.getSlideItem(0));
-        assertSame("Second item should be retrieved", item2, slide.getSlideItem(1));
+        
+        // Get and verify
+        assertEquals("Should get correct item at index 0", item1, slide.getSlideItem(0));
+        assertEquals("Should get correct item at index 1", item2, slide.getSlideItem(1));
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void testGetInvalidSlideItem()
     {
-        Slide slide = new Slide();
-        // This should throw an ArrayIndexOutOfBoundsException
-        slide.getSlideItem(0);
+        // Try to get an item from an empty slide
+        assertNull("Invalid index should return null", slide.getSlideItem(0));
+        assertNull("Negative index should return null", slide.getSlideItem(-1));
     }
 
     @Test
     public void testGetSlideItems()
     {
-        Slide slide = new Slide();
-        TextItem item1 = new TextItem(1, "Item 1");
-        TextItem item2 = new TextItem(2, "Item 2");
-
+        // Create test items
+        SlideItem item1 = new TextItem(1, "Item 1");
+        SlideItem item2 = new TextItem(2, "Item 2");
+        
+        // Append to slide
         slide.append(item1);
         slide.append(item2);
-
-        assertNotNull("Slide items should be returned", slide.getSlideItems());
-        assertEquals("Slide items vector should have correct size", 2, slide.getSlideItems().size());
+        
+        // Get the list
+        List<SlideItem> items = slide.getSlideItems();
+        
+        assertNotNull("Item list should not be null", items);
+        assertEquals("List size should match", 2, items.size());
+        assertEquals("First item should match", item1, items.get(0));
+        assertEquals("Second item should match", item2, items.get(1));
     }
 
     @Test
     public void testGetSize()
     {
-        Slide slide = new Slide();
         assertEquals("Empty slide should have size 0", 0, slide.getSize());
-
+        
+        // Add some items
         slide.append(new TextItem(1, "Item 1"));
-        assertEquals("Slide should have size 1", 1, slide.getSize());
-
+        assertEquals("Size should be 1 after one append", 1, slide.getSize());
+        
         slide.append(new TextItem(2, "Item 2"));
-        assertEquals("Slide should have size 2", 2, slide.getSize());
+        assertEquals("Size should be 2 after two appends", 2, slide.getSize());
     }
 
     @Test
     public void testDraw()
     {
-        Slide slide = new Slide();
+        // Set up a slide with items
         slide.setTitle("Test Slide");
         slide.append(new TextItem(1, "Test Item"));
-
-        // Create a dummy graphics context instead of passing null
-        BufferedImage image = new BufferedImage(800, 600, BufferedImage.TYPE_INT_ARGB);
+        
+        // Create a graphics object for testing
+        BufferedImage image = new BufferedImage(500, 500, BufferedImage.TYPE_INT_ARGB);
         Graphics g = image.getGraphics();
-
-        try
-        {
-            // Create a dummy rectangle
-            Rectangle rect = new Rectangle(0, 0, 800, 600);
-            slide.draw(g, rect, null);
-            // If we get here, the test passes (no exceptions thrown)
+        Rectangle area = new Rectangle(0, 0, 400, 300);
+        
+        // This is mostly a smoke test - we're verifying no exceptions are thrown
+        try {
+            slide.draw(g, area, null);
+            // If we get here, no exception was thrown, which is what we expect
             assertTrue(true);
-        } catch (Exception e)
-        {
-            fail("draw() should not throw exceptions: " + e.getMessage());
-        } finally
-        {
-            if (g != null)
-            {
-                g.dispose(); // Clean up resources
-            }
+        } catch (Exception e) {
+            fail("Draw method threw exception: " + e.getMessage());
+        } finally {
+            g.dispose();
         }
     }
 
     @Test
     public void testAppendWithLevelAndText()
     {
-        Slide slide = new Slide();
-        slide.append(1, "Test Text");
-
-        assertEquals("Slide should have 1 item", 1, slide.getSize());
+        // Test append with level and text
+        int level = 2;
+        String text = "Test Text";
+        
+        slide.append(level, text);
+        
+        assertEquals("Size should be 1 after append", 1, slide.getSize());
+        
+        // Get the item and verify
         SlideItem item = slide.getSlideItem(0);
+        assertNotNull("Item should be created", item);
         assertTrue("Item should be a TextItem", item instanceof TextItem);
-        TextItem textItem = (TextItem) item;
-        assertEquals("Text item should have correct text", "Test Text", textItem.getText());
-        assertEquals("Text item should have correct level", 1, textItem.getLevel());
+        assertEquals("Level should match", level, item.getLevel());
+        assertEquals("Text should match", text, ((TextItem)item).getText());
     }
 
     @Test
@@ -251,8 +271,8 @@ public class SlideTest
         TextItem item = new TextItem(1, "Test Item");
         slide.append(item);
 
-        Vector<SlideItem> items = slide.getSlideItems();
-        items.add(new TextItem(2, "New Item")); // Try to modify the vector
+        List<SlideItem> items = slide.getSlideItems();
+        items.add(new TextItem(2, "New Item")); // Try to modify the list
 
         assertEquals("Original slide should not be modified", 1, slide.getSize());
         assertEquals("Original item should remain unchanged", item, slide.getSlideItem(0));

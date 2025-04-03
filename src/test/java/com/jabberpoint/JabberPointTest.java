@@ -3,22 +3,22 @@ package com.jabberpoint;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.awt.GraphicsEnvironment;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.awt.HeadlessException;
-import java.io.File;
 import java.io.IOException;
 
-@RunWith(JUnit4.class)
+/**
+ * Tests for the main JabberPoint class
+ */
 public class JabberPointTest {
     
     private boolean originalHeadless;

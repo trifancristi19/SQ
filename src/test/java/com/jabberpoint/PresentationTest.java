@@ -1,36 +1,37 @@
 package com.jabberpoint;
 
 import org.junit.Test;
-
+import org.junit.Before;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PresentationTest
-{
+public class PresentationTest {
+
+    private Presentation presentation;
+    
+    @Before
+    public void setUp() {
+        // Create fresh presentation for each test
+        presentation = new Presentation();
+    }
 
     @Test
-    public void testPresentationCreation()
-    {
-        Presentation presentation = new Presentation();
+    public void testPresentationCreation() {
         assertNotNull("Presentation should be created", presentation);
         assertEquals("New presentation should have 0 slides", 0, presentation.getSize());
     }
 
     @Test
-    public void testSetTitle()
-    {
-        Presentation presentation = new Presentation();
+    public void testSetTitle() {
         String testTitle = "Test Presentation";
         presentation.setTitle(testTitle);
         assertEquals("Title should be set correctly", testTitle, presentation.getTitle());
     }
 
     @Test
-    public void testAppendSlide()
-    {
-        Presentation presentation = new Presentation();
+    public void testAppendSlide() {
         Slide slide = new Slide();
         presentation.append(slide);
         assertEquals("Presentation should have 1 slide", 1, presentation.getSize());
@@ -40,7 +41,6 @@ public class PresentationTest
     @Test
     public void testSlideNavigation()
     {
-        Presentation presentation = new Presentation();
         Slide slide1 = new Slide();
         Slide slide2 = new Slide();
         Slide slide3 = new Slide();
@@ -65,7 +65,6 @@ public class PresentationTest
     @Test
     public void testNavigationBoundary()
     {
-        Presentation presentation = new Presentation();
         Slide slide1 = new Slide();
         presentation.append(slide1);
 
@@ -80,7 +79,6 @@ public class PresentationTest
     @Test
     public void testClear()
     {
-        Presentation presentation = new Presentation();
         Slide slide1 = new Slide();
         Slide slide2 = new Slide();
 
@@ -96,17 +94,16 @@ public class PresentationTest
     @Test
     public void testGetInvalidSlide()
     {
-        Presentation presentation = new Presentation();
         assertNull("Getting negative slide number should return null", presentation.getSlide(-1));
         assertNull("Getting out of bounds slide should return null", presentation.getSlide(0));
 
-        presentation.append(new Slide());
+        Slide slide = new Slide();
+        presentation.append(slide);
         assertNull("Getting out of bounds slide should return null", presentation.getSlide(1));
     }
 
     @Test
     public void testSetInvalidSlideNumber() {
-        Presentation presentation = new Presentation();
         presentation.append(new Slide());
         presentation.append(new Slide());
         
@@ -120,8 +117,6 @@ public class PresentationTest
 
     @Test
     public void testEmptyPresentationNavigation() {
-        Presentation presentation = new Presentation();
-        
         // Test navigation on empty presentation
         presentation.nextSlide();
         assertEquals("Should not navigate on empty presentation", -1, presentation.getSlideNumber());
@@ -135,7 +130,6 @@ public class PresentationTest
 
     @Test
     public void testMultipleSlidesNavigation() {
-        Presentation presentation = new Presentation();
         Slide slide1 = new Slide();
         Slide slide2 = new Slide();
         Slide slide3 = new Slide();
@@ -158,7 +152,6 @@ public class PresentationTest
 
     @Test
     public void testSlideNumberAfterClear() {
-        Presentation presentation = new Presentation();
         presentation.append(new Slide());
         presentation.append(new Slide());
         presentation.setSlideNumber(1);
@@ -170,7 +163,6 @@ public class PresentationTest
 
     @Test
     public void testSlideNumberAfterAppend() {
-        Presentation presentation = new Presentation();
         presentation.append(new Slide());
         presentation.setSlideNumber(0);
         
@@ -180,7 +172,6 @@ public class PresentationTest
 
     @Test
     public void testObserverPattern() {
-        Presentation presentation = new Presentation();
         TestPresentationObserver observer = new TestPresentationObserver();
         presentation.addObserver(observer);
         
@@ -203,7 +194,6 @@ public class PresentationTest
 
     @Test
     public void testPresentationLoader() throws Exception {
-        Presentation presentation = new Presentation();
         TestPresentationLoader loader = new TestPresentationLoader();
         presentation.setLoader(loader);
         
@@ -218,19 +208,16 @@ public class PresentationTest
 
     @Test(expected = IllegalStateException.class)
     public void testLoadPresentationWithoutLoader() throws Exception {
-        Presentation presentation = new Presentation();
         presentation.loadPresentation("test.xml");
     }
 
     @Test(expected = IllegalStateException.class)
     public void testSavePresentationWithoutLoader() throws Exception {
-        Presentation presentation = new Presentation();
         presentation.savePresentation("test.xml");
     }
 
     @Test
     public void testSetSlides() {
-        Presentation presentation = new Presentation();
         TestPresentationObserver observer = new TestPresentationObserver();
         presentation.addObserver(observer);
         
@@ -245,7 +232,6 @@ public class PresentationTest
 
     @Test
     public void testSetNullSlides() {
-        Presentation presentation = new Presentation();
         presentation.append(new Slide());
         
         presentation.setSlides(null);
@@ -254,7 +240,6 @@ public class PresentationTest
 
     @Test
     public void testSetShowView() {
-        Presentation presentation = new Presentation();
         SlideViewerComponent viewer = new SlideViewerComponent(presentation);
         presentation.setShowView(viewer);
         // No direct way to test this as it's just a setter, but we can verify it doesn't throw
@@ -279,7 +264,6 @@ public class PresentationTest
 
     @Test
     public void testGetCurrentSlideNumber() {
-        Presentation presentation = new Presentation();
         assertEquals("Initial slide number should be 0", 0, presentation.getCurrentSlideNumber());
         
         presentation.append(new Slide());
@@ -293,8 +277,6 @@ public class PresentationTest
 
     @Test
     public void testEdgeCaseNavigation() {
-        Presentation presentation = new Presentation();
-        
         // Test navigation with empty presentation
         presentation.nextSlide();
         assertEquals("Next slide on empty presentation should set number to -1", -1, presentation.getSlideNumber());
@@ -315,7 +297,6 @@ public class PresentationTest
 
     @Test
     public void testMultipleObservers() {
-        Presentation presentation = new Presentation();
         TestPresentationObserver observer1 = new TestPresentationObserver();
         TestPresentationObserver observer2 = new TestPresentationObserver();
         

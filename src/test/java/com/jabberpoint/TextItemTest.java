@@ -1,6 +1,7 @@
 package com.jabberpoint;
 
 import org.junit.Test;
+import org.junit.Before;
 import org.junit.BeforeClass;
 
 import static org.junit.Assert.*;
@@ -11,19 +12,21 @@ import java.awt.image.BufferedImage;
 import java.awt.Font;
 import java.awt.Color;
 
-public class TextItemTest
-{
+public class TextItemTest {
 
     @BeforeClass
-    public static void setUpClass()
-    {
+    public static void setUpClass() {
         // Initialize styles
         Style.createStyles();
     }
+    
+    @Before
+    public void setUp() {
+        // No specific setup needed for each test
+    }
 
     @Test
-    public void testTextItemCreation()
-    {
+    public void testTextItemCreation() {
         String testText = "Test Text";
         TextItem textItem = new TextItem(1, testText);
         assertNotNull("TextItem should be created", textItem);
@@ -32,8 +35,7 @@ public class TextItemTest
     }
 
     @Test
-    public void testEmptyTextItemCreation()
-    {
+    public void testEmptyTextItemCreation() {
         TextItem textItem = new TextItem();
         assertNotNull("Empty TextItem should be created", textItem);
         assertEquals("Default level should be 0", 0, textItem.getLevel());
@@ -42,16 +44,14 @@ public class TextItemTest
     }
 
     @Test
-    public void testGetText()
-    {
+    public void testGetText() {
         String testText = "Test Text";
         TextItem textItem = new TextItem(1, testText);
         assertEquals("getText should return the correct text", testText, textItem.getText());
     }
 
     @Test
-    public void testGetAttributedString()
-    {
+    public void testGetAttributedString() {
         String testText = "Test Text";
         TextItem textItem = new TextItem(1, testText);
 
@@ -64,8 +64,7 @@ public class TextItemTest
 
 
     @Test
-    public void testToString()
-    {
+    public void testToString() {
         String testText = "Test Text";
         int level = 2;
         TextItem textItem = new TextItem(level, testText);

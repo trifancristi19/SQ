@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Assume;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 import static com.jabberpoint.MenuController.*;
 
@@ -40,9 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tests for the MenuController class that directly test action listener functionality
+ * Tests for the MenuController class
  */
-@RunWith(JUnit4.class)
 public class MenuControllerTest {
     
     private boolean originalHeadless;

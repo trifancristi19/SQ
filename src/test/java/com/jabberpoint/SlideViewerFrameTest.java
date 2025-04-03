@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Assume;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 
 import java.awt.MenuBar;
@@ -28,7 +26,6 @@ import java.lang.reflect.Constructor;
 /**
  * Tests for the SlideViewerFrame class
  */
-@RunWith(JUnit4.class)
 public class SlideViewerFrameTest {
     
     private static boolean originalHeadless;
