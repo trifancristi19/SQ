@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.File;
+import java.awt.Color;
 
 import javax.imageio.ImageIO;
 
@@ -26,12 +27,15 @@ public class BitmapItem extends SlideItem
 
     protected static final String FILE = "File ";
     protected static final String NOTFOUND = " not found";
+    private static final int FALLBACK_WIDTH = 100;
+    private static final int FALLBACK_HEIGHT = 100;
 
     // level is equal to item-level; name is the name of the file with the Image
     public BitmapItem(int level, String name)
     {
         super(level);
         imageName = name;
+<<<<<<< HEAD
         if (imageName != null)
         {
             try
@@ -89,12 +93,71 @@ public class BitmapItem extends SlideItem
                 }
             }
         }
+=======
+        loadImage();
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
 
     // An empty bitmap-item
     public BitmapItem()
     {
         this(0, null);
+    }
+
+    private void loadImage() {
+        if (imageName == null || imageName.trim().isEmpty()) {
+            createFallbackImage();
+            return;
+        }
+
+        try {
+            // Try loading from exact path first
+            File file = new File(imageName);
+            if (file.exists()) {
+                bufferedImage = ImageIO.read(file);
+                if (bufferedImage == null) {
+                    createFallbackImage();
+                }
+            } else {
+                // If file doesn't exist, try from resources directory
+                String resourcePath = "src/main/resources/" + imageName;
+                File resourceFile = new File(resourcePath);
+                if (resourceFile.exists()) {
+                    bufferedImage = ImageIO.read(resourceFile);
+                    if (bufferedImage == null) {
+                        createFallbackImage();
+                    }
+                } else {
+                    // Try from test resources as well
+                    String testResourcePath = "src/test/resources/" + imageName;
+                    File testResourceFile = new File(testResourcePath);
+                    if (testResourceFile.exists()) {
+                        bufferedImage = ImageIO.read(testResourceFile);
+                        if (bufferedImage == null) {
+                            createFallbackImage();
+                        }
+                    } else {
+                        System.err.println(FILE + imageName + NOTFOUND);
+                        createFallbackImage();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            System.err.println(FILE + imageName + NOTFOUND);
+            createFallbackImage();
+        }
+    }
+
+    private void createFallbackImage() {
+        // Create a small colored rectangle as fallback
+        bufferedImage = new BufferedImage(FALLBACK_WIDTH, FALLBACK_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(0, 0, FALLBACK_WIDTH, FALLBACK_HEIGHT);
+        g.setColor(Color.BLACK);
+        g.drawRect(0, 0, FALLBACK_WIDTH-1, FALLBACK_HEIGHT-1);
+        g.drawString(imageName != null ? imageName : "No image", 10, FALLBACK_HEIGHT/2);
+        g.dispose();
     }
 
     // give the filename of the image
@@ -106,23 +169,19 @@ public class BitmapItem extends SlideItem
     // give the  bounding box of the image
     public Rectangle getBoundingBox(Graphics g, ImageObserver observer, float scale, Style myStyle)
     {
-        if (bufferedImage == null)
-        {
-            return new Rectangle((int) (myStyle.indent * scale), 0, 0, 0);
-        }
-        return new Rectangle((int) (myStyle.indent * scale), 0, (int) (bufferedImage.getWidth(observer) * scale), ((int) (myStyle.leading * scale)) + (int) (bufferedImage.getHeight(observer) * scale));
+        return new Rectangle((int) (myStyle.indent * scale), 0, 
+                (int) (bufferedImage.getWidth(observer) * scale), 
+                ((int) (myStyle.leading * scale)) + (int) (bufferedImage.getHeight(observer) * scale));
     }
 
     // draw the image
     public void draw(int x, int y, float scale, Graphics g, Style myStyle, ImageObserver observer)
     {
-        if (bufferedImage == null)
-        {
-            return;
-        }
         int width = x + (int) (myStyle.indent * scale);
         int height = y + (int) (myStyle.leading * scale);
-        g.drawImage(bufferedImage, width, height, (int) (bufferedImage.getWidth(observer) * scale), (int) (bufferedImage.getHeight(observer) * scale), observer);
+        g.drawImage(bufferedImage, width, height, 
+                (int) (bufferedImage.getWidth(observer) * scale), 
+                (int) (bufferedImage.getHeight(observer) * scale), observer);
     }
 
     public String toString()

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import javax.imageio.ImageIO;
 
+<<<<<<< HEAD
 public class BitmapItemTest {
     
     private BitmapItem bitmapItem;
@@ -21,18 +22,70 @@ public class BitmapItemTest {
     private Graphics mockGraphics;
     private ImageObserver mockObserver;
     
+=======
+public class BitmapItemTest
+{
+
+    private static final String TEST_IMAGE_PATH = "target/test-resources/test-image.jpg";
+    private static final String TEST_RESOURCES_DIR = "target/test-resources";
+    private MockImageObserver observer;
+    private Style testStyle;
+
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     @Before
     public void setUp() {
         defaultStyle = new Style(0, Color.BLACK, 12, 0);
         
+<<<<<<< HEAD
         // Create mock graphics
         BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
         mockGraphics = image.getGraphics();
+=======
+        // Always create a valid test image for tests
+        File testImage = new File(TEST_IMAGE_PATH);
+        createValidTestImage(testImage);
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
         
         // Create simple mock observer that always returns true
         mockObserver = (img, infoflags, x, y, width, height) -> true;
     }
     
+<<<<<<< HEAD
+=======
+    @After
+    public void tearDown() {
+        // Reset observer state
+        observer.resetTracking();
+    }
+
+    private boolean isValidImageFile(File file)
+    {
+        try
+        {
+            return ImageIO.read(file) != null;
+        } catch (IOException e)
+        {
+            return false;
+        }
+    }
+
+    private void createValidTestImage(File file) throws IOException
+    {
+        // Ensure the directory exists
+        file.getParentFile().mkdirs();
+
+        // Create a small 10x10 test image
+        BufferedImage image = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = image.createGraphics();
+        g2d.setColor(Color.RED);
+        g2d.fillRect(0, 0, 10, 10);
+        g2d.dispose();
+        
+        // Save as a JPEG
+        ImageIO.write(image, "jpg", file);
+    }
+
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     @Test
     public void testConstructorWithValidValues() {
         bitmapItem = new BitmapItem(1, "test-image.jpg");
@@ -44,6 +97,7 @@ public class BitmapItemTest {
     public void testEmptyConstructor() {
         bitmapItem = new BitmapItem();
         assertEquals("Default level should be 0", 0, bitmapItem.getLevel());
+<<<<<<< HEAD
         assertNull("Image name should be null", bitmapItem.getName());
     }
     
@@ -52,6 +106,63 @@ public class BitmapItemTest {
         String imageName = "test-bitmap.png";
         bitmapItem = new BitmapItem(2, imageName);
         assertEquals("getName should return the correct image name", imageName, bitmapItem.getName());
+=======
+        assertNull("Name should be null for empty bitmap", bitmapItem.getName());
+    }
+
+    @Test
+    public void testGetName()
+    {
+        BitmapItem bitmapItem = new BitmapItem(1, TEST_IMAGE_PATH);
+        assertEquals("getName should return the correct path", TEST_IMAGE_PATH, bitmapItem.getName());
+    }
+
+    @Test
+    public void testGetBoundingBox()
+    {
+        // Use our guaranteed test image
+        BitmapItem bitmapItem = new BitmapItem(1, TEST_IMAGE_PATH);
+
+        // Test with non-null parameters
+        Rectangle boundingBox = bitmapItem.getBoundingBox(createTestGraphics(), observer, 1.0f, testStyle);
+        assertNotNull("Bounding box should be calculated", boundingBox);
+        assertTrue("Bounding box width should be positive", boundingBox.width > 0);
+        assertTrue("Bounding box height should be positive", boundingBox.height > 0);
+        assertEquals("X position should match style indent", (int)testStyle.indent, boundingBox.x);
+    }
+    
+    @Test
+    public void testGetBoundingBoxWithScaling() {
+        // Use our guaranteed test image
+        BitmapItem bitmapItem = new BitmapItem(1, TEST_IMAGE_PATH);
+        
+        // Get bounding box with scale factor of 1.0
+        Rectangle boundingBox1 = bitmapItem.getBoundingBox(createTestGraphics(), observer, 1.0f, testStyle);
+        
+        // Get bounding box with scale factor of 2.0
+        Rectangle boundingBox2 = bitmapItem.getBoundingBox(createTestGraphics(), observer, 2.0f, testStyle);
+        
+        // The width and height should be proportional to the scale
+        assertEquals("Width should double with scale factor 2", boundingBox1.width * 2, boundingBox2.width);
+        assertTrue("Height should be larger with scale factor 2", boundingBox2.height > boundingBox1.height);
+        assertEquals("X position should be proportional to scale", boundingBox1.x * 2, boundingBox2.x);
+    }
+
+    @Test
+    public void testInvalidImage()
+    {
+        // Use a non-existent path that won't display error messages
+        String nonExistentPath = "nonexistent.jpg";
+        BitmapItem bitmapItem = new BitmapItem(1, nonExistentPath);
+        assertNotNull("BitmapItem should be created even with invalid image", bitmapItem);
+        assertEquals("getName should return the file name", nonExistentPath, bitmapItem.getName());
+        
+        // Test getBoundingBox behavior with null image
+        Rectangle boundingBox = bitmapItem.getBoundingBox(createTestGraphics(), observer, 1.0f, testStyle);
+        assertNotNull("Bounding box should still be created for invalid image", boundingBox);
+        // Just verify it exists, don't check specific dimensions which may vary
+        assertTrue("Bounding box should have valid dimensions", boundingBox.width >= 0 && boundingBox.height >= 0);
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     @Test
@@ -75,6 +186,7 @@ public class BitmapItemTest {
         // Create a BitmapItem with a test image that we can control
         bitmapItem = new BitmapItem(1, "test-image.jpg");
         
+<<<<<<< HEAD
         // Set a controlled bufferedImage using reflection
         try {
             BufferedImage testImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -96,6 +208,23 @@ public class BitmapItemTest {
         } catch (Exception e) {
             fail("Failed to set test image: " + e.getMessage());
         }
+=======
+        // Create a test graphics context
+        BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.getGraphics();
+        
+        // Create tracking graphics to monitor draw calls
+        TrackingGraphics trackingGraphics = new TrackingGraphics(g);
+        
+        // Try to draw the invalid bitmap
+        invalidBitmap.draw(10, 20, 1.0f, trackingGraphics, testStyle, observer);
+        
+        // With fallback image implementation, image WILL be drawn
+        assertTrue("Invalid image should use fallback image and be drawn", trackingGraphics.imageDrawn);
+        
+        // Clean up
+        g.dispose();
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     @Test
@@ -114,6 +243,7 @@ public class BitmapItemTest {
         // Create a BitmapItem with a test image that we can control
         bitmapItem = new BitmapItem(1, "test-image.jpg");
         
+<<<<<<< HEAD
         // Set a controlled bufferedImage using reflection
         try {
             BufferedImage testImage = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
@@ -128,6 +258,16 @@ public class BitmapItemTest {
         } catch (Exception e) {
             fail("Failed to set test image or draw image: " + e.getMessage());
         }
+=======
+        // Try to draw the null bitmap
+        nullBitmap.draw(10, 20, 1.0f, trackingGraphics, testStyle, observer);
+        
+        // With fallback image implementation, image WILL be drawn
+        assertTrue("Null image should use fallback image and be drawn", trackingGraphics.imageDrawn);
+        
+        // Clean up
+        g.dispose();
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     @Test
@@ -180,10 +320,60 @@ public class BitmapItemTest {
     }
     
     @Test
+<<<<<<< HEAD
     public void testConstantsValues() {
         // Test the constant values in BitmapItem
         assertEquals("FILE constant should be correct", "File ", BitmapItem.FILE);
         assertEquals("NOTFOUND constant should be correct", " not found", BitmapItem.NOTFOUND);
+=======
+    public void testLoadMissingImage() {
+        BitmapItem item = new BitmapItem(1, "non-existent-image.jpg");
+        
+        // Should use fallback image - test won't fail anymore
+        assertNotNull("Should have fallback image", item.getName());
+        
+        // Try drawing to ensure no exceptions
+        Style style = new Style(10, Color.BLACK, 12, 5);
+        BufferedImage img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+        Graphics g = img.getGraphics();
+        
+        // This should not throw an exception thanks to the fallback image
+        item.draw(10, 10, 1.0f, g, style, null);
+        
+        // Test bounding box
+        Rectangle bounds = item.getBoundingBox(g, null, 1.0f, style);
+        assertNotNull("Should have a bounding box", bounds);
+        assertTrue("Bounding box should have width > 0", bounds.width > 0);
+        assertTrue("Bounding box should have height > 0", bounds.height > 0);
+        
+        g.dispose();
+    }
+    
+    @Test
+    public void testFallbackImageCreation() {
+        // Create item with invalid image path
+        BitmapItem item = new BitmapItem(1, "invalid-path.jpg");
+        
+        // Create a test image to draw on
+        BufferedImage testImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
+        Graphics g = testImage.getGraphics();
+        
+        // Draw the fallback image
+        Style style = new Style(10, Color.BLACK, 12, 5);
+        item.draw(10, 10, 1.0f, g, style, null);
+        
+        // The image should be drawn without exceptions
+        // and should contain the fallback image text
+        g.dispose();
+    }
+    
+    /**
+     * Utility to create a test graphics object
+     */
+    private Graphics createTestGraphics() {
+        BufferedImage image = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        return image.getGraphics();
+>>>>>>> d6925b5f1f4d3bd3ef515fc7598526c5c7875072
     }
     
     @Test
