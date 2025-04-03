@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MenuController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jabberpoint</a> &gt; <a href="index.source.html" class="el_package">com.jabberpoint</a> &gt; <span class="el_source">MenuController.java</span></div><h1>MenuController.java</h1><pre class="source lang-java linenums">package com.jabberpoint;
+
+import java.awt.MenuBar;
+import java.awt.Frame;
+import java.awt.Menu;
+import java.awt.MenuItem;
+import java.awt.MenuShortcut;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+
+/**
+ * &lt;p&gt;The controller for the menu&lt;/p&gt;
+ *
+ * @author Ian F. Darwin, ian@darwinsys.com, Gert Florijn, Sylvia Stuurman
+ * @version 1.6 2014/05/16 Sylvia Stuurman
+ */
+public class MenuController extends MenuBar
+{
+
+    private Frame parent; // the frame, only used as parent for the Dialogs
+    private transient Presentation presentation; // Commands are given to the presentation
+
+    private static final long serialVersionUID = 227L;
+
+    protected static final String ABOUT = &quot;About&quot;;
+    protected static final String FILE = &quot;File&quot;;
+    protected static final String EXIT = &quot;Exit&quot;;
+    protected static final String GOTO = &quot;Go to&quot;;
+    protected static final String HELP = &quot;Help&quot;;
+    protected static final String NEW = &quot;New&quot;;
+    protected static final String NEXT = &quot;Next&quot;;
+    protected static final String OPEN = &quot;Open&quot;;
+    protected static final String PAGENR = &quot;Page number?&quot;;
+    protected static final String PREV = &quot;Prev&quot;;
+    protected static final String SAVE = &quot;Save&quot;;
+    protected static final String VIEW = &quot;View&quot;;
+
+    protected static final String TESTFILE = &quot;test.xml&quot;;
+    protected static final String SAVEFILE = &quot;dump.xml&quot;;
+
+    protected static final String IOEX = &quot;IO Exception: &quot;;
+    protected static final String LOADERR = &quot;Load Error&quot;;
+    protected static final String SAVEERR = &quot;Save Error&quot;;
+
+<span class="nc" id="L48">    public MenuController(Frame frame, Presentation pres)</span>
+    {
+<span class="nc" id="L50">        parent = frame;</span>
+<span class="nc" id="L51">        presentation = pres;</span>
+<span class="nc" id="L52">        buildFileMenu();</span>
+<span class="nc" id="L53">        buildViewMenu();</span>
+<span class="nc" id="L54">        buildHelpMenu();        // needed for portability (Motif, etc.).</span>
+<span class="nc" id="L55">    }</span>
+
+    public void initialize()
+    {
+        // Menus already built in constructor
+<span class="nc" id="L60">    }</span>
+
+    private void buildFileMenu()
+    {
+<span class="nc" id="L64">        Menu fileMenu = new Menu(FILE);</span>
+        MenuItem menuItem;
+<span class="nc" id="L66">        fileMenu.add(menuItem = mkMenuItem(OPEN));</span>
+<span class="nc" id="L67">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+<span class="nc" id="L71">                Accessor xmlAccessor = new XMLAccessor();</span>
+                try
+                {
+<span class="nc" id="L74">                    xmlAccessor.loadFile(presentation, TESTFILE);</span>
+<span class="nc" id="L75">                    presentation.setSlideNumber(0);</span>
+<span class="nc" id="L76">                } catch (IOException exc)</span>
+                {
+<span class="nc" id="L78">                    JOptionPane.showMessageDialog(parent, IOEX + exc, LOADERR, JOptionPane.ERROR_MESSAGE);</span>
+                }
+<span class="nc" id="L80">                parent.repaint();</span>
+<span class="nc" id="L81">            }</span>
+        });
+<span class="nc" id="L83">        fileMenu.add(menuItem = mkMenuItem(NEW));</span>
+<span class="nc" id="L84">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+<span class="nc" id="L88">                presentation.clear();</span>
+<span class="nc" id="L89">                parent.repaint();</span>
+<span class="nc" id="L90">            }</span>
+        });
+<span class="nc" id="L92">        fileMenu.add(menuItem = mkMenuItem(SAVE));</span>
+<span class="nc" id="L93">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+<span class="nc" id="L97">                Accessor xmlAccessor = new XMLAccessor();</span>
+                try
+                {
+<span class="nc" id="L100">                    xmlAccessor.saveFile(presentation, SAVEFILE);</span>
+<span class="nc" id="L101">                } catch (IOException exc)</span>
+                {
+<span class="nc" id="L103">                    JOptionPane.showMessageDialog(parent, IOEX + exc, SAVEERR, JOptionPane.ERROR_MESSAGE);</span>
+                }
+<span class="nc" id="L105">            }</span>
+        });
+<span class="nc" id="L107">        fileMenu.addSeparator();</span>
+<span class="nc" id="L108">        fileMenu.add(menuItem = mkMenuItem(EXIT));</span>
+<span class="nc" id="L109">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+<span class="nc" id="L113">                presentation.exit(0);</span>
+<span class="nc" id="L114">            }</span>
+        });
+<span class="nc" id="L116">        add(fileMenu);</span>
+<span class="nc" id="L117">    }</span>
+
+    private void buildViewMenu()
+    {
+<span class="nc" id="L121">        Menu viewMenu = new Menu(VIEW);</span>
+        MenuItem menuItem;
+<span class="nc" id="L123">        viewMenu.add(menuItem = mkMenuItem(NEXT));</span>
+<span class="nc" id="L124">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+<span class="nc" id="L128">                presentation.nextSlide();</span>
+<span class="nc" id="L129">            }</span>
+        });
+<span class="nc" id="L131">        viewMenu.add(menuItem = mkMenuItem(PREV));</span>
+<span class="nc" id="L132">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+<span class="nc" id="L136">                presentation.prevSlide();</span>
+<span class="nc" id="L137">            }</span>
+        });
+<span class="nc" id="L139">        viewMenu.add(menuItem = mkMenuItem(GOTO));</span>
+<span class="nc" id="L140">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+<span class="nc" id="L144">                String pageNumberStr = JOptionPane.showInputDialog((Object) PAGENR);</span>
+<span class="nc" id="L145">                int pageNumber = Integer.parseInt(pageNumberStr);</span>
+<span class="nc" id="L146">                presentation.setSlideNumber(pageNumber - 1);</span>
+<span class="nc" id="L147">            }</span>
+        });
+<span class="nc" id="L149">        add(viewMenu);</span>
+<span class="nc" id="L150">    }</span>
+
+    private void buildHelpMenu()
+    {
+<span class="nc" id="L154">        Menu helpMenu = new Menu(HELP);</span>
+        MenuItem menuItem;
+<span class="nc" id="L156">        helpMenu.add(menuItem = mkMenuItem(ABOUT));</span>
+<span class="nc" id="L157">        menuItem.addActionListener(new ActionListener()</span>
+        {
+            public void actionPerformed(ActionEvent actionEvent)
+            {
+<span class="nc" id="L161">                AboutBox.show(parent);</span>
+<span class="nc" id="L162">            }</span>
+        });
+<span class="nc" id="L164">        setHelpMenu(helpMenu);</span>
+<span class="nc" id="L165">    }</span>
+
+    // create a menu item
+    public MenuItem mkMenuItem(String name)
+    {
+<span class="nc" id="L170">        return new MenuItem(name, new MenuShortcut(name.charAt(0)));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

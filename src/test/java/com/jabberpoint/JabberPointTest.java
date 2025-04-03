@@ -3,206 +3,174 @@ package com.jabberpoint;
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import static org.junit.Assert.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.lang.reflect.Method;
-import java.awt.GraphicsEnvironment;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.awt.HeadlessException;
-import java.io.File;
 import java.io.IOException;
+import java.awt.GraphicsEnvironment;
+import javax.swing.JOptionPane;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
-@RunWith(JUnit4.class)
 public class JabberPointTest {
     
-    private boolean originalHeadless;
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+    // Save the original System.out to restore it later
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.err;
-    
-    // Create test class that extends JabberPoint to enable testing
-    private static class TestableJabberPoint extends JabberPoint {
-        public static boolean createFrameCalled = false;
-        public static boolean loadDemoCalled = false;
-        public static boolean loadXmlCalled = false;
-        public static Exception lastException = null;
-        
-        // This method imitates the main method without system exit
-        public static void testableMain(String[] argv) {
-            createFrameCalled = false;
-            loadDemoCalled = false;
-            loadXmlCalled = false;
-            lastException = null;
-            
-            try {
-                // Directly call the logic from main() without actually creating GUI
-                Style.createStyles();
-                Presentation presentation = new Presentation();
-                
-                // Record the call instead of creating an actual frame
-                createFrameCalled = true;
-                
-                try {
-                    if (argv.length == 0) {
-                        // Record the demo access call
-                        loadDemoCalled = true;
-                        // Create demo presentation but don't load via accessor
-                        // to avoid JOptionPane dialog in test
-                        DemoPresentationLoader loader = new DemoPresentationLoader();
-                        // For test coverage, we should make the call
-                        // But we can handle errors differently
-                        try {
-                            loader.loadPresentation(presentation, "");
-                        } catch (Exception e) {
-                            System.err.println("Test: Demo loading exception: " + e);
-                        }
-                    } else {
-                        // Record the XML access call
-                        loadXmlCalled = true;
-                        // For actual coverage without exiting in test,
-                        // we'll make a direct call but catch exceptions differently
-                        try {
-                            XMLPresentationLoader loader = new XMLPresentationLoader();
-                            loader.loadPresentation(presentation, argv[0]);
-                        } catch (Exception e) {
-                            System.err.println("Test: XML loading exception: " + e);
-                        }
-                    }
-                    // For test, we don't need to set slide number
-                } catch (Exception ex) {
-                    lastException = ex;
-                    System.err.println(IOERR + ex);
-                }
-            } catch (Exception e) {
-                lastException = e;
-                System.err.println("Unexpected exception: " + e);
-            }
-        }
-    }
+    private ByteArrayOutputStream outContent;
+    private ByteArrayOutputStream errContent;
     
     @Before
     public void setUp() {
-        // Store original headless state
-        originalHeadless = GraphicsEnvironment.isHeadless();
-        
-        // Force headless mode for tests
-        System.setProperty("java.awt.headless", "true");
-        
-        // Capture stdout and stderr
+        // Set up System.out and System.err to capture output
+        outContent = new ByteArrayOutputStream();
+        errContent = new ByteArrayOutputStream();
         System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(outContent));
-        
-        // Reset test tracking
-        TestableJabberPoint.createFrameCalled = false;
-        TestableJabberPoint.loadDemoCalled = false;
-        TestableJabberPoint.loadXmlCalled = false;
-        TestableJabberPoint.lastException = null;
+        System.setErr(new PrintStream(errContent));
     }
     
     @After
     public void tearDown() {
-        // Restore original headless value
-        System.setProperty("java.awt.headless", Boolean.toString(originalHeadless));
-        
-        // Restore original stdout and stderr
+        // Restore original streams
         System.setOut(originalOut);
         System.setErr(originalErr);
     }
     
-    /**
-     * Test JabberPoint constants and fields
-     */
     @Test
-    public void testJabberPointConstants() {
-        // Test the constants defined in JabberPoint
+    public void testConstants() {
+        // Test that constants are defined with expected values
         assertEquals("IO Error: ", JabberPoint.IOERR);
         assertEquals("Jabberpoint Error ", JabberPoint.JABERR);
         assertEquals("Jabberpoint 1.6 - OU version", JabberPoint.JABVERSION);
     }
     
-    /**
-     * Test logic in the main method with no arguments
-     * This directly exercises the code paths in JabberPoint main method
-     */
     @Test
-    public void testMainNoArgs() {
-        // Call the testable version with no arguments
-        TestableJabberPoint.testableMain(new String[0]);
-        
-        // Verify the correct code paths were executed
-        assertTrue("Create frame should be called", TestableJabberPoint.createFrameCalled);
-        assertTrue("Load demo should be called", TestableJabberPoint.loadDemoCalled);
-        assertFalse("Load XML should not be called", TestableJabberPoint.loadXmlCalled);
-        assertNull("No exceptions should be thrown", TestableJabberPoint.lastException);
+    public void testStaticMethodsExist() {
+        // Test that critical static methods exist
+        try {
+            // Verify main method exists
+            assertNotNull("main method should exist", 
+                JabberPoint.class.getMethod("main", String[].class));
+        } catch (NoSuchMethodException e) {
+            fail("Required method not found: " + e.getMessage());
+        }
     }
     
-    /**
-     * Test logic with file argument, including error handling
-     */
     @Test
-    public void testMainWithFileArg() {
-        // Call with an argument
-        TestableJabberPoint.testableMain(new String[]{"test-file.xml"});
-        
-        // Verify the correct code paths
-        assertTrue("Create frame should be called", TestableJabberPoint.createFrameCalled);
-        assertFalse("Load demo should not be called", TestableJabberPoint.loadDemoCalled);
-        assertTrue("Load XML should be called", TestableJabberPoint.loadXmlCalled);
-    }
-    
-    /**
-     * Test handling non-existent files
-     */
-    @Test
-    public void testMainWithNonexistentFile() {
-        // Call with non-existent file
-        TestableJabberPoint.testableMain(new String[]{"nonexistent.xml"});
-        
-        // Verify handling
-        assertTrue("Create frame should be called", TestableJabberPoint.createFrameCalled);
-        assertFalse("Load demo should not be called", TestableJabberPoint.loadDemoCalled);
-        assertTrue("Load XML should be called", TestableJabberPoint.loadXmlCalled);
-        
-        // Verify the error output was produced
-        String output = outContent.toString();
-        assertTrue("Error output should contain something", output.length() > 0);
-    }
-    
-    /**
-     * Test a simulated run of the application
-     */
-    @Test
-    public void testFullApplicationFlow() {
-        // Create styles (which the main method does)
+    public void testStyleInitialization() {
+        // Test that Style.createStyles() initializes styles correctly
         Style.createStyles();
         
-        // Create a presentation (as main would)
+        // Verify that styles were created by checking a few properties
+        // The default style (level 0) should exist
+        Style style = Style.getStyle(0);
+        assertNotNull("Default style should be created", style);
+        
+        // Additional styles should be created too (at least 1-5)
+        for (int i = 1; i <= 5; i++) {
+            assertNotNull("Style for level " + i + " should be created", Style.getStyle(i));
+        }
+    }
+    
+    @Test
+    public void testPresentationCreation() {
+        // Test that a Presentation can be created
         Presentation presentation = new Presentation();
+        assertNotNull("Presentation should be created successfully", presentation);
         
-        // Set a title
-        presentation.setTitle("Test Presentation");
+        // Test initial state
+        assertEquals("New presentation should have 0 slides", 0, presentation.getSize());
+    }
+    
+    /**
+     * Custom class to help with testing JabberPoint's main method in headless environments.
+     * This handles the JOptionPane problem by bypassing UI components.
+     */
+    private static class HeadlessTestHelper {
+        private final boolean isHeadless;
+        private final String originalHeadlessProperty;
         
-        // Create and add a slide
-        Slide slide = new Slide();
-        slide.setTitle("Test Slide");
-        presentation.append(slide);
+        public HeadlessTestHelper() {
+            // Save original headless state
+            originalHeadlessProperty = System.getProperty("java.awt.headless");
+            isHeadless = GraphicsEnvironment.isHeadless();
+            
+            // Force headless mode for testing
+            System.setProperty("java.awt.headless", "true");
+        }
         
-        // Navigate slides as a user would
-        assertEquals("Initial slide should be 0", 0, presentation.getSlideNumber());
+        public void restore() {
+            // Restore original headless property
+            if (originalHeadlessProperty != null) {
+                System.setProperty("java.awt.headless", originalHeadlessProperty);
+            } else {
+                System.clearProperty("java.awt.headless");
+            }
+        }
+    }
+    
+    @Test
+    public void testMainWithNoArguments() {
+        HeadlessTestHelper helper = new HeadlessTestHelper();
         
-        // Setting slide number should work
-        presentation.setSlideNumber(0);
-        assertEquals("After set, slide should be 0", 0, presentation.getSlideNumber());
+        try {
+            // Create a separate SlideViewerFrame implementation for testing
+            TestableJabberPoint.mainNoArgs();
+            assertTrue(true);
+        } catch (Exception e) {
+            fail("JabberPoint.main() with no arguments should not throw exceptions: " + e.getMessage());
+        } finally {
+            helper.restore();
+        }
+    }
+    
+    @Test
+    public void testMainWithFilenameArgument() {
+        HeadlessTestHelper helper = new HeadlessTestHelper();
         
-        // The slide content should be as expected
-        Slide currentSlide = presentation.getCurrentSlide();
-        assertNotNull("Current slide should not be null", currentSlide);
-        assertEquals("Slide title should match", "Test Slide", currentSlide.getTitle());
+        try {
+            // Create a test file path that doesn't exist
+            String testFilePath = "nonexistent_test_file.xml";
+            
+            // Create a separate implementation that doesn't use JOptionPane
+            boolean exceptionThrown = false;
+            try {
+                TestableJabberPoint.mainWithArgs(testFilePath);
+            } catch (IOException e) {
+                // We expect an IOException for a non-existent file
+                exceptionThrown = true;
+            }
+            
+            // Verify that an exception was thrown for the non-existent file
+            assertTrue("An IOException should be thrown for a non-existent file", exceptionThrown);
+        } finally {
+            helper.restore();
+        }
+    }
+    
+    /**
+     * Test version of JabberPoint that doesn't use JOptionPane to avoid UI issues during testing.
+     */
+    private static class TestableJabberPoint {
+        public static void mainNoArgs() throws IOException {
+            Style.createStyles();
+            Presentation presentation = new Presentation();
+            // Skip creating the frame for headless testing
+            
+            // Load the demo presentation
+            Accessor.getDemoAccessor().loadFile(presentation, "");
+            presentation.setSlideNumber(0);
+        }
+        
+        public static void mainWithArgs(String filename) throws IOException {
+            Style.createStyles();
+            Presentation presentation = new Presentation();
+            // Skip creating the frame for headless testing
+            
+            // Try to load the file - this should throw an IOException for a non-existent file
+            new XMLAccessor().loadFile(presentation, filename);
+            presentation.setSlideNumber(0);
+        }
     }
 } 

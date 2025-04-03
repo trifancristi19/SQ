@@ -1,103 +1,66 @@
 package com.jabberpoint;
 
 import org.junit.Test;
-
 import static org.junit.Assert.*;
 
 import java.io.IOException;
 
-public class AccessorTest
-{
-
-    // Mock implementation of Accessor for testing
-    private class MockAccessor extends Accessor
-    {
-        private boolean loadCalled = false;
-        private boolean saveCalled = false;
-        private String lastFilename = null;
-
-        @Override
-        public void loadFile(Presentation p, String fn) throws IOException
-        {
-            this.loadCalled = true;
-            this.lastFilename = fn;
-        }
-
-        @Override
-        public void saveFile(Presentation p, String fn) throws IOException
-        {
-            this.saveCalled = true;
-            this.lastFilename = fn;
-        }
-
-        public boolean wasLoadCalled()
-        {
-            return this.loadCalled;
-        }
-
-        public boolean wasSaveCalled()
-        {
-            return this.saveCalled;
-        }
-
-        public String getLastFilename()
-        {
-            return this.lastFilename;
-        }
-    }
-
+/**
+ * Tests for the abstract Accessor class
+ */
+public class AccessorTest {
+    
+    /**
+     * Test the getDemoAccessor factory method
+     */
     @Test
-    public void testAccessorCreation()
-    {
-        Accessor accessor = new MockAccessor();
-        assertNotNull("Accessor should be created", accessor);
+    public void testGetDemoAccessor() {
+        Accessor accessor = Accessor.getDemoAccessor();
+        assertNotNull("Demo accessor should not be null", accessor);
+        assertTrue("Should get a DemoPresentation instance", accessor instanceof DemoPresentation);
     }
-
+    
+    /**
+     * Test constants in Accessor class
+     */
     @Test
-    public void testGetDemoAccessor()
-    {
-        Accessor demoAccessor = Accessor.getDemoAccessor();
-        assertNotNull("Demo accessor should be created", demoAccessor);
-        assertTrue("Demo accessor should be an instance of DemoPresentation",
-                demoAccessor instanceof DemoPresentation);
+    public void testAccessorConstants() {
+        assertEquals("Demo name should match", "Demonstration presentation", Accessor.DEMO_NAME);
+        assertEquals("Default extension should match", ".xml", Accessor.DEFAULT_EXTENSION);
     }
-
+    
+    /**
+     * Test constructor exists and works
+     */
     @Test
-    public void testLoadFile() throws IOException
-    {
-        MockAccessor accessor = new MockAccessor();
-        Presentation presentation = new Presentation();
-        String filename = "test.xml";
-
-        accessor.loadFile(presentation, filename);
-
-        assertTrue("loadFile should be called", accessor.wasLoadCalled());
-        assertEquals("Filename should be passed correctly", filename, accessor.getLastFilename());
+    public void testConstructor() {
+        // Create a concrete implementation for testing
+        Accessor testAccessor = new Accessor() {
+            @Override
+            public void loadFile(Presentation p, String fn) {
+                // No implementation needed for test
+            }
+            
+            @Override
+            public void saveFile(Presentation p, String fn) {
+                // No implementation needed for test
+            }
+        };
+        
+        assertNotNull("Accessor implementation should be created", testAccessor);
     }
-
+    
     @Test
-    public void testSaveFile() throws IOException
-    {
-        MockAccessor accessor = new MockAccessor();
-        Presentation presentation = new Presentation();
-        String filename = "test.xml";
-
-        accessor.saveFile(presentation, filename);
-
-        assertTrue("saveFile should be called", accessor.wasSaveCalled());
-        assertEquals("Filename should be passed correctly", filename, accessor.getLastFilename());
+    public void testXmlAccessorSubclass() {
+        Accessor accessor = new XMLAccessor();
+        assertNotNull("XMLAccessor should be created successfully", accessor);
+        assertTrue("XMLAccessor should be a subclass of Accessor", accessor instanceof Accessor);
     }
-
+    
     @Test
-    public void testDefaultExtension()
-    {
-        assertEquals("Default extension should be .xml", ".xml", Accessor.DEFAULT_EXTENSION);
-    }
-
-    @Test
-    public void testDemoName()
-    {
-        assertEquals("Demo name should be set correctly",
-                "Demonstration presentation", Accessor.DEMO_NAME);
+    public void testDemoPresentationSubclass() {
+        Accessor accessor = new DemoPresentation();
+        assertNotNull("DemoPresentation should be created successfully", accessor);
+        assertTrue("DemoPresentation should be a subclass of Accessor", accessor instanceof Accessor);
     }
 } 

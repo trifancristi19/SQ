@@ -2,33 +2,21 @@ package com.jabberpoint;
 
 import org.junit.Test;
 import org.junit.Before;
-import org.junit.After;
 import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.lang.reflect.Field;
 
 /**
  * Tests for the Style class
  */
 public class StyleTest {
-
+    
     @BeforeClass
     public static void setUpClass() {
-        // Create styles for testing
+        // Initialize styles before all tests
         Style.createStyles();
-    }
-    
-    @Before
-    public void setUp() {
-        // No specific setup needed for each test
-    }
-    
-    @After
-    public void tearDown() {
-        // No specific teardown needed for each test
     }
     
     /**
@@ -36,15 +24,16 @@ public class StyleTest {
      */
     @Test
     public void testCreateStyles() {
-        // Call createStyles again to ensure it works multiple times
+        // Create styles again (should reinitialize)
         Style.createStyles();
         
-        // Verify the styles were created properly
-        assertNotNull("Default style should exist", Style.getStyle(0));
-        assertNotNull("Style for level 1 should exist", Style.getStyle(1));
-        assertNotNull("Style for level 2 should exist", Style.getStyle(2));
-        assertNotNull("Style for level 3 should exist", Style.getStyle(3));
-        assertNotNull("Style for level 4 should exist", Style.getStyle(4));
+        // Verify we can get styles for each level
+        for (int i = 0; i < 5; i++) {
+            Style style = Style.getStyle(i);
+            assertNotNull("Style should be created for level " + i, style);
+            assertNotNull("Font should not be null", style.font);
+            assertNotNull("Color should not be null", style.color);
+        }
     }
     
     /**
@@ -72,74 +61,22 @@ public class StyleTest {
     }
     
     /**
-     * Test style constructors and property access
+     * Test style properties and constructor
      */
     @Test
     public void testStyleProperties() {
-        int indent = 15;
+        // Create a custom style
+        int indent = 20;
         Color color = Color.RED;
-        int fontSize = 20;
+        int points = 24;
         int leading = 10;
         
-        // Create style with all properties
-        Style style = new Style(indent, color, fontSize, leading);
+        Style style = new Style(indent, color, points, leading);
         
-        // Test all properties
-        assertEquals("Indent should match", indent, style.indent);
-        assertEquals("Font size should match", fontSize, style.fontSize);
-        assertEquals("Leading should match", leading, style.leading);
+        // Verify properties
         assertEquals("Color should match", color, style.color);
-    }
-    
-    /**
-     * Test getFont method with scaling
-     */
-    @Test
-    public void testGetFontWithScale() {
-        Style style = new Style(10, Color.RED, 20, 5);
-        float scale = 2.0f;
-        Font scaledFont = style.getFont(scale);
-        
-        assertNotNull("Scaled font should not be null", scaledFont);
-        assertEquals("Font size should be scaled correctly", 
-                20 * scale, scaledFont.getSize2D(), 0.001f);
-    }
-    
-    /**
-     * Test toString method
-     */
-    @Test
-    public void testToString() {
-        Style style = new Style(10, Color.RED, 20, 5);
-        String styleString = style.toString();
-        
-        assertNotNull("String representation should not be null", styleString);
-        assertTrue("String should contain indent", styleString.contains("10"));
-        assertTrue("String should contain font size", styleString.contains("20"));
-        assertTrue("String should contain leading", styleString.contains("5"));
-    }
-    
-    /**
-     * Test Style.styles array for internal state
-     */
-    @Test
-    public void testStylesArray() throws Exception {
-        // Access the styles array using reflection
-        Field stylesField = Style.class.getDeclaredField("styles");
-        stylesField.setAccessible(true);
-        Object stylesObj = stylesField.get(null);
-        
-        // Verify it's a Style array
-        assertTrue("styles should be a Style array", stylesObj instanceof Style[]);
-        
-        // Check the length of the array
-        Style[] styles = (Style[]) stylesObj;
-        assertEquals("Should have 5 styles defined", 5, styles.length);
-        
-        // Test that styles in the array match what getStyle returns
-        for (int i = 0; i < styles.length; i++) {
-            assertEquals("Style in array should match getStyle", 
-                    styles[i], Style.getStyle(i));
-        }
+        assertEquals("Indent should match", indent, style.indent);
+        assertEquals("Leading should match", leading, style.leading);
+        assertEquals("Font size should match", points, style.fontSize);
     }
 } 

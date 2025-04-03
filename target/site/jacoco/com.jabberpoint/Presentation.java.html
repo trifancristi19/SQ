@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Presentation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jabberpoint</a> &gt; <a href="index.source.html" class="el_package">com.jabberpoint</a> &gt; <span class="el_source">Presentation.java</span></div><h1>Presentation.java</h1><pre class="source lang-java linenums">package com.jabberpoint;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * &lt;p&gt;Presentation maintains the slides in the presentation.&lt;/p&gt;
+ * &lt;p&gt;There is only instance of this class.&lt;/p&gt;
+ *
+ * @author Ian F. Darwin, ian@darwinsys.com, Gert Florijn, Sylvia Stuurman
+ * @version 1.6 2014/05/16 Sylvia Stuurman
+ */
+
+public class Presentation
+{
+    private String title;
+    private List&lt;Slide&gt; slides;
+<span class="fc" id="L18">    private int currentSlideNumber = 0;</span>
+<span class="fc" id="L19">    private List&lt;PresentationObserver&gt; observers = new ArrayList&lt;&gt;();</span>
+    private PresentationLoader loader;  // Strategy pattern
+<span class="fc" id="L21">    private SlideViewerComponent slideViewComponent = null; // the viewcomponent of the Slides</span>
+
+<span class="fc" id="L23">    public Presentation()</span>
+    {
+<span class="fc" id="L25">        slides = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L26">        title = &quot;New Presentation&quot;;</span>
+<span class="fc" id="L27">    }</span>
+
+    public void setLoader(PresentationLoader loader)
+    {
+<span class="nc" id="L31">        this.loader = loader;</span>
+<span class="nc" id="L32">    }</span>
+
+    public void loadPresentation(String fileName) throws Exception
+    {
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        if (loader == null)</span>
+        {
+<span class="nc" id="L38">            throw new IllegalStateException(&quot;No presentation loader set&quot;);</span>
+        }
+<span class="nc" id="L40">        loader.loadPresentation(this, fileName);</span>
+<span class="nc" id="L41">        notifyPresentationChanged();</span>
+<span class="nc" id="L42">    }</span>
+
+    public void savePresentation(String fileName) throws Exception
+    {
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        if (loader == null)</span>
+        {
+<span class="nc" id="L48">            throw new IllegalStateException(&quot;No presentation loader set&quot;);</span>
+        }
+<span class="nc" id="L50">        loader.savePresentation(this, fileName);</span>
+<span class="nc" id="L51">    }</span>
+
+    public void addObserver(PresentationObserver observer)
+    {
+<span class="fc" id="L55">        observers.add(observer);</span>
+<span class="fc" id="L56">    }</span>
+
+    public void removeObserver(PresentationObserver observer)
+    {
+<span class="fc" id="L60">        observers.remove(observer);</span>
+<span class="fc" id="L61">    }</span>
+
+    private void notifySlideChanged()
+    {
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (PresentationObserver observer : observers)</span>
+        {
+<span class="fc" id="L67">            observer.onSlideChanged(currentSlideNumber);</span>
+        }
+<span class="fc" id="L69">    }</span>
+
+    private void notifyPresentationChanged()
+    {
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        for (PresentationObserver observer : observers)</span>
+        {
+<span class="nc" id="L75">            observer.onPresentationChanged();</span>
+        }
+<span class="fc" id="L77">    }</span>
+
+    public int getSize()
+    {
+<span class="fc" id="L81">        return slides.size();</span>
+    }
+
+    public String getTitle()
+    {
+<span class="fc" id="L86">        return title;</span>
+    }
+
+    public void setTitle(String title)
+    {
+<span class="fc" id="L91">        this.title = title;</span>
+<span class="fc" id="L92">    }</span>
+
+    public void setShowView(SlideViewerComponent slideViewerComponent)
+    {
+<span class="nc" id="L96">        this.slideViewComponent = slideViewerComponent;</span>
+<span class="nc" id="L97">    }</span>
+
+    // give the number of the current slide
+    public int getSlideNumber()
+    {
+<span class="fc" id="L102">        return currentSlideNumber;</span>
+    }
+
+    // change the current slide number and signal it to the window
+    public void setSlideNumber(int number)
+    {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (number &lt; 0) {</span>
+<span class="fc" id="L109">            currentSlideNumber = 0;</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        } else if (number &gt;= slides.size()) {</span>
+<span class="fc" id="L111">            currentSlideNumber = slides.size() - 1;</span>
+<span class="fc" id="L112">        } else {</span>
+<span class="fc" id="L113">            currentSlideNumber = number;</span>
+        }
+<span class="fc" id="L115">        notifySlideChanged();</span>
+<span class="fc" id="L116">    }</span>
+
+    // go to the previous slide unless your at the beginning of the presentation
+    public void prevSlide()
+    {
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        if (slides.isEmpty()) {</span>
+<span class="nc" id="L122">            currentSlideNumber = -1;</span>
+<span class="nc" id="L123">            return;</span>
+        }
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        if (currentSlideNumber &gt; 0)</span>
+        {
+<span class="fc" id="L127">            setSlideNumber(currentSlideNumber - 1);</span>
+        }
+<span class="fc" id="L129">    }</span>
+
+    // go to the next slide unless your at the end of the presentation.
+    public void nextSlide()
+    {
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        if (slides.isEmpty()) {</span>
+<span class="nc" id="L135">            currentSlideNumber = -1;</span>
+<span class="nc" id="L136">            return;</span>
+        }
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        if (currentSlideNumber &lt; (slides.size() - 1))</span>
+        {
+<span class="fc" id="L140">            setSlideNumber(currentSlideNumber + 1);</span>
+        }
+<span class="fc" id="L142">    }</span>
+
+    // Delete the presentation to be ready for the next one.
+    void clear()
+    {
+<span class="fc" id="L147">        slides = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L148">        currentSlideNumber = -1;</span>
+<span class="fc" id="L149">        notifyPresentationChanged();</span>
+<span class="fc" id="L150">    }</span>
+
+    // Add a slide to the presentation
+    public void append(Slide slide)
+    {
+<span class="fc" id="L155">        slides.add(slide);</span>
+<span class="fc" id="L156">    }</span>
+
+    // Get a slide with a certain slidenumber
+    public Slide getSlide(int number)
+    {
+<span class="pc bpc" id="L161" title="1 of 4 branches missed.">        if (number &lt; 0 || number &gt;= getSize())</span>
+        {
+<span class="fc" id="L163">            return null;</span>
+        }
+<span class="fc" id="L165">        return slides.get(number);</span>
+    }
+
+    // Give the current slide
+    public Slide getCurrentSlide()
+    {
+<span class="pc bpc" id="L171" title="2 of 4 branches missed.">        if (currentSlideNumber &lt; 0 || currentSlideNumber &gt;= slides.size()) {</span>
+<span class="nc" id="L172">            return null;</span>
+        }
+<span class="fc" id="L174">        return slides.get(currentSlideNumber);</span>
+    }
+
+    public void exit(int n) {
+<span class="nc" id="L178">        doExit(n);</span>
+<span class="nc" id="L179">    }</span>
+    
+    // Protected method that can be overridden in tests
+    protected void doExit(int n) {
+<span class="nc" id="L183">        System.exit(n);</span>
+<span class="nc" id="L184">    }</span>
+
+    public List&lt;Slide&gt; getSlides()
+    {
+<span class="fc" id="L188">        return slides;</span>
+    }
+
+    public void setSlides(List&lt;Slide&gt; slides)
+    {
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">        this.slides = (slides != null) ? slides : new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L194">        notifyPresentationChanged();</span>
+<span class="fc" id="L195">    }</span>
+
+    public int getCurrentSlideNumber()
+    {
+<span class="fc" id="L199">        return currentSlideNumber;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

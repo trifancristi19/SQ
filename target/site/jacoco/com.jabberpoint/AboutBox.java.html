@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AboutBox.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jabberpoint</a> &gt; <a href="index.source.html" class="el_package">com.jabberpoint</a> &gt; <span class="el_source">AboutBox.java</span></div><h1>AboutBox.java</h1><pre class="source lang-java linenums">package com.jabberpoint;
+
+import java.awt.Frame;
+import javax.swing.JOptionPane;
+
+/**De About-box voor JabberPoint.
+ * @author Ian F. Darwin, ian@darwinsys.com, Gert Florijn, Sylvia Stuurman
+ * @version 1.1 2002/12/17 Gert Florijn
+ * @version 1.2 2003/11/19 Sylvia Stuurman
+ * @version 1.3 2004/08/17 Sylvia Stuurman
+ * @version 1.4 2007/07/16 Sylvia Stuurman
+ * @version 1.5 2010/03/03 Sylvia Stuurman
+ * @version 1.6 2014/05/16 Sylvia Stuurman
+ */
+
+<span class="nc" id="L16">public class AboutBox</span>
+{
+	public static void show(Frame parent)
+    {
+<span class="nc" id="L20">		JOptionPane.showMessageDialog(parent,</span>
+<span class="nc" id="L21">				&quot;JabberPoint is a primitive slide-show program in Java(tm). It\n&quot; +</span>
+				&quot;is freely copyable as long as you keep this notice and\n&quot; +
+				&quot;the splash screen intact.\n&quot; +
+				&quot;Copyright (c) 1995-1997 by Ian F. Darwin, ian@darwinsys.com.\n&quot; +
+				&quot;Adapted by Gert Florijn (version 1.1) and &quot; +
+				&quot;Sylvia Stuurman (version 1.2 and higher) for the Open&quot; +
+				&quot;University of the Netherlands, 2002 -- now.&quot; +
+				&quot;Author's version available from http://www.darwinsys.com/&quot;,
+<span class="nc" id="L29">				&quot;About JabberPoint&quot;,</span>
+<span class="nc" id="L30">				JOptionPane.INFORMATION_MESSAGE</span>
+		);
+<span class="nc" id="L32">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

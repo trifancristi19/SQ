@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XMLAccessor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">jabberpoint</a> &gt; <a href="index.source.html" class="el_package">com.jabberpoint</a> &gt; <span class="el_source">XMLAccessor.java</span></div><h1>XMLAccessor.java</h1><pre class="source lang-java linenums">package com.jabberpoint;
+
+import java.util.Vector;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.FileWriter;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
+
+
+/**
+ * XMLAccessor, reads and writes XML files
+ *
+ * @author Ian F. Darwin, ian@darwinsys.com, Gert Florijn, Sylvia Stuurman
+ * @version 1.6 2014/05/16 Sylvia Stuurman
+ */
+
+<span class="fc" id="L27">public class XMLAccessor extends Accessor</span>
+{
+
+    /**
+     * Default API to use.
+     */
+    protected static final String DEFAULT_API_TO_USE = &quot;dom&quot;;
+
+    /**
+     * namen van xml tags of attributen
+     */
+    protected static final String SHOWTITLE = &quot;showtitle&quot;;
+    protected static final String SLIDETITLE = &quot;title&quot;;
+    protected static final String SLIDE = &quot;slide&quot;;
+    protected static final String ITEM = &quot;item&quot;;
+    protected static final String LEVEL = &quot;level&quot;;
+    protected static final String KIND = &quot;kind&quot;;
+    protected static final String TEXT = &quot;text&quot;;
+    protected static final String IMAGE = &quot;image&quot;;
+
+    /**
+     * tekst van messages
+     */
+    protected static final String PCE = &quot;Parser Configuration Exception&quot;;
+    protected static final String UNKNOWNTYPE = &quot;Unknown Element type&quot;;
+    protected static final String NFE = &quot;Number Format Exception&quot;;
+
+
+    private String getTitle(Element element, String tagName)
+    {
+<span class="fc" id="L57">        NodeList titles = element.getElementsByTagName(tagName);</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (titles.getLength() == 0)</span>
+        {
+<span class="nc" id="L60">            return &quot;&quot;; // Return empty string if no title element found</span>
+        }
+<span class="fc" id="L62">        return titles.item(0).getTextContent();</span>
+    }
+
+    public void loadFile(Presentation presentation, String filename) throws IOException
+    {
+<span class="fc" id="L67">        int slideNumber, itemNumber, max = 0, maxItems = 0;</span>
+        try
+        {
+<span class="fc" id="L70">            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();</span>
+
+            // Set features to make DTD handling more robust
+<span class="fc" id="L73">            factory.setValidating(false);</span>
+<span class="fc" id="L74">            factory.setFeature(&quot;http://apache.org/xml/features/nonvalidating/load-external-dtd&quot;, false);</span>
+
+<span class="fc" id="L76">            DocumentBuilder builder = factory.newDocumentBuilder();</span>
+<span class="fc" id="L77">            Document document = builder.parse(new File(filename)); // Create a JDOM document</span>
+<span class="fc" id="L78">            Element doc = document.getDocumentElement();</span>
+
+            // First, get the title so it doesn't get cleared
+<span class="fc" id="L81">            String title = getTitle(doc, SHOWTITLE);</span>
+
+            // Clear the presentation
+<span class="fc" id="L84">            presentation.clear();</span>
+
+            // Set the title after clearing
+<span class="fc" id="L87">            presentation.setTitle(title);</span>
+
+<span class="fc" id="L89">            NodeList slides = doc.getElementsByTagName(SLIDE);</span>
+<span class="fc" id="L90">            max = slides.getLength();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">            for (slideNumber = 0; slideNumber &lt; max; slideNumber++)</span>
+            {
+<span class="fc" id="L93">                Element xmlSlide = (Element) slides.item(slideNumber);</span>
+<span class="fc" id="L94">                Slide slide = new Slide();</span>
+<span class="fc" id="L95">                slide.setTitle(getTitle(xmlSlide, SLIDETITLE));</span>
+<span class="fc" id="L96">                presentation.append(slide);</span>
+
+<span class="fc" id="L98">                NodeList slideItems = xmlSlide.getElementsByTagName(ITEM);</span>
+<span class="fc" id="L99">                maxItems = slideItems.getLength();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                for (itemNumber = 0; itemNumber &lt; maxItems; itemNumber++)</span>
+                {
+<span class="fc" id="L102">                    Element item = (Element) slideItems.item(itemNumber);</span>
+<span class="fc" id="L103">                    loadSlideItem(slide, item);</span>
+                }
+            }
+<span class="fc" id="L106">        } catch (IOException iox)</span>
+        {
+<span class="fc" id="L108">            System.err.println(iox.toString());</span>
+<span class="fc" id="L109">            throw iox; // Rethrow to ensure caller knows about the error</span>
+<span class="fc" id="L110">        } catch (SAXException sax)</span>
+        {
+<span class="fc" id="L112">            System.err.println(sax.getMessage());</span>
+<span class="fc" id="L113">            throw new IOException(&quot;SAX Exception: &quot; + sax.getMessage(), sax);</span>
+<span class="nc" id="L114">        } catch (ParserConfigurationException pcx)</span>
+        {
+<span class="nc" id="L116">            System.err.println(PCE);</span>
+<span class="nc" id="L117">            throw new IOException(&quot;Parser Configuration Exception&quot;, pcx);</span>
+        }
+<span class="fc" id="L119">    }</span>
+
+    protected void loadSlideItem(Slide slide, Element item)
+    {
+<span class="fc" id="L123">        int level = 1; // default</span>
+<span class="fc" id="L124">        NamedNodeMap attributes = item.getAttributes();</span>
+        
+        // Check if required attributes exist
+<span class="fc bfc" id="L127" title="All 4 branches covered.">        if (attributes.getNamedItem(LEVEL) == null || attributes.getNamedItem(KIND) == null) {</span>
+<span class="fc" id="L128">            System.err.println(&quot;Missing required attributes (level or kind)&quot;);</span>
+<span class="fc" id="L129">            return; // Skip this item if required attributes are missing</span>
+        }
+
+<span class="fc" id="L132">        String leveltext = attributes.getNamedItem(LEVEL).getTextContent();</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        if (leveltext != null)</span>
+        {
+            try
+            {
+<span class="fc" id="L137">                level = Integer.parseInt(leveltext);</span>
+<span class="fc" id="L138">            } catch (NumberFormatException x)</span>
+            {
+<span class="fc" id="L140">                System.err.println(NFE);</span>
+            }
+        }
+<span class="fc" id="L143">        String type = attributes.getNamedItem(KIND).getTextContent();</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        if (TEXT.equals(type))</span>
+        {
+<span class="fc" id="L146">            slide.append(new TextItem(level, item.getTextContent()));</span>
+<span class="fc" id="L147">        }</span>
+        else
+        {
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (IMAGE.equals(type))</span>
+            {
+<span class="fc" id="L152">                slide.append(new BitmapItem(level, item.getTextContent()));</span>
+<span class="fc" id="L153">            }</span>
+            else
+            {
+<span class="fc" id="L156">                System.err.println(UNKNOWNTYPE);</span>
+            }
+        }
+<span class="fc" id="L159">    }</span>
+
+    public void saveFile(Presentation presentation, String filename) throws IOException
+    {
+        // Create the parent directory first
+<span class="fc" id="L164">        File file = new File(filename);</span>
+<span class="fc" id="L165">        File parentDir = file.getParentFile();</span>
+<span class="pc bpc" id="L166" title="1 of 4 branches missed.">        if (parentDir != null &amp;&amp; !parentDir.exists()) {</span>
+<span class="fc" id="L167">            boolean dirCreated = parentDir.mkdirs();</span>
+<span class="pc bpc" id="L168" title="1 of 2 branches missed.">            if (!dirCreated) {</span>
+<span class="nc" id="L169">                System.err.println(&quot;Failed to create directory: &quot; + parentDir.getAbsolutePath());</span>
+                // Check if parent directory exists now, despite failed mkdirs() call
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                if (!parentDir.exists()) {</span>
+<span class="nc" id="L172">                    throw new IOException(&quot;Failed to create directory: &quot; + parentDir.getAbsolutePath());</span>
+                } else {
+<span class="nc" id="L174">                    System.out.println(&quot;Directory exists despite mkdirs() returning false: &quot; + parentDir.getAbsolutePath());</span>
+                }
+<span class="nc" id="L176">            } else {</span>
+<span class="fc" id="L177">                System.out.println(&quot;Successfully created directory: &quot; + parentDir.getAbsolutePath());</span>
+            }
+        }
+        
+        try {
+<span class="fc" id="L182">            PrintWriter out = new PrintWriter(new FileWriter(filename));</span>
+<span class="fc" id="L183">            out.println(&quot;&lt;?xml version=\&quot;1.0\&quot;?&gt;&quot;);</span>
+
+            // Get the directory path from the filename
+<span class="fc" id="L186">            String directory = file.getParent();</span>
+
+            // Check if jabberpoint.dtd exists in the target directory, if not, copy it
+<span class="fc bfc" id="L189" title="All 2 branches covered.">            if (directory != null) {</span>
+<span class="fc" id="L190">                File dtdFile = new File(directory, &quot;jabberpoint.dtd&quot;);</span>
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">                if (!dtdFile.exists()) {</span>
+                    // Create the DTD file in the same directory
+<span class="fc" id="L193">                    createDTDFile(dtdFile.getPath());</span>
+                }
+            }
+
+<span class="fc" id="L197">            out.println(&quot;&lt;!DOCTYPE presentation SYSTEM \&quot;jabberpoint.dtd\&quot;&gt;&quot;);</span>
+<span class="fc" id="L198">            out.println(&quot;&lt;presentation&gt;&quot;);</span>
+<span class="fc" id="L199">            out.print(&quot;&lt;showtitle&gt;&quot;);</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">            out.print(presentation.getTitle() == null ? &quot;&quot; : presentation.getTitle());</span>
+<span class="fc" id="L201">            out.println(&quot;&lt;/showtitle&gt;&quot;);</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">            for (int slideNumber = 0; slideNumber &lt; presentation.getSize(); slideNumber++) {</span>
+<span class="fc" id="L203">                Slide slide = presentation.getSlide(slideNumber);</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">                if (slide == null) continue;</span>
+                
+<span class="fc" id="L206">                out.println(&quot;&lt;slide&gt;&quot;);</span>
+<span class="pc bpc" id="L207" title="1 of 2 branches missed.">                out.println(&quot;&lt;title&gt;&quot; + (slide.getTitle() == null ? &quot;&quot; : slide.getTitle()) + &quot;&lt;/title&gt;&quot;);</span>
+<span class="fc" id="L208">                Vector&lt;SlideItem&gt; slideItems = slide.getSlideItems();</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">                for (int itemNumber = 0; itemNumber &lt; slideItems.size(); itemNumber++) {</span>
+<span class="fc" id="L210">                    SlideItem slideItem = slideItems.elementAt(itemNumber);</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">                    if (slideItem == null) continue;</span>
+                    
+<span class="fc" id="L213">                    out.print(&quot;&lt;item kind=&quot;);</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">                    if (slideItem instanceof TextItem) {</span>
+<span class="fc" id="L215">                        out.print(&quot;\&quot;text\&quot; level=\&quot;&quot; + slideItem.getLevel() + &quot;\&quot;&gt;&quot;);</span>
+<span class="pc bpc" id="L216" title="1 of 2 branches missed.">                        out.print(((TextItem) slideItem).getText() == null ? &quot;&quot; : ((TextItem) slideItem).getText());</span>
+<span class="fc" id="L217">                    } else {</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                        if (slideItem instanceof BitmapItem) {</span>
+<span class="fc" id="L219">                            out.print(&quot;\&quot;image\&quot; level=\&quot;&quot; + slideItem.getLevel() + &quot;\&quot;&gt;&quot;);</span>
+<span class="pc bpc" id="L220" title="1 of 2 branches missed.">                            out.print(((BitmapItem) slideItem).getName() == null ? &quot;&quot; : ((BitmapItem) slideItem).getName());</span>
+<span class="fc" id="L221">                        } else {</span>
+<span class="nc" id="L222">                            System.out.println(&quot;Ignoring &quot; + slideItem);</span>
+<span class="nc" id="L223">                            continue;</span>
+                        }
+                    }
+<span class="fc" id="L226">                    out.println(&quot;&lt;/item&gt;&quot;);</span>
+                }
+<span class="fc" id="L228">                out.println(&quot;&lt;/slide&gt;&quot;);</span>
+            }
+<span class="fc" id="L230">            out.println(&quot;&lt;/presentation&gt;&quot;);</span>
+<span class="fc" id="L231">            out.close();</span>
+<span class="pc" id="L232">        } catch (IOException e) {</span>
+<span class="nc" id="L233">            System.err.println(&quot;Error writing to file: &quot; + filename + &quot; - &quot; + e.getMessage());</span>
+<span class="nc" id="L234">            throw e;</span>
+        }
+<span class="fc" id="L236">    }</span>
+
+    // Helper method to create a DTD file at the specified path
+    private void createDTDFile(String path) throws IOException
+    {
+<span class="fc" id="L241">        String dtdContent = &quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;\n&quot; + &quot;&lt;!ELEMENT presentation (showtitle, slide*)&gt;\n&quot; + &quot;&lt;!ELEMENT showtitle (#PCDATA)&gt;\n&quot; + &quot;&lt;!ELEMENT slide (title, item*)&gt;\n&quot; + &quot;&lt;!ELEMENT title (#PCDATA)&gt;\n&quot; + &quot;&lt;!ELEMENT item (#PCDATA)&gt;\n&quot; + &quot;&lt;!ATTLIST item kind CDATA #REQUIRED&gt;\n&quot; + &quot;&lt;!ATTLIST item level CDATA #REQUIRED&gt;&quot;;</span>
+
+<span class="fc" id="L243">        PrintWriter out = new PrintWriter(new FileWriter(path));</span>
+<span class="fc" id="L244">        out.print(dtdContent);</span>
+<span class="fc" id="L245">        out.close();</span>
+<span class="fc" id="L246">        System.out.println(&quot;Created DTD file at: &quot; + path);</span>
+<span class="fc" id="L247">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

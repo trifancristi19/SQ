@@ -44,21 +44,49 @@ public class BitmapItem extends SlideItem
                 }
                 else
                 {
-                    // If file doesn't exist, try from resources directory
-                    String resourcePath = "src/main/resources/" + imageName;
-                    File resourceFile = new File(resourcePath);
-                    if (resourceFile.exists())
+                    // Try loading from classpath resources first (works in JARs too)
+                    java.io.InputStream is = getClass().getClassLoader().getResourceAsStream(imageName);
+                    if (is != null)
                     {
-                        bufferedImage = ImageIO.read(resourceFile);
+                        bufferedImage = ImageIO.read(is);
                     }
                     else
                     {
-                        System.err.println(FILE + imageName + NOTFOUND);
+                        // Fallback to resources directory
+                        String resourcePath = "src/main/resources/" + imageName;
+                        File resourceFile = new File(resourcePath);
+                        if (resourceFile.exists())
+                        {
+                            bufferedImage = ImageIO.read(resourceFile);
+                        }
+                        else
+                        {
+                            // Try with fallback image if provided one doesn't exist
+                            is = getClass().getClassLoader().getResourceAsStream("resources-fallback.jpg");
+                            if (is != null) {
+                                bufferedImage = ImageIO.read(is);
+                                System.err.println(FILE + imageName + NOTFOUND + ", using fallback image");
+                            } else {
+                                System.err.println(FILE + imageName + NOTFOUND);
+                            }
+                        }
                     }
                 }
             } catch (IOException e)
             {
-                System.err.println(FILE + imageName + NOTFOUND);
+                System.err.println(FILE + imageName + NOTFOUND + ": " + e.getMessage());
+                
+                // Try with fallback image if there was an error
+                try {
+                    java.io.InputStream is = getClass().getClassLoader().getResourceAsStream("resources-fallback.jpg");
+                    if (is != null) {
+                        bufferedImage = ImageIO.read(is);
+                        System.err.println("Using fallback image");
+                    }
+                } catch (IOException fallbackEx) {
+                    // If even fallback fails, just report error
+                    System.err.println("Fallback image also failed: " + fallbackEx.getMessage());
+                }
             }
         }
     }

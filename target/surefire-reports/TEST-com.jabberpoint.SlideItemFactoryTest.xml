@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.jabberpoint.SlideItemFactoryTest" time="0.147" tests="4" errors="0" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="21"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="java.class.path" value="C:\Users\trifa\.m2\repository\org\apache\maven\surefire\surefire-booter\3.0.0-M7\surefire-booter-3.0.0-M7.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\surefire-api\3.0.0-M7\surefire-api-3.0.0-M7.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\surefire-logger-api\3.0.0-M7\surefire-logger-api-3.0.0-M7.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\surefire-shared-utils\3.0.0-M7\surefire-shared-utils-3.0.0-M7.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\surefire-extensions-spi\3.0.0-M7\surefire-extensions-spi-3.0.0-M7.jar;C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\test-classes;C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\classes;C:\Users\trifa\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\trifa\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\surefire-junit4\3.0.0-M7\surefire-junit4-3.0.0-M7.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\common-java5\3.0.0-M7\common-java5-3.0.0-M7.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\common-junit3\3.0.0-M7\common-junit3-3.0.0-M7.jar;C:\Users\trifa\.m2\repository\org\apache\maven\surefire\common-junit4\3.0.0-M7\common-junit4-3.0.0-M7.jar"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Amsterdam"/>
+    <property name="os.name" value="Windows 11"/>
+    <property name="java.vm.specification.version" value="21"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="US"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21\bin"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter C:\Users\trifa\AppData\Local\Temp\surefire13132115219611833250 2025-04-03T16-37-24_473-jvmRun1 surefire-20250403163724723_34tmp surefire_8-20250403163724723_35tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\test-classes;C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target\classes;C:\Users\trifa\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\trifa\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\trifa"/>
+    <property name="user.language" value="en"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2024-01-16"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-21"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.awt.headless" value="true"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="21.0.2+13-LTS-58"/>
+    <property name="user.name" value="trifa"/>
+    <property name="stdout.encoding" value="Cp1252"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\trifa\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\trifa\AppData\Local\Temp\"/>
+    <property name="java.version" value="21.0.2"/>
+    <property name="user.dir" value="C:\Users\trifa\Desktop\scoala\Year 2\semester 2\SQ\SQ\target"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1252"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-21\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\bin;C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v12.8\libnvvp;C:\Program Files (x86)\VMware\VMware Workstation\bin\;c:\Users\trifa\AppData\Local\Programs\cursor\resources\app\bin;C:\Program Files\Python312\Scripts\;C:\Program Files\Python312\;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Razer Chroma SDK\bin;C:\Program Files\Razer Chroma SDK\bin;C:\Program Files (x86)\Razer\ChromaBroadcast\bin;C:\Program Files\Razer\ChromaBroadcast\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\Process Lasso\;C:\ProgramData\chocolatey\bin;C:\Windows\system32\config\systemprofile\AppData\Local\Microsoft\WindowsApps;C:\Program Files\dotnet\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Users\trifa\AppData\Roaming\Python\Python312\Scripts;&apos;C:\Users\trifa\AppData\Roaming\Python\Python312\Scripts;C:\Program Files\Git\cmd;c:\Users\trifa\AppData\Local\Programs\cursor\resources\app\bin;C:\Program Files\nodejs;C:\Users\trifa\Downloads\chromedriver-win64\chromedriver-win64;C:\Program Files\NVIDIA Corporation\Nsight Compute 2025.1.1\;C:\Program Files\NVIDIA Corporation\NVIDIA app\NvDLISR;C:\Program Files\Apache\maven\bin;C:\Program Files\Apache\maven\apache-maven-3.9.9\bin;C:\Users\trifa\Downloads\apache-maven-3.9.9\bin;C:\Users\trifa\AppData\Local\Microsoft\WindowsApps;C:\Users\trifa\AppData\Local\Programs\Microsoft VS Code\bin;C:\Program Files\JetBrains\PyCharm 2023.3.3\bin;;C:\Program Files\JetBrains\IntelliJ IDEA 2024.2.1\bin;;C:\Users\trifa\AppData\Roaming\Python\Python312\Scripts;C:\Users\trifa\AppData\Roaming\Python\Python312\Scripts;C:\Users\trifa\AppData\Roaming\npm;C:\Program Files\nodejs;C:\Users\trifa\AppData\Local\Programs\cursor\resources\app\bin;c:\Users\trifa\AppData\Roaming\Cursor\User\globalStorage\github.copilot-chat\debugCommand;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1252"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="21.0.2+13-LTS-58"/>
+    <property name="headless.awt" value="true"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="65.0"/>
+  </properties>
+  <testcase name="testCreateTextItem" classname="com.jabberpoint.SlideItemFactoryTest" time="0.01"/>
+  <testcase name="testCreateBitmapItem" classname="com.jabberpoint.SlideItemFactoryTest" time="0.073">
+    <system-err><![CDATA[File test.png not found, using fallback image
+]]></system-err>
+  </testcase>
+  <testcase name="testCreateTextItemCaseInsensitive" classname="com.jabberpoint.SlideItemFactoryTest" time="0"/>
+  <testcase name="testCreateUnknownItemType" classname="com.jabberpoint.SlideItemFactoryTest" time="0"/>
+</testsuite>
