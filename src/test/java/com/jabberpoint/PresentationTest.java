@@ -108,28 +108,37 @@ public class PresentationTest
     @Test
     public void testObserverManagement()
     {
+        // Create a mock observer
         PresentationObserver mockObserver = new PresentationObserver()
         {
             @Override
             public void onSlideChanged(int slideNumber)
             {
+                // No implementation needed for this test
             }
 
             @Override
             public void onPresentationChanged()
             {
+                // No implementation needed for this test
             }
         };
 
-        // Add observer
+        // Test adding observer
         presentation.addObserver(mockObserver);
 
-        // Check if observer was added
         try
         {
-            Field observersField = Presentation.class.getDeclaredField("observers");
+            // Get the observer manager field
+            Field observerManagerField = Presentation.class.getDeclaredField("observerManager");
+            observerManagerField.setAccessible(true);
+            PresentationObserverManager manager = (PresentationObserverManager) observerManagerField.get(presentation);
+            
+            // Get the observers list from the manager
+            Field observersField = PresentationObserverManager.class.getDeclaredField("observers");
             observersField.setAccessible(true);
-            List<?> observers = (List<?>) observersField.get(presentation);
+            List<?> observers = (List<?>) observersField.get(manager);
+            
             assertTrue("Observer should be in the list", observers.contains(mockObserver));
 
             // Remove observer
