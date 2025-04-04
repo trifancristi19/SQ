@@ -1,8 +1,13 @@
 package com.jabberpoint;
 
 import javax.swing.JOptionPane;
-
 import java.io.IOException;
+import com.jabberpoint.io.PresentationReader;
+import com.jabberpoint.io.PresentationLoader;
+import com.jabberpoint.io.XMLPresentationLoader;
+import com.jabberpoint.io.DemoPresentationReader;
+import com.jabberpoint.error.DialogErrorHandler;
+import com.jabberpoint.error.ErrorHandler;
 
 /**
  * JabberPoint Main Programma
@@ -23,24 +28,42 @@ public class JabberPoint
 
     public static void main(String argv[])
     {
-
+        // Create styles first
         Style.createStyles();
+        
+        // Create the presentation
         Presentation presentation = new Presentation();
-        new SlideViewerFrame(JABVERSION, presentation);
+        
+        // Create the slide viewer frame
+        SlideViewerFrame slideViewerFrame = new SlideViewerFrame(JABVERSION, presentation);
+        
+        // Create error handler
+        ErrorHandler errorHandler = new DialogErrorHandler(slideViewerFrame, JABERR);
+        
         try
         {
+            // Create appropriate loader based on command line arguments
+            PresentationReader reader;
+            String filename = "";
+            
             if (argv.length == 0)
             {
-                Accessor.getDemoAccessor().loadFile(presentation, "");
+                reader = new DemoPresentationReader();
             }
             else
             {
-                new XMLAccessor().loadFile(presentation, argv[0]);
+                reader = new XMLPresentationLoader();
+                filename = argv[0];
             }
+            
+            // Load the presentation
+            reader.loadPresentation(presentation, filename);
             presentation.setSlideNumber(0);
-        } catch (IOException ex)
+        } 
+        catch (Exception ex)
         {
-            JOptionPane.showMessageDialog(null, IOERR + ex, JABERR, JOptionPane.ERROR_MESSAGE);
+            // Use the error handler instead of directly showing dialog
+            errorHandler.handleError(IOERR, ex);
         }
     }
 }

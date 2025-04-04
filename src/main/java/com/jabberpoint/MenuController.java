@@ -11,6 +11,11 @@ import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
+import com.jabberpoint.io.PresentationLoader;
+import com.jabberpoint.io.XMLPresentationLoader;
+import com.jabberpoint.error.DialogErrorHandler;
+import com.jabberpoint.error.ErrorHandler;
+
 /**
  * <p>The controller for the menu</p>
  *
@@ -22,6 +27,7 @@ public class MenuController extends MenuBar
 
     private Frame parent; // the frame, only used as parent for the Dialogs
     private transient Presentation presentation; // Commands are given to the presentation
+    private final ErrorHandler errorHandler;
 
     private static final long serialVersionUID = 227L;
 
@@ -49,6 +55,7 @@ public class MenuController extends MenuBar
     {
         this.parent = frame;
         this.presentation = pres;
+        this.errorHandler = new DialogErrorHandler(frame, "Jabberpoint");
         buildFileMenu();
         buildViewMenu();
         buildHelpMenu();        // needed for portability (Motif, etc.).
@@ -68,14 +75,15 @@ public class MenuController extends MenuBar
         {
             public void actionPerformed(ActionEvent actionEvent)
             {
-                Accessor xmlAccessor = new XMLAccessor();
                 try
                 {
-                    xmlAccessor.loadFile(presentation, TESTFILE);
+                    // Use loader directly from io package
+                    PresentationLoader loader = new XMLPresentationLoader();
+                    loader.loadPresentation(presentation, TESTFILE);
                     presentation.setSlideNumber(0);
-                } catch (IOException exc)
+                } catch (Exception exc)
                 {
-                    JOptionPane.showMessageDialog(parent, IOEX + exc, LOADERR, JOptionPane.ERROR_MESSAGE);
+                    errorHandler.handleError("Could not load presentation", exc);
                 }
                 parent.repaint();
             }
@@ -94,13 +102,14 @@ public class MenuController extends MenuBar
         {
             public void actionPerformed(ActionEvent e)
             {
-                Accessor xmlAccessor = new XMLAccessor();
                 try
                 {
-                    xmlAccessor.saveFile(presentation, SAVEFILE);
-                } catch (IOException exc)
+                    // Use loader directly from io package
+                    PresentationLoader loader = new XMLPresentationLoader();
+                    loader.savePresentation(presentation, SAVEFILE);
+                } catch (Exception exc)
                 {
-                    JOptionPane.showMessageDialog(parent, IOEX + exc, SAVEERR, JOptionPane.ERROR_MESSAGE);
+                    errorHandler.handleError("Could not save presentation", exc);
                 }
             }
         });

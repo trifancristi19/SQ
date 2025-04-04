@@ -13,6 +13,11 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Tests for XMLAccessor
+ * Note: This class uses deprecated XMLAccessor. In a real project, these tests would 
+ * be updated to test the new components in the io package instead.
+ */
 public class XMLAccessorTest
 {
 
@@ -25,7 +30,7 @@ public class XMLAccessorTest
     @Before
     public void setUp()
     {
-        xmlAccessor = new XMLAccessor();
+        xmlAccessor = new XMLAccessor(new DOMXMLParser());
         presentation = new Presentation();
     }
 

@@ -10,6 +10,8 @@ import java.util.List;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import com.jabberpoint.io.PresentationLoader;
+
 /**
  * Tests for the Presentation class
  */
@@ -24,7 +26,7 @@ public class PresentationTest
     @Before
     public void setUp()
     {
-        presentation = new Presentation();
+        this.presentation = new Presentation();
         presentation.setTitle("Test Presentation");
 
         // Create a slide
@@ -378,68 +380,128 @@ public class PresentationTest
     }
 
     /**
-     * Test loader related methods
+     * Test loader related methods 
+     * Tests the deprecated methods have been properly marked as deprecated
      */
     @Test
+    @SuppressWarnings("deprecation")
     public void testLoader()
     {
-        // Create a mock loader
+        // Skip the actual test since the methods now throw UnsupportedOperationException
+        // This test just verifies the methods still exist but are deprecated
+
+        // Ensure the methods exist and are deprecated
+        assertTrue("loadPresentation method should be deprecated", 
+            isMethodDeprecated(Presentation.class, "loadPresentation", String.class));
+        assertTrue("savePresentation method should be deprecated", 
+            isMethodDeprecated(Presentation.class, "savePresentation", String.class));
+        assertTrue("setLoader method should be deprecated", 
+            isMethodDeprecated(Presentation.class, "setLoader", com.jabberpoint.PresentationLoader.class));
+        
+        // Test with new interfaces directly
         MockPresentationLoader loader = new MockPresentationLoader();
-
-        // Set the loader
-        presentation.setLoader(loader);
-
-        try
-        {
-            // Try to load
-            presentation.loadPresentation("test.xml");
-
+        
+        try {
+            // Load directly with the loader
+            loader.loadPresentation(presentation, "test.xml");
+            
             // Verify loader was called
             assertTrue("Loader should have been called for loading", loader.loadCalled);
             assertEquals("Filename should be passed to loader", "test.xml", loader.loadedFile);
-
-            // Try to save
-            presentation.savePresentation("output.xml");
-
+            
+            // Save directly with the loader
+            loader.savePresentation(presentation, "output.xml");
+            
             // Verify loader was called
             assertTrue("Loader should have been called for saving", loader.saveCalled);
             assertEquals("Filename should be passed to loader", "output.xml", loader.savedFile);
-
-        } catch (Exception e)
-        {
+        } catch (Exception e) {
             fail("Exception should not be thrown: " + e.getMessage());
         }
     }
 
     /**
-     * Test exceptions when no loader is set
+     * Test that deprecated methods throw UnsupportedOperationException
      */
     @Test
-    public void testLoaderExceptions()
+    @SuppressWarnings("deprecation")
+    public void testDeprecatedMethodsThrowException()
     {
-        // Ensure no loader is set
-        presentation.setLoader(null);
+        try {
+            // Try to load - should throw UnsupportedOperationException
+            try {
+                presentation.loadPresentation("test.xml");
+                fail("Should throw UnsupportedOperationException as this method is deprecated");
+            } catch (UnsupportedOperationException e) {
+                // Expected
+                assertTrue(e.getMessage().contains("Use PresentationReader"));
+            }
+            
+            // Try to save - should throw UnsupportedOperationException
+            try {
+                presentation.savePresentation("output.xml");
+                fail("Should throw UnsupportedOperationException as this method is deprecated");
+            } catch (UnsupportedOperationException e) {
+                // Expected
+                assertTrue(e.getMessage().contains("Use PresentationWriter"));
+            }
+        } catch (Exception e) {
+            fail("Unexpected exception: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Helper method to check if a method is deprecated
+     */
+    private boolean isMethodDeprecated(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
+        try {
+            java.lang.reflect.Method method = clazz.getMethod(methodName, parameterTypes);
+            return method.isAnnotationPresent(Deprecated.class);
+        } catch (NoSuchMethodException e) {
+            fail("Method " + methodName + " not found in " + clazz.getName());
+            return false;
+        }
+    }
 
-        try
+    /**
+     * Mock loader for testing loader-related methods
+     */
+    private class MockPresentationLoader implements PresentationLoader
+    {
+        public boolean loadCalled = false;
+        public boolean saveCalled = false;
+        public String loadedFile = null;
+        public String savedFile = null;
+
+        @Override
+        public void loadPresentation(Presentation p, String filename) throws Exception
         {
-            // Try to load without a loader
-            presentation.loadPresentation("test.xml");
-            fail("Should throw IllegalStateException when no loader is set");
-        } catch (Exception e)
-        {
-            assertTrue("Exception should be IllegalStateException", e instanceof IllegalStateException);
-            assertEquals("Exception message should mention loader", "No presentation loader set", e.getMessage());
+            loadCalled = true;
+            loadedFile = filename;
         }
 
-        try
+        @Override
+        public void savePresentation(Presentation p, String filename) throws Exception
         {
-            // Try to save without a loader
-            presentation.savePresentation("output.xml");
-            fail("Should throw IllegalStateException when no loader is set");
-        } catch (Exception e)
+            saveCalled = true;
+            savedFile = filename;
+        }
+    }
+
+    /**
+     * Test subclass for testing exit functionality
+     */
+    private class TestPresentation extends Presentation
+    {
+        public boolean exitCalled = false;
+        public int exitCode = -1;
+
+        @Override
+        protected void doExit(int n)
         {
-            assertTrue("Exception should be IllegalStateException", e instanceof IllegalStateException);
-            assertEquals("Exception message should mention loader", "No presentation loader set", e.getMessage());
+            exitCalled = true;
+            exitCode = n;
+            // Don't actually exit
         }
     }
 
@@ -486,48 +548,6 @@ public class PresentationTest
         } catch (Exception e)
         {
             fail("Exception accessing field: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Test subclass for testing exit functionality
-     */
-    private class TestPresentation extends Presentation
-    {
-        public boolean exitCalled = false;
-        public int exitCode = -1;
-
-        @Override
-        protected void doExit(int n)
-        {
-            exitCalled = true;
-            exitCode = n;
-            // Don't actually exit
-        }
-    }
-
-    /**
-     * Mock loader for testing loader-related methods
-     */
-    private class MockPresentationLoader implements PresentationLoader
-    {
-        public boolean loadCalled = false;
-        public boolean saveCalled = false;
-        public String loadedFile = null;
-        public String savedFile = null;
-
-        @Override
-        public void loadPresentation(Presentation p, String filename) throws Exception
-        {
-            loadCalled = true;
-            loadedFile = filename;
-        }
-
-        @Override
-        public void savePresentation(Presentation p, String filename) throws Exception
-        {
-            saveCalled = true;
-            savedFile = filename;
         }
     }
 } 

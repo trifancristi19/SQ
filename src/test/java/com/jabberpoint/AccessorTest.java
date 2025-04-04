@@ -8,7 +8,10 @@ import java.io.IOException;
 
 /**
  * Tests for the abstract Accessor class
+ * Note: This class tests deprecated code. In a production environment, these tests
+ * would be rewritten to use the new io package components instead.
  */
+@SuppressWarnings("deprecation")
 public class AccessorTest
 {
 
@@ -43,13 +46,13 @@ public class AccessorTest
         Accessor testAccessor = new Accessor()
         {
             @Override
-            public void loadFile(Presentation p, String fn)
+            public void loadFile(Presentation p, String fn) throws IOException
             {
                 // No implementation needed for test
             }
 
             @Override
-            public void saveFile(Presentation p, String fn)
+            public void saveFile(Presentation p, String fn) throws IOException
             {
                 // No implementation needed for test
             }

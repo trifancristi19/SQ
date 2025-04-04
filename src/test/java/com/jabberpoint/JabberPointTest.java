@@ -14,6 +14,9 @@ import javax.swing.JOptionPane;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import com.jabberpoint.io.PresentationReader;
+import com.jabberpoint.io.DemoPresentationReader;
+
 public class JabberPointTest
 {
 
@@ -187,8 +190,13 @@ public class JabberPointTest
             // Skip creating the frame for headless testing
 
             // Load the demo presentation
-            Accessor.getDemoAccessor().loadFile(presentation, "");
-            presentation.setSlideNumber(0);
+            PresentationReader reader = new DemoPresentationReader();
+            try {
+                reader.loadPresentation(presentation, "");
+                presentation.setSlideNumber(0);
+            } catch (Exception ex) {
+                throw new IOException("Error loading demo presentation: " + ex.getMessage());
+            }
         }
 
         public static void mainWithArgs(String filename) throws IOException
@@ -198,8 +206,13 @@ public class JabberPointTest
             // Skip creating the frame for headless testing
 
             // Try to load the file - this should throw an IOException for a non-existent file
-            new XMLAccessor().loadFile(presentation, filename);
-            presentation.setSlideNumber(0);
+            try {
+                com.jabberpoint.io.XMLPresentationLoader loader = new com.jabberpoint.io.XMLPresentationLoader();
+                loader.loadPresentation(presentation, filename);
+                presentation.setSlideNumber(0);
+            } catch (Exception ex) {
+                throw new IOException("Error loading presentation: " + ex.getMessage());
+            }
         }
     }
 } 

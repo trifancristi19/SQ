@@ -26,6 +26,7 @@ import org.w3c.dom.NodeList;
 
 public class XMLAccessor extends Accessor
 {
+    private final XMLParser xmlParser;
 
     /**
      * Default API to use.
@@ -51,6 +52,20 @@ public class XMLAccessor extends Accessor
     protected static final String UNKNOWNTYPE = "Unknown Element type";
     protected static final String NFE = "Number Format Exception";
 
+    /**
+     * Creates an XMLAccessor with the default XMLParser (DOM)
+     */
+    public XMLAccessor() {
+        this(new DOMXMLParser());
+    }
+    
+    /**
+     * Creates an XMLAccessor with a specific XMLParser implementation
+     * @param xmlParser The XMLParser to use
+     */
+    public XMLAccessor(XMLParser xmlParser) {
+        this.xmlParser = xmlParser != null ? xmlParser : new DOMXMLParser();
+    }
 
     private String getTitle(Element element, String tagName)
     {
@@ -67,14 +82,8 @@ public class XMLAccessor extends Accessor
         int slideNumber, itemNumber, max = 0, maxItems = 0;
         try
         {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-            // Set features to make DTD handling more robust
-            factory.setValidating(false);
-            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new File(filename)); // Create a JDOM document
+            // Use the parser from the strategy pattern
+            Document document = xmlParser.parseFile(new File(filename));
             Element doc = document.getDocumentElement();
 
             // First, get the title so it doesn't get cleared
@@ -107,14 +116,10 @@ public class XMLAccessor extends Accessor
         {
             System.err.println(iox.toString());
             throw iox; // Rethrow to ensure caller knows about the error
-        } catch (SAXException sax)
+        } catch (Exception ex)
         {
-            System.err.println(sax.getMessage());
-            throw new IOException("SAX Exception: " + sax.getMessage(), sax);
-        } catch (ParserConfigurationException pcx)
-        {
-            System.err.println(PCE);
-            throw new IOException("Parser Configuration Exception", pcx);
+            System.err.println(ex.getMessage());
+            throw new IOException("Error parsing XML: " + ex.getMessage(), ex);
         }
     }
 
@@ -141,22 +146,34 @@ public class XMLAccessor extends Accessor
                 System.err.println(NFE);
             }
         }
+        
         String type = attributes.getNamedItem(KIND).getTextContent();
-        if (TEXT.equals(type))
-        {
-            slide.append(new TextItem(level, item.getTextContent()));
+        String content = item.getTextContent();
+        
+        try {
+            // Use the factory to create the appropriate slide item
+            SlideItem slideItem = SlideItemFactory.createSlideItem(type, level, content);
+            slide.append(slideItem);
+        } catch (IllegalArgumentException e) {
+            System.err.println(UNKNOWNTYPE + ": " + type);
         }
-        else
-        {
-            if (IMAGE.equals(type))
-            {
-                slide.append(new BitmapItem(level, item.getTextContent()));
-            }
-            else
-            {
-                System.err.println(UNKNOWNTYPE);
-            }
-        }
+    }
+
+    private void createDTDFile(String path) throws IOException
+    {
+        String dtdContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
+                           "<!ELEMENT presentation (showtitle, slide*)>\n" + 
+                           "<!ELEMENT showtitle (#PCDATA)>\n" + 
+                           "<!ELEMENT slide (title, item*)>\n" + 
+                           "<!ELEMENT title (#PCDATA)>\n" + 
+                           "<!ELEMENT item (#PCDATA)>\n" + 
+                           "<!ATTLIST item kind CDATA #REQUIRED>\n" + 
+                           "<!ATTLIST item level CDATA #REQUIRED>";
+
+        PrintWriter out = new PrintWriter(new FileWriter(path));
+        out.print(dtdContent);
+        out.close();
+        System.out.println("Created DTD file at: " + path);
     }
 
     public void saveFile(Presentation presentation, String filename) throws IOException
@@ -250,19 +267,8 @@ public class XMLAccessor extends Accessor
             out.close();
         } catch (IOException e)
         {
-            System.err.println("Error writing to file: " + filename + " - " + e.getMessage());
+            System.err.println(e.toString());
             throw e;
         }
-    }
-
-    // Helper method to create a DTD file at the specified path
-    private void createDTDFile(String path) throws IOException
-    {
-        String dtdContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<!ELEMENT presentation (showtitle, slide*)>\n" + "<!ELEMENT showtitle (#PCDATA)>\n" + "<!ELEMENT slide (title, item*)>\n" + "<!ELEMENT title (#PCDATA)>\n" + "<!ELEMENT item (#PCDATA)>\n" + "<!ATTLIST item kind CDATA #REQUIRED>\n" + "<!ATTLIST item level CDATA #REQUIRED>";
-
-        PrintWriter out = new PrintWriter(new FileWriter(path));
-        out.print(dtdContent);
-        out.close();
-        System.out.println("Created DTD file at: " + path);
     }
 }

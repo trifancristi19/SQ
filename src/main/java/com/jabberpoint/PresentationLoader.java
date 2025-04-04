@@ -1,11 +1,13 @@
 package com.jabberpoint;
 
-/**
- * Strategy interface for loading presentations
- */
-public interface PresentationLoader
-{
-    void loadPresentation(Presentation presentation, String fileName) throws Exception;
+import com.jabberpoint.io.PresentationReader;
+import com.jabberpoint.io.PresentationWriter;
 
-    void savePresentation(Presentation presentation, String fileName) throws Exception;
+/**
+ * Base interface for presentation loading and saving capabilities
+ * @deprecated Use com.jabberpoint.io.PresentationLoader instead
+ */
+@Deprecated
+public interface PresentationLoader extends PresentationReader, PresentationWriter {
+    // No additional methods needed - inherits from both interfaces
 } 

@@ -2,7 +2,9 @@ package com.jabberpoint;
 
 /**
  * XML implementation of PresentationLoader
+ * @deprecated Use com.jabberpoint.io.XMLPresentationLoader instead
  */
+@Deprecated
 public class XMLPresentationLoader implements PresentationLoader
 {
     private final XMLAccessor accessor = new XMLAccessor();

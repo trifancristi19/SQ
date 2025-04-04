@@ -2,7 +2,9 @@ package com.jabberpoint;
 
 /**
  * Demo implementation of PresentationLoader
+ * @deprecated Use com.jabberpoint.io.DemoPresentationReader instead
  */
+@Deprecated
 public class DemoPresentationLoader implements PresentationLoader {
     private final DemoPresentation demoPresentation = new DemoPresentation();
 

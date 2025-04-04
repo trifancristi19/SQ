@@ -7,6 +7,12 @@ import static org.junit.Assert.*;
 
 import java.io.IOException;
 
+/**
+ * Tests for the DemoPresentation class
+ * Note: This class tests deprecated code. In a production environment, these tests
+ * would be rewritten to use the new io.DemoPresentationReader instead.
+ */
+@SuppressWarnings("deprecation")
 public class DemoPresentationTest
 {
 

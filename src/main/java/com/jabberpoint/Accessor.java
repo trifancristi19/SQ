@@ -9,8 +9,9 @@ import java.io.IOException;
  *
  * @author Ian F. Darwin, ian@darwinsys.com, Gert Florijn, Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
+ * @deprecated Use com.jabberpoint.io.PresentationReader and PresentationWriter interfaces instead
  */
-
+@Deprecated
 public abstract class Accessor
 {
     public static final String DEMO_NAME = "Demonstration presentation";

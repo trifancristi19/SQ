@@ -3,6 +3,10 @@ package com.jabberpoint;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jabberpoint.io.PresentationLoader;
+import com.jabberpoint.io.PresentationReader;
+import com.jabberpoint.io.PresentationWriter;
+
 /**
  * <p>Presentation maintains the slides in the presentation.</p>
  * <p>There is only instance of this class.</p>
@@ -16,64 +20,61 @@ public class Presentation
     private String title;
     private List<Slide> slides;
     private int currentSlideNumber = 0;
-    private List<PresentationObserver> observers = new ArrayList<>();
-    private PresentationLoader loader;  // Strategy pattern
+    private PresentationObserverManager observerManager;
     private SlideViewerComponent slideViewComponent = null; // the viewcomponent of the Slides
 
     public Presentation()
     {
         this.slides = new ArrayList<>();
         this.title = "New Presentation";
+        this.observerManager = new PresentationObserverManager();
     }
 
-    public void setLoader(PresentationLoader loader)
+    /**
+     * @deprecated Use com.jabberpoint.io.PresentationReader or PresentationWriter directly
+     */
+    @Deprecated
+    public void setLoader(com.jabberpoint.PresentationLoader loader)
     {
-        this.loader = loader;
+        // Deprecated - kept for backward compatibility
     }
 
+    /**
+     * @deprecated Use com.jabberpoint.io.PresentationReader directly
+     */
+    @Deprecated
     public void loadPresentation(String fileName) throws Exception
     {
-        if (this.loader == null)
-        {
-            throw new IllegalStateException("No presentation loader set");
-        }
-        this.loader.loadPresentation(this, fileName);
-        notifyPresentationChanged();
+        throw new UnsupportedOperationException("Use PresentationReader.loadPresentation(presentation, fileName) instead");
     }
 
+    /**
+     * @deprecated Use com.jabberpoint.io.PresentationWriter directly
+     */
+    @Deprecated
     public void savePresentation(String fileName) throws Exception
     {
-        if (this.loader == null)
-        {
-            throw new IllegalStateException("No presentation loader set");
-        }
-        this.loader.savePresentation(this, fileName);
+        throw new UnsupportedOperationException("Use PresentationWriter.savePresentation(presentation, fileName) instead");
     }
 
     public void addObserver(PresentationObserver observer)
     {
-        this.observers.add(observer);
+        this.observerManager.addObserver(observer);
     }
 
     public void removeObserver(PresentationObserver observer)
     {
-        this.observers.remove(observer);
+        this.observerManager.removeObserver(observer);
     }
 
     private void notifySlideChanged()
     {
-        for (PresentationObserver observer : this.observers)
-        {
-            observer.onSlideChanged(this.currentSlideNumber);
-        }
+        this.observerManager.notifySlideChanged(this.currentSlideNumber);
     }
 
     private void notifyPresentationChanged()
     {
-        for (PresentationObserver observer : this.observers)
-        {
-            observer.onPresentationChanged();
-        }
+        this.observerManager.notifyPresentationChanged();
     }
 
     public int getSize()
