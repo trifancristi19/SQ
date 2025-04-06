@@ -76,4 +76,3 @@ mvn test
 After running tests, open `target/site/jacoco/index.html` in your browser to view the test coverage report.
 
 ## 📝 License
-This project is licensed under the MIT License - see the LICENSE file for details.
