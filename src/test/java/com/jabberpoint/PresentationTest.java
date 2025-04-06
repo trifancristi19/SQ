@@ -133,12 +133,12 @@ public class PresentationTest
             Field observerManagerField = Presentation.class.getDeclaredField("observerManager");
             observerManagerField.setAccessible(true);
             PresentationObserverManager manager = (PresentationObserverManager) observerManagerField.get(presentation);
-            
+
             // Get the observers list from the manager
             Field observersField = PresentationObserverManager.class.getDeclaredField("observers");
             observersField.setAccessible(true);
             List<?> observers = (List<?>) observersField.get(manager);
-            
+
             assertTrue("Observer should be in the list", observers.contains(mockObserver));
 
             // Remove observer
@@ -389,7 +389,7 @@ public class PresentationTest
     }
 
     /**
-     * Test loader related methods 
+     * Test loader related methods
      * Tests the deprecated methods have been properly marked as deprecated
      */
     @Test
@@ -400,31 +400,33 @@ public class PresentationTest
         // This test just verifies the methods still exist but are deprecated
 
         // Ensure the methods exist and are deprecated
-        assertTrue("loadPresentation method should be deprecated", 
-            isMethodDeprecated(Presentation.class, "loadPresentation", String.class));
-        assertTrue("savePresentation method should be deprecated", 
-            isMethodDeprecated(Presentation.class, "savePresentation", String.class));
-        assertTrue("setLoader method should be deprecated", 
-            isMethodDeprecated(Presentation.class, "setLoader", com.jabberpoint.io.PresentationLoader.class));
-        
+        assertTrue("loadPresentation method should be deprecated",
+                isMethodDeprecated(Presentation.class, "loadPresentation", String.class));
+        assertTrue("savePresentation method should be deprecated",
+                isMethodDeprecated(Presentation.class, "savePresentation", String.class));
+        assertTrue("setLoader method should be deprecated",
+                isMethodDeprecated(Presentation.class, "setLoader", com.jabberpoint.io.PresentationLoader.class));
+
         // Test with new interfaces directly
         MockPresentationLoader loader = new MockPresentationLoader();
-        
-        try {
+
+        try
+        {
             // Load directly with the loader
             loader.loadPresentation(presentation, "test.xml");
-            
+
             // Verify loader was called
             assertTrue("Loader should have been called for loading", loader.loadCalled);
             assertEquals("Filename should be passed to loader", "test.xml", loader.loadedFile);
-            
+
             // Save directly with the loader
             loader.savePresentation(presentation, "output.xml");
-            
+
             // Verify loader was called
             assertTrue("Loader should have been called for saving", loader.saveCalled);
             assertEquals("Filename should be passed to loader", "output.xml", loader.savedFile);
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             fail("Exception should not be thrown: " + e.getMessage());
         }
     }
@@ -436,37 +438,46 @@ public class PresentationTest
     @SuppressWarnings("deprecation")
     public void testDeprecatedMethodsThrowException()
     {
-        try {
+        try
+        {
             // Try to load - should throw UnsupportedOperationException
-            try {
+            try
+            {
                 presentation.loadPresentation("test.xml");
                 fail("Should throw UnsupportedOperationException as this method is deprecated");
-            } catch (UnsupportedOperationException e) {
+            } catch (UnsupportedOperationException e)
+            {
                 // Expected
                 assertTrue(e.getMessage().contains("Use PresentationReader"));
             }
-            
+
             // Try to save - should throw UnsupportedOperationException
-            try {
+            try
+            {
                 presentation.savePresentation("output.xml");
                 fail("Should throw UnsupportedOperationException as this method is deprecated");
-            } catch (UnsupportedOperationException e) {
+            } catch (UnsupportedOperationException e)
+            {
                 // Expected
                 assertTrue(e.getMessage().contains("Use PresentationWriter"));
             }
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             fail("Unexpected exception: " + e.getMessage());
         }
     }
-    
+
     /**
      * Helper method to check if a method is deprecated
      */
-    private boolean isMethodDeprecated(Class<?> clazz, String methodName, Class<?>... parameterTypes) {
-        try {
+    private boolean isMethodDeprecated(Class<?> clazz, String methodName, Class<?>... parameterTypes)
+    {
+        try
+        {
             java.lang.reflect.Method method = clazz.getMethod(methodName, parameterTypes);
             return method.isAnnotationPresent(Deprecated.class);
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException e)
+        {
             fail("Method " + methodName + " not found in " + clazz.getName());
             return false;
         }

@@ -195,10 +195,12 @@ public class JabberPointTest
 
             // Load the demo presentation
             PresentationReader reader = new DemoPresentationReader();
-            try {
+            try
+            {
                 reader.loadPresentation(presentation, "");
                 presentation.setSlideNumber(0);
-            } catch (Exception ex) {
+            } catch (Exception ex)
+            {
                 throw new IOException("Error loading demo presentation: " + ex.getMessage());
             }
         }
@@ -210,85 +212,94 @@ public class JabberPointTest
             // Skip creating the frame for headless testing
 
             // Try to load the file - this should throw an IOException for a non-existent file
-            try {
+            try
+            {
                 // Use the strategic XML reader with default DOM strategy
                 StrategicXMLPresentationReader reader = new StrategicXMLPresentationReader();
                 reader.loadPresentation(presentation, filename);
                 presentation.setSlideNumber(0);
-            } catch (Exception ex) {
+            } catch (Exception ex)
+            {
                 throw new IOException("Error loading presentation: " + ex.getMessage());
             }
         }
-        
+
         public static void mainWithSaxStrategy(String filename) throws IOException
         {
             Style.createStyles();
             Presentation presentation = new Presentation();
             // Skip creating the frame for headless testing
 
-            try {
+            try
+            {
                 // Use the strategic XML reader with SAX strategy
                 StrategicXMLPresentationReader reader = new StrategicXMLPresentationReader(
-                    XMLParsingStrategyFactory.StrategyType.SAX);
+                        XMLParsingStrategyFactory.StrategyType.SAX);
                 reader.loadPresentation(presentation, filename);
                 presentation.setSlideNumber(0);
-            } catch (Exception ex) {
+            } catch (Exception ex)
+            {
                 throw new IOException("Error loading presentation: " + ex.getMessage());
             }
         }
     }
-    
+
     /**
      * Test the strategic XML parsing with DOM strategy
      */
     @Test
-    public void testStrategicXMLParsingWithDOM() throws IOException {
+    public void testStrategicXMLParsingWithDOM() throws IOException
+    {
         // Create a temporary XML file
         File tempFile = File.createTempFile("test-presentation", ".xml");
         tempFile.deleteOnExit();
-        
-        try (FileWriter writer = new FileWriter(tempFile)) {
+
+        try (FileWriter writer = new FileWriter(tempFile))
+        {
             writer.write("<?xml version=\"1.0\"?>\n" +
-                "<presentation>\n" +
-                "  <title>Test Presentation</title>\n" +
-                "  <slide>\n" +
-                "    <title>Test Slide</title>\n" +
-                "  </slide>\n" +
-                "</presentation>");
+                    "<presentation>\n" +
+                    "  <title>Test Presentation</title>\n" +
+                    "  <slide>\n" +
+                    "    <title>Test Slide</title>\n" +
+                    "  </slide>\n" +
+                    "</presentation>");
         }
-        
+
         // This should not throw an exception
         TestableJabberPoint.mainWithArgs(tempFile.getAbsolutePath());
     }
-    
+
     /**
      * Test the strategic XML parsing with SAX strategy
      */
     @Test
-    public void testStrategicXMLParsingWithSAX() throws IOException {
+    public void testStrategicXMLParsingWithSAX() throws IOException
+    {
         // Create a temporary XML file
         File tempFile = File.createTempFile("test-presentation", ".xml");
         tempFile.deleteOnExit();
-        
-        try (FileWriter writer = new FileWriter(tempFile)) {
+
+        try (FileWriter writer = new FileWriter(tempFile))
+        {
             writer.write("<?xml version=\"1.0\"?>\n" +
-                "<presentation>\n" +
-                "  <title>Test Presentation</title>\n" +
-                "  <slide>\n" +
-                "    <title>Test Slide</title>\n" +
-                "  </slide>\n" +
-                "</presentation>");
+                    "<presentation>\n" +
+                    "  <title>Test Presentation</title>\n" +
+                    "  <slide>\n" +
+                    "    <title>Test Slide</title>\n" +
+                    "  </slide>\n" +
+                    "</presentation>");
         }
-        
+
         // This should not throw an exception
         TestableJabberPoint.mainWithSaxStrategy(tempFile.getAbsolutePath());
     }
-    
+
     /**
      * Test strategic XML parsing with non-existent file
      */
     @Test(expected = IOException.class)
-    public void testStrategicXMLParsingWithNonExistentFile() throws IOException {
+    public void testStrategicXMLParsingWithNonExistentFile() throws IOException
+    {
         TestableJabberPoint.mainWithArgs("non-existent-file.xml");
     }
 } 

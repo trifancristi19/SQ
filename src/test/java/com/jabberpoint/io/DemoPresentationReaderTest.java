@@ -13,19 +13,22 @@ import com.jabberpoint.BitmapItem;
 /**
  * Tests for the DemoPresentationReader class in the io package
  */
-public class DemoPresentationReaderTest {
+public class DemoPresentationReaderTest
+{
 
     private DemoPresentationReader reader;
     private Presentation presentation;
 
     @Before
-    public void setUp() {
+    public void setUp()
+    {
         reader = new DemoPresentationReader();
         presentation = new Presentation();
     }
 
     @Test
-    public void testLoadPresentation() throws Exception {
+    public void testLoadPresentation() throws Exception
+    {
         // Load the demo presentation
         reader.loadPresentation(presentation, "");
 
@@ -50,8 +53,10 @@ public class DemoPresentationReaderTest {
 
         // Verify that the third slide has a bitmap item
         boolean hasBitmapItem = false;
-        for (SlideItem item : thirdSlide.getSlideItems()) {
-            if (item instanceof BitmapItem) {
+        for (SlideItem item : thirdSlide.getSlideItems())
+        {
+            if (item instanceof BitmapItem)
+            {
                 hasBitmapItem = true;
                 assertEquals("JabberPoint.gif", ((BitmapItem) item).getName());
                 break;
@@ -61,7 +66,8 @@ public class DemoPresentationReaderTest {
     }
 
     @Test
-    public void testLoadPresentationIgnoresFilename() throws Exception {
+    public void testLoadPresentationIgnoresFilename() throws Exception
+    {
         // The demo reader ignores the filename, so we should be able to pass any string
         reader.loadPresentation(presentation, "ignored-filename.xyz");
 
@@ -71,7 +77,8 @@ public class DemoPresentationReaderTest {
     }
 
     @Test
-    public void testLoadMultipleTimes() throws Exception {
+    public void testLoadMultipleTimes() throws Exception
+    {
         // Load once
         reader.loadPresentation(presentation, "");
         int initialSlideCount = presentation.getSize();

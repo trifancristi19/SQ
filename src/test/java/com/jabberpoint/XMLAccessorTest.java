@@ -19,7 +19,7 @@ import com.jabberpoint.io.XMLParsingStrategyFactory;
 
 /**
  * Tests for XMLAccessor
- * Note: This class uses deprecated XMLAccessor. In a real project, these tests would 
+ * Note: This class uses deprecated XMLAccessor. In a real project, these tests would
  * be updated to test the new components in the io package instead.
  */
 public class XMLAccessorTest
@@ -37,7 +37,7 @@ public class XMLAccessorTest
     {
         xmlAccessor = new XMLAccessor(new DOMXMLParsingStrategy());
         presentation = new Presentation();
-        
+
         // Create the DTD file needed for testing to avoid FileNotFoundException
         createDTDFile();
     }
@@ -62,7 +62,7 @@ public class XMLAccessorTest
             System.err.println("Error during cleanup: " + e.getMessage());
         }
     }
-    
+
     /**
      * Creates a simple DTD file for testing to avoid FileNotFoundException
      */

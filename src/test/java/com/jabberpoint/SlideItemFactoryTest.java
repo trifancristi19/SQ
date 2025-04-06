@@ -16,31 +16,38 @@ public class SlideItemFactoryTest
     // Store a custom item creator to restore after tests
     private BiFunction<Integer, String, SlideItem> originalCustomItemCreator = null;
     private boolean hadCustomItem = false;
-    
+
     @Before
-    public void setUp() {
+    public void setUp()
+    {
         // Check if "custom" type already exists
-        try {
+        try
+        {
             hadCustomItem = true;
             SlideItemFactory.createSlideItem("custom", 1, "test");
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e)
+        {
             hadCustomItem = false;
         }
     }
-    
+
     @After
-    public void tearDown() {
+    public void tearDown()
+    {
         // Remove test registration if we added it
-        if (!hadCustomItem) {
-            try {
+        if (!hadCustomItem)
+        {
+            try
+            {
                 // Use reflection to remove our test registration
                 java.lang.reflect.Field itemCreatorsField = SlideItemFactory.class.getDeclaredField("itemCreators");
                 itemCreatorsField.setAccessible(true);
                 @SuppressWarnings("unchecked")
-                java.util.Map<String, BiFunction<Integer, String, SlideItem>> itemCreators = 
-                    (java.util.Map<String, BiFunction<Integer, String, SlideItem>>) itemCreatorsField.get(null);
+                java.util.Map<String, BiFunction<Integer, String, SlideItem>> itemCreators =
+                        (java.util.Map<String, BiFunction<Integer, String, SlideItem>>) itemCreatorsField.get(null);
                 itemCreators.remove("custom");
-            } catch (Exception e) {
+            } catch (Exception e)
+            {
                 // Ignore
             }
         }
@@ -78,30 +85,30 @@ public class SlideItemFactoryTest
     {
         SlideItemFactory.createSlideItem("unknown", 1, "Test Content");
     }
-    
+
     @Test
     public void testRegisterNewItemType()
     {
         // Create a custom item creator
         BiFunction<Integer, String, SlideItem> customCreator = (level, content) -> new TextItem(level, "Custom: " + content);
-        
+
         // Register the custom creator
         SlideItemFactory.registerItemType("custom", customCreator);
-        
+
         // Use the custom creator
         SlideItem item = SlideItemFactory.createSlideItem("custom", 3, "Test");
-        
+
         // Verify the result
         assertTrue(item instanceof TextItem);
         assertEquals(3, item.getLevel());
         assertEquals("Custom: Test", ((TextItem) item).getText());
-        
+
         // Also test with different case
         item = SlideItemFactory.createSlideItem("CUSTOM", 4, "Case Test");
         assertEquals(4, item.getLevel());
         assertEquals("Custom: Case Test", ((TextItem) item).getText());
     }
-    
+
     @Test
     public void testImageAliasForBitmap()
     {

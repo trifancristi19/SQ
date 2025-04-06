@@ -76,7 +76,7 @@ public class BitmapItemTest
         assertEquals("X coordinate should be style indent * scale", (int) (style.indent * scale), boundingBox.x);
         assertEquals("Y coordinate should be 0", 0, boundingBox.y);
     }
-    
+
     @Test
     public void testGetBoundingBoxWithImage()
     {
@@ -119,7 +119,7 @@ public class BitmapItemTest
 
         // Test passes if no exception is thrown
     }
-    
+
     @Test
     public void testDrawWithImage()
     {
@@ -154,7 +154,7 @@ public class BitmapItemTest
         String expected = "BitmapItem[" + level + "," + imageName + "]";
         assertEquals("toString should return the correct string representation", expected, bitmapItem.toString());
     }
-    
+
     @Test
     public void testNonExistentImageHandling()
     {
@@ -163,7 +163,7 @@ public class BitmapItemTest
         // We're just testing that it doesn't throw an exception and that getName works
         assertEquals("Image name should be preserved", "definitely-does-not-exist.jpg", bitmapItem.getName());
     }
-    
+
     @Test
     public void testImageLoadingPaths()
     {
@@ -192,14 +192,14 @@ public class BitmapItemTest
             System.err.println("Error in image test: " + e.getMessage());
         } finally
         {
-        // Clean up
+            // Clean up
             if (tempImageFile != null && tempImageFile.exists())
             {
                 tempImageFile.delete();
             }
         }
     }
-    
+
     @Test
     public void testConstantsValues()
     {
@@ -207,7 +207,7 @@ public class BitmapItemTest
         assertEquals("FILE constant should be correct", "File ", BitmapItem.FILE);
         assertEquals("NOTFOUND constant should be correct", " not found", BitmapItem.NOTFOUND);
     }
-    
+
     @Test
     public void testResourcePathLoading()
     {

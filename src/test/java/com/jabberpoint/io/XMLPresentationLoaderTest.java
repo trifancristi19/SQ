@@ -21,7 +21,8 @@ import com.jabberpoint.BitmapItem;
 /**
  * Tests for the XMLPresentationLoader in the new io package
  */
-public class XMLPresentationLoaderTest {
+public class XMLPresentationLoaderTest
+{
 
     private XMLPresentationLoader loader;
     private Presentation presentation;
@@ -29,30 +30,36 @@ public class XMLPresentationLoaderTest {
     private static final String DTD_FILE_PATH = "jabberpoint.dtd";
 
     @Before
-    public void setUp() {
+    public void setUp()
+    {
         loader = new XMLPresentationLoader(new DOMXMLParsingStrategy());
         presentation = new Presentation();
-        
+
         // Create the DTD file needed for testing to avoid FileNotFoundException
         createDTDFile();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown()
+    {
         // Clean up test files
-        try {
+        try
+        {
             Files.deleteIfExists(Paths.get(TEST_FILE_PATH));
             Files.deleteIfExists(Paths.get(DTD_FILE_PATH));
-        } catch (Exception e) {
+        } catch (Exception e)
+        {
             System.err.println("Error during cleanup: " + e.getMessage());
         }
     }
-    
+
     /**
      * Creates a simple DTD file for testing to avoid FileNotFoundException
      */
-    private void createDTDFile() {
-        try (PrintWriter out = new PrintWriter(new FileWriter(DTD_FILE_PATH))) {
+    private void createDTDFile()
+    {
+        try (PrintWriter out = new PrintWriter(new FileWriter(DTD_FILE_PATH)))
+        {
             out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             out.println("<!ELEMENT presentation (showtitle, slide*)>");
             out.println("<!ELEMENT showtitle (#PCDATA)>");
@@ -61,13 +68,15 @@ public class XMLPresentationLoaderTest {
             out.println("<!ELEMENT item (#PCDATA)>");
             out.println("<!ATTLIST item kind CDATA #REQUIRED>");
             out.println("<!ATTLIST item level CDATA #REQUIRED>");
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             System.err.println("Error creating DTD file: " + e.getMessage());
         }
     }
 
     @Test
-    public void testLoadAndSavePresentation() throws Exception {
+    public void testLoadAndSavePresentation() throws Exception
+    {
         // Create a test presentation
         presentation.setTitle("Test Presentation");
 
@@ -96,9 +105,9 @@ public class XMLPresentationLoaderTest {
         loader.loadPresentation(loadedPresentation, TEST_FILE_PATH);
 
         // Verify loaded content
-        assertEquals("Presentation title should match", 
+        assertEquals("Presentation title should match",
                 presentation.getTitle(), loadedPresentation.getTitle());
-        assertEquals("Slide count should match", 
+        assertEquals("Slide count should match",
                 presentation.getSize(), loadedPresentation.getSize());
 
         // Verify first slide content
@@ -113,26 +122,29 @@ public class XMLPresentationLoaderTest {
     }
 
     @Test(expected = Exception.class)
-    public void testLoadNonExistentFile() throws Exception {
+    public void testLoadNonExistentFile() throws Exception
+    {
         // Try to load a non-existent file
         loader.loadPresentation(presentation, "non-existent-file.xml");
     }
 
     @Test
-    public void testGetStrategy() {
+    public void testGetStrategy()
+    {
         // Create loader with explicit strategy
         DOMXMLParsingStrategy strategy = new DOMXMLParsingStrategy();
         XMLPresentationLoader loaderWithStrategy = new XMLPresentationLoader(strategy);
-        
+
         // Test passes if no exception
         assertNotNull("Loader should be created with explicit strategy", loaderWithStrategy);
     }
 
     @Test
-    public void testDefaultConstructor() {
+    public void testDefaultConstructor()
+    {
         // Use default constructor
         XMLPresentationLoader defaultLoader = new XMLPresentationLoader();
-        
+
         // Test passes if no exception
         assertNotNull("Loader should be created with default constructor", defaultLoader);
     }

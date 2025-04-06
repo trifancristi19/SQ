@@ -8,54 +8,64 @@ import static org.junit.Assert.*;
 /**
  * Tests for the PresentationObserverManager class
  */
-public class PresentationObserverManagerTest {
+public class PresentationObserverManagerTest
+{
 
     private PresentationObserverManager manager;
     private TestPresentationObserver observer;
 
-    private static class TestPresentationObserver implements PresentationObserver {
+    private static class TestPresentationObserver implements PresentationObserver
+    {
         private boolean slideChangedCalled = false;
         private boolean presentationChangedCalled = false;
         private int lastSlideNumber = -1;
 
         @Override
-        public void onSlideChanged(int slideNumber) {
+        public void onSlideChanged(int slideNumber)
+        {
             slideChangedCalled = true;
             lastSlideNumber = slideNumber;
         }
 
         @Override
-        public void onPresentationChanged() {
+        public void onPresentationChanged()
+        {
             presentationChangedCalled = true;
         }
 
-        public void reset() {
+        public void reset()
+        {
             slideChangedCalled = false;
             presentationChangedCalled = false;
             lastSlideNumber = -1;
         }
 
-        public boolean wasSlideChangedCalled() {
+        public boolean wasSlideChangedCalled()
+        {
             return slideChangedCalled;
         }
 
-        public boolean wasPresentationChangedCalled() {
+        public boolean wasPresentationChangedCalled()
+        {
             return presentationChangedCalled;
         }
 
-        public int getLastSlideNumber() {
+        public int getLastSlideNumber()
+        {
             return lastSlideNumber;
         }
     }
 
     @Before
-    public void setUp() {
+    public void setUp()
+    {
         manager = new PresentationObserverManager();
         observer = new TestPresentationObserver();
     }
 
     @Test
-    public void testAddObserver() {
+    public void testAddObserver()
+    {
         // Add observer
         manager.addObserver(observer);
 
@@ -68,7 +78,8 @@ public class PresentationObserverManagerTest {
     }
 
     @Test
-    public void testRemoveObserver() {
+    public void testRemoveObserver()
+    {
         // Add observer
         manager.addObserver(observer);
 
@@ -83,7 +94,8 @@ public class PresentationObserverManagerTest {
     }
 
     @Test
-    public void testNotifySlideChanged() {
+    public void testNotifySlideChanged()
+    {
         // Add observer
         manager.addObserver(observer);
 
@@ -101,7 +113,8 @@ public class PresentationObserverManagerTest {
     }
 
     @Test
-    public void testNotifyPresentationChanged() {
+    public void testNotifyPresentationChanged()
+    {
         // Add observer
         manager.addObserver(observer);
 
@@ -114,7 +127,8 @@ public class PresentationObserverManagerTest {
     }
 
     @Test
-    public void testAddNullObserver() {
+    public void testAddNullObserver()
+    {
         // Add null observer - should not throw exception
         manager.addObserver(null);
 
@@ -124,7 +138,8 @@ public class PresentationObserverManagerTest {
     }
 
     @Test
-    public void testMultipleObservers() {
+    public void testMultipleObservers()
+    {
         // Create second observer
         TestPresentationObserver observer2 = new TestPresentationObserver();
 
