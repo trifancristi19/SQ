@@ -7,6 +7,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -14,7 +17,6 @@ import com.jabberpoint.Presentation;
 import com.jabberpoint.Slide;
 import com.jabberpoint.TextItem;
 import com.jabberpoint.BitmapItem;
-import com.jabberpoint.DOMXMLParser;
 
 /**
  * Tests for the XMLPresentationLoader in the new io package
@@ -24,11 +26,15 @@ public class XMLPresentationLoaderTest {
     private XMLPresentationLoader loader;
     private Presentation presentation;
     private static final String TEST_FILE_PATH = "test-presentation.xml";
+    private static final String DTD_FILE_PATH = "jabberpoint.dtd";
 
     @Before
     public void setUp() {
-        loader = new XMLPresentationLoader(new DOMXMLParser());
+        loader = new XMLPresentationLoader(new DOMXMLParsingStrategy());
         presentation = new Presentation();
+        
+        // Create the DTD file needed for testing to avoid FileNotFoundException
+        createDTDFile();
     }
 
     @After
@@ -36,9 +42,27 @@ public class XMLPresentationLoaderTest {
         // Clean up test files
         try {
             Files.deleteIfExists(Paths.get(TEST_FILE_PATH));
-            Files.deleteIfExists(Paths.get("jabberpoint.dtd"));
+            Files.deleteIfExists(Paths.get(DTD_FILE_PATH));
         } catch (Exception e) {
             System.err.println("Error during cleanup: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Creates a simple DTD file for testing to avoid FileNotFoundException
+     */
+    private void createDTDFile() {
+        try (PrintWriter out = new PrintWriter(new FileWriter(DTD_FILE_PATH))) {
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            out.println("<!ELEMENT presentation (showtitle, slide*)>");
+            out.println("<!ELEMENT showtitle (#PCDATA)>");
+            out.println("<!ELEMENT slide (title, item*)>");
+            out.println("<!ELEMENT title (#PCDATA)>");
+            out.println("<!ELEMENT item (#PCDATA)>");
+            out.println("<!ATTLIST item kind CDATA #REQUIRED>");
+            out.println("<!ATTLIST item level CDATA #REQUIRED>");
+        } catch (IOException e) {
+            System.err.println("Error creating DTD file: " + e.getMessage());
         }
     }
 
@@ -95,13 +119,13 @@ public class XMLPresentationLoaderTest {
     }
 
     @Test
-    public void testGetParser() {
-        // Create loader with explicit parser
-        DOMXMLParser parser = new DOMXMLParser();
-        XMLPresentationLoader loaderWithParser = new XMLPresentationLoader(parser);
+    public void testGetStrategy() {
+        // Create loader with explicit strategy
+        DOMXMLParsingStrategy strategy = new DOMXMLParsingStrategy();
+        XMLPresentationLoader loaderWithStrategy = new XMLPresentationLoader(strategy);
         
         // Test passes if no exception
-        assertNotNull("Loader should be created with explicit parser", loaderWithParser);
+        assertNotNull("Loader should be created with explicit strategy", loaderWithStrategy);
     }
 
     @Test

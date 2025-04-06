@@ -16,6 +16,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
+import com.jabberpoint.io.XMLParsingStrategy;
+import com.jabberpoint.io.DOMXMLParsingStrategy;
+import com.jabberpoint.io.XMLParsingStrategyFactory;
 
 /**
  * XMLAccessor, reads and writes XML files
@@ -26,7 +29,7 @@ import org.w3c.dom.NodeList;
 
 public class XMLAccessor extends Accessor
 {
-    private final XMLParser xmlParser;
+    private final XMLParsingStrategy parsingStrategy;
 
     /**
      * Default API to use.
@@ -53,18 +56,18 @@ public class XMLAccessor extends Accessor
     protected static final String NFE = "Number Format Exception";
 
     /**
-     * Creates an XMLAccessor with the default XMLParser (DOM)
+     * Creates an XMLAccessor with the default XMLParsingStrategy (DOM)
      */
     public XMLAccessor() {
-        this(new DOMXMLParser());
+        this(XMLParsingStrategyFactory.getDefaultStrategy());
     }
     
     /**
-     * Creates an XMLAccessor with a specific XMLParser implementation
-     * @param xmlParser The XMLParser to use
+     * Creates an XMLAccessor with a specific XMLParsingStrategy implementation
+     * @param parsingStrategy The XMLParsingStrategy to use
      */
-    public XMLAccessor(XMLParser xmlParser) {
-        this.xmlParser = xmlParser != null ? xmlParser : new DOMXMLParser();
+    public XMLAccessor(XMLParsingStrategy parsingStrategy) {
+        this.parsingStrategy = parsingStrategy != null ? parsingStrategy : XMLParsingStrategyFactory.getDefaultStrategy();
     }
 
     private String getTitle(Element element, String tagName)
@@ -83,8 +86,8 @@ public class XMLAccessor extends Accessor
         try
         {
             // Use the parser from the strategy pattern
-            Document document = xmlParser.parseFile(new File(filename));
-            Element doc = document.getDocumentElement();
+            Document document = parsingStrategy.parseFile(new File(filename));
+            Element doc = parsingStrategy.getRootElement(document);
 
             // First, get the title so it doesn't get cleared
             String title = getTitle(doc, SHOWTITLE);
@@ -205,6 +208,9 @@ public class XMLAccessor extends Accessor
 
         try
         {
+            // Note: For XML saving, we bypass the parsingStrategy and write directly to the file
+            // This is because the XMLParsingStrategy is primarily for parsing, not for creating
+            // XML structures. We could extend XMLParsingStrategy to include serialization methods in the future.
             PrintWriter out = new PrintWriter(new FileWriter(filename));
             out.println("<?xml version=\"1.0\"?>");
 

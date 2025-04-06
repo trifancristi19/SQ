@@ -2,8 +2,9 @@ package com.jabberpoint.io;
 
 import com.jabberpoint.Presentation;
 import com.jabberpoint.XMLAccessor;
-import com.jabberpoint.XMLParser;
-import com.jabberpoint.DOMXMLParser;
+import com.jabberpoint.io.XMLParsingStrategy;
+import com.jabberpoint.io.DOMXMLParsingStrategy;
+import com.jabberpoint.io.XMLParsingStrategyFactory;
 
 /**
  * XML implementation of PresentationLoader
@@ -13,18 +14,18 @@ public class XMLPresentationLoader implements PresentationLoader {
     private final XMLAccessor accessor;
     
     /**
-     * Create a loader with the default XML parser
+     * Create a loader with the default XML parsing strategy
      */
     public XMLPresentationLoader() {
-        this(new DOMXMLParser());
+        this(XMLParsingStrategyFactory.getDefaultStrategy());
     }
     
     /**
-     * Create a loader with a specific XML parser
-     * @param parser The XML parser to use
+     * Create a loader with a specific XML parsing strategy
+     * @param strategy The XML parsing strategy to use
      */
-    public XMLPresentationLoader(XMLParser parser) {
-        this.accessor = new XMLAccessor(parser);
+    public XMLPresentationLoader(XMLParsingStrategy strategy) {
+        this.accessor = new XMLAccessor(strategy);
     }
     
     @Override

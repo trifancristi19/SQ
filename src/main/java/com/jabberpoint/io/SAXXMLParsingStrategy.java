@@ -29,6 +29,18 @@ public class SAXXMLParsingStrategy implements XMLParsingStrategy {
      */
     public SAXXMLParsingStrategy() {
         this.factory = DocumentBuilderFactory.newInstance();
+        
+        // Set features to make DTD handling more robust
+        factory.setValidating(false);
+        try {
+            // Disable external DTD loading and validation
+            factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (ParserConfigurationException e) {
+            // If feature is not supported, log the error but continue
+            System.err.println("Warning: Could not set parser feature: " + e.getMessage());
+        }
     }
     
     @Override

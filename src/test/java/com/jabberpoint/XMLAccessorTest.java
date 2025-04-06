@@ -13,6 +13,10 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import com.jabberpoint.io.DOMXMLParsingStrategy;
+import com.jabberpoint.io.XMLParsingStrategy;
+import com.jabberpoint.io.XMLParsingStrategyFactory;
+
 /**
  * Tests for XMLAccessor
  * Note: This class uses deprecated XMLAccessor. In a real project, these tests would 
@@ -26,12 +30,16 @@ public class XMLAccessorTest
     private static final String TEST_FILE_PATH = "test-presentation.xml";
     private static final String MALFORMED_XML_PATH = "malformed-test.xml";
     private static final String MISSING_ATTRS_XML_PATH = "missing-attrs-test.xml";
+    private static final String DTD_FILE_PATH = "jabberpoint.dtd";
 
     @Before
     public void setUp()
     {
-        xmlAccessor = new XMLAccessor(new DOMXMLParser());
+        xmlAccessor = new XMLAccessor(new DOMXMLParsingStrategy());
         presentation = new Presentation();
+        
+        // Create the DTD file needed for testing to avoid FileNotFoundException
+        createDTDFile();
     }
 
     @After
@@ -43,7 +51,7 @@ public class XMLAccessorTest
             Files.deleteIfExists(Paths.get(TEST_FILE_PATH));
             Files.deleteIfExists(Paths.get(MALFORMED_XML_PATH));
             Files.deleteIfExists(Paths.get(MISSING_ATTRS_XML_PATH));
-            Files.deleteIfExists(Paths.get("jabberpoint.dtd"));
+            Files.deleteIfExists(Paths.get(DTD_FILE_PATH));
 
             // Clean up any test directories that might have been created
             Files.deleteIfExists(Paths.get("test-output-dir/test.xml"));
@@ -52,6 +60,27 @@ public class XMLAccessorTest
         } catch (IOException e)
         {
             System.err.println("Error during cleanup: " + e.getMessage());
+        }
+    }
+    
+    /**
+     * Creates a simple DTD file for testing to avoid FileNotFoundException
+     */
+    private void createDTDFile()
+    {
+        try (PrintWriter out = new PrintWriter(new FileWriter(DTD_FILE_PATH)))
+        {
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            out.println("<!ELEMENT presentation (showtitle, slide*)>");
+            out.println("<!ELEMENT showtitle (#PCDATA)>");
+            out.println("<!ELEMENT slide (title, item*)>");
+            out.println("<!ELEMENT title (#PCDATA)>");
+            out.println("<!ELEMENT item (#PCDATA)>");
+            out.println("<!ATTLIST item kind CDATA #REQUIRED>");
+            out.println("<!ATTLIST item level CDATA #REQUIRED>");
+        } catch (IOException e)
+        {
+            System.err.println("Error creating DTD file: " + e.getMessage());
         }
     }
 

@@ -117,12 +117,4 @@ public class StrategicXMLPresentationReader implements PresentationReader {
         return slide;
     }
     
-    // These methods are no longer used since we process all elements in order in processSlide
-    private void processTextItems(Element slideElement, Slide slide) {
-        // This method is kept for backward compatibility but is no longer used
-    }
-    
-    private void processImageItems(Element slideElement, Slide slide) {
-        // This method is kept for backward compatibility but is no longer used
-    }
 } 
