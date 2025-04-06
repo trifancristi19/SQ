@@ -405,7 +405,7 @@ public class PresentationTest
         assertTrue("savePresentation method should be deprecated", 
             isMethodDeprecated(Presentation.class, "savePresentation", String.class));
         assertTrue("setLoader method should be deprecated", 
-            isMethodDeprecated(Presentation.class, "setLoader", com.jabberpoint.PresentationLoader.class));
+            isMethodDeprecated(Presentation.class, "setLoader", com.jabberpoint.io.PresentationLoader.class));
         
         // Test with new interfaces directly
         MockPresentationLoader loader = new MockPresentationLoader();
@@ -475,7 +475,7 @@ public class PresentationTest
     /**
      * Mock loader for testing loader-related methods
      */
-    private class MockPresentationLoader implements PresentationLoader
+    private class MockPresentationLoader implements com.jabberpoint.io.PresentationLoader
     {
         public boolean loadCalled = false;
         public boolean saveCalled = false;

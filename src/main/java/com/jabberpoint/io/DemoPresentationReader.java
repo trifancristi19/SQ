@@ -9,16 +9,18 @@ import java.util.ArrayList;
 /**
  * Demo implementation of PresentationReader that creates a built-in demo presentation
  */
-public class DemoPresentationReader implements PresentationReader {
-    
+public class DemoPresentationReader implements PresentationReader
+{
+
     @Override
-    public void loadPresentation(Presentation presentation, String unusedFilename) throws Exception {
+    public void loadPresentation(Presentation presentation, String unusedFilename) throws Exception
+    {
         // Clear the presentation by setting an empty slide list
         presentation.setSlides(new ArrayList<>());
-        
+
         presentation.setTitle("Demo Presentation");
         Slide slide;
-        
+
         slide = new Slide();
         slide.setTitle("JabberPoint");
         slide.append(1, "The Java Presentation Tool");

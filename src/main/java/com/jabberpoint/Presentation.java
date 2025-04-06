@@ -3,18 +3,19 @@ package com.jabberpoint;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jabberpoint.io.PresentationLoader;
+import com.jabberpoint.error.DialogErrorHandler;
 import com.jabberpoint.io.PresentationReader;
 import com.jabberpoint.io.PresentationWriter;
+import com.jabberpoint.io.PresentationLoader;
 
 /**
- * <p>Presentation maintains the slides in the presentation.</p>
- * <p>There is only instance of this class.</p>
+ * <p>Presentation houdt de slides in de presentatie bij.</p>
+ * <p>Er is slechts een Presentatie, deze is toegankelijk via het Singleton
+ * Design Pattern.</p>
  *
  * @author Ian F. Darwin, ian@darwinsys.com, Gert Florijn, Sylvia Stuurman
  * @version 1.6 2014/05/16 Sylvia Stuurman
  */
-
 public class Presentation
 {
     private String title;
@@ -34,7 +35,7 @@ public class Presentation
      * @deprecated Use com.jabberpoint.io.PresentationReader or PresentationWriter directly
      */
     @Deprecated
-    public void setLoader(com.jabberpoint.PresentationLoader loader)
+    public void setLoader(PresentationLoader loader)
     {
         // Deprecated - kept for backward compatibility
     }

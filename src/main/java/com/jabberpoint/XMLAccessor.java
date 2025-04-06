@@ -58,15 +58,18 @@ public class XMLAccessor extends Accessor
     /**
      * Creates an XMLAccessor with the default XMLParsingStrategy (DOM)
      */
-    public XMLAccessor() {
+    public XMLAccessor()
+    {
         this(XMLParsingStrategyFactory.getDefaultStrategy());
     }
-    
+
     /**
      * Creates an XMLAccessor with a specific XMLParsingStrategy implementation
+     *
      * @param parsingStrategy The XMLParsingStrategy to use
      */
-    public XMLAccessor(XMLParsingStrategy parsingStrategy) {
+    public XMLAccessor(XMLParsingStrategy parsingStrategy)
+    {
         this.parsingStrategy = parsingStrategy != null ? parsingStrategy : XMLParsingStrategyFactory.getDefaultStrategy();
     }
 
@@ -149,29 +152,31 @@ public class XMLAccessor extends Accessor
                 System.err.println(NFE);
             }
         }
-        
+
         String type = attributes.getNamedItem(KIND).getTextContent();
         String content = item.getTextContent();
-        
-        try {
+
+        try
+        {
             // Use the factory to create the appropriate slide item
             SlideItem slideItem = SlideItemFactory.createSlideItem(type, level, content);
             slide.append(slideItem);
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e)
+        {
             System.err.println(UNKNOWNTYPE + ": " + type);
         }
     }
 
     private void createDTDFile(String path) throws IOException
     {
-        String dtdContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + 
-                           "<!ELEMENT presentation (showtitle, slide*)>\n" + 
-                           "<!ELEMENT showtitle (#PCDATA)>\n" + 
-                           "<!ELEMENT slide (title, item*)>\n" + 
-                           "<!ELEMENT title (#PCDATA)>\n" + 
-                           "<!ELEMENT item (#PCDATA)>\n" + 
-                           "<!ATTLIST item kind CDATA #REQUIRED>\n" + 
-                           "<!ATTLIST item level CDATA #REQUIRED>";
+        String dtdContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "<!ELEMENT presentation (showtitle, slide*)>\n" +
+                "<!ELEMENT showtitle (#PCDATA)>\n" +
+                "<!ELEMENT slide (title, item*)>\n" +
+                "<!ELEMENT title (#PCDATA)>\n" +
+                "<!ELEMENT item (#PCDATA)>\n" +
+                "<!ATTLIST item kind CDATA #REQUIRED>\n" +
+                "<!ATTLIST item level CDATA #REQUIRED>";
 
         PrintWriter out = new PrintWriter(new FileWriter(path));
         out.print(dtdContent);

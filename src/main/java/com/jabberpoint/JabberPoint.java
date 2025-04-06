@@ -2,6 +2,7 @@ package com.jabberpoint;
 
 import javax.swing.JOptionPane;
 import java.io.IOException;
+
 import com.jabberpoint.io.PresentationReader;
 import com.jabberpoint.io.PresentationLoader;
 import com.jabberpoint.io.XMLPresentationLoader;
@@ -32,22 +33,22 @@ public class JabberPoint
     {
         // Create styles first
         Style.createStyles();
-        
+
         // Create the presentation
         Presentation presentation = new Presentation();
-        
+
         // Create the slide viewer frame
         SlideViewerFrame slideViewerFrame = new SlideViewerFrame(JABVERSION, presentation);
-        
+
         // Create error handler
         ErrorHandler errorHandler = new DialogErrorHandler(slideViewerFrame, JABERR);
-        
+
         try
         {
             // Create appropriate loader based on command line arguments
             PresentationReader reader;
             String filename = "";
-            
+
             if (argv.length == 0)
             {
                 reader = new DemoPresentationReader();
@@ -62,22 +63,21 @@ public class JabberPoint
             {
                 // Use the strategic XML reader with SAX strategy if specified
                 reader = new StrategicXMLPresentationReader(
-                    XMLParsingStrategyFactory.StrategyType.SAX);
+                        XMLParsingStrategyFactory.StrategyType.SAX);
                 filename = argv[1];
             }
             else
             {
                 // Default to DOM strategy
                 reader = new StrategicXMLPresentationReader(
-                    XMLParsingStrategyFactory.StrategyType.DOM);
+                        XMLParsingStrategyFactory.StrategyType.DOM);
                 filename = argv[0];
             }
-            
+
             // Load the presentation
             reader.loadPresentation(presentation, filename);
             presentation.setSlideNumber(0);
-        } 
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             // Use the error handler instead of directly showing dialog
             errorHandler.handleError(IOERR, ex);
