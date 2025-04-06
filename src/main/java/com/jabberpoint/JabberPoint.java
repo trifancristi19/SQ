@@ -6,6 +6,8 @@ import com.jabberpoint.io.PresentationReader;
 import com.jabberpoint.io.PresentationLoader;
 import com.jabberpoint.io.XMLPresentationLoader;
 import com.jabberpoint.io.DemoPresentationReader;
+import com.jabberpoint.io.StrategicXMLPresentationReader;
+import com.jabberpoint.io.XMLParsingStrategyFactory;
 import com.jabberpoint.error.DialogErrorHandler;
 import com.jabberpoint.error.ErrorHandler;
 
@@ -50,9 +52,24 @@ public class JabberPoint
             {
                 reader = new DemoPresentationReader();
             }
+            else if (argv.length == 1)
+            {
+                // Use the strategic XML reader with the default DOM strategy
+                reader = new StrategicXMLPresentationReader();
+                filename = argv[0];
+            }
+            else if (argv.length == 2 && argv[0].equals("--sax"))
+            {
+                // Use the strategic XML reader with SAX strategy if specified
+                reader = new StrategicXMLPresentationReader(
+                    XMLParsingStrategyFactory.StrategyType.SAX);
+                filename = argv[1];
+            }
             else
             {
-                reader = new XMLPresentationLoader();
+                // Default to DOM strategy
+                reader = new StrategicXMLPresentationReader(
+                    XMLParsingStrategyFactory.StrategyType.DOM);
                 filename = argv[0];
             }
             
